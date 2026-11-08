@@ -1,56 +1,88 @@
-# Grupo 4 · Pantalla
+# Grupo de pantalla — Matriz LED RGB 64×64 (HUB75E)
 
-Controlador del panel LED 64×64 y memoria de imagen (framebuffer).
+**Proyecto final de Electrónica Digital 1 · Estado: estudio documental inicial (2026-11-07).**
 
-## Integrantes
+## Integrantes del equipo de pantalla
 
--
--
--
+- Gisela Barrera Florez
+- Sandra Amaya Betancourt
+- Erika Briyith Hueso Castro
+- Sebastian Cespedes
+- Juan Jose Mora
+- Luis Felipe Cardenas
 
-## Qué hace este grupo
+**Equipo conjunto de pantalla (grupos 4 y 5).** Esta lista documenta la composición comunicada por el equipo, sin asignar actividades individuales ni atribuir autorías de RTL, experimentos, diagramas o verificaciones técnicas. El reparto de responsabilidades y su alcance académico deben quedar registrados cuando se acuerden.
 
-_(Describir el periférico y su función dentro de la consola.)_
+Este módulo estudia y desarrollará el controlador de visualización de una matriz LED RGB de **64×64 píxeles**, interfaz serigrafiada **HUB75E**, para su conexión a una FPGA **Tang Nano 9K**. El propósito es integrar posteriormente un framebuffer y el acceso del procesador **FemtoRV32** mediante MMIO.
 
-- Dispositivo(s): Panel LED RGB 64×64 HUB75
-- Protocolo: HUB75
-- Dirección base en el mapa de memoria: `0x48_0000` framebuffer · `0x4C_0000` control
+> **Alcance demostrado a la fecha:** inspección de fotografías, consulta de documentación externa y propuesta de verificación. **Todavía no** se ha comprobado por nosotros el conexionado, el consumo, el funcionamiento físico, las simulaciones ni el RTL de la pantalla.
 
-## Tareas
+## Identificación del hardware
 
-- [ ] Estudiar el panel HUB75 (barrido, BCM)
-- [ ] Definir el formato de los píxeles y el framebuffer
-- [ ] Diseñar el barrido del panel
-- [ ] Definir los registros de control
-- [ ] Escribir el testbench
-- [ ] Probar en la placa (patrón de prueba)
+| Característica | Dato | Grado de verificación |
+|---|---|---|
+| Resolución | 64×64, 4096 píxeles | Marcaje PCB `64X64` |
+| Referencia impresa | `P2.5-2121-64X64-32S-8H-M11` (sufijo por cotejar) | Fotografía |
+| Paso | P2.5, nominal 2,5 mm | Inferencia del código |
+| Área activa | ≈160×160 mm | Calculada, no medida |
+| Interfaz | HUB75E, conector de 16 contactos | Fotografía |
+| Barrido | Posible 1/32 (`32S`) | Hipótesis pendiente de prueba |
+| Alimentación | Bornes separados `VCC`/`GND`; **tensión sin confirmar para esta PCB** | Fotografía |
+| Driver, fabricante y hoja de datos exacta | No identificados | Investigación abierta |
 
-## Diseño
+### Particularidad que debe verificarse
 
-_(Diagrama de bloques, diagrama de flujo, cálculos. Guardar los archivos en `docs/`.)_
+El integrante que inspeccionó la placa aclaró la distribución de los contactos **`C` y `NC`**, por separado, en la sexta fila del conector. Por tanto, el **rótulo físico declarado es `NC` en la posición donde el HUB75E convencional utiliza `D`**. Aunque `NC` suele significar «sin conexión», **el comportamiento eléctrico del contacto no se ha comprobado** y el controlador de filas aún no está identificado. **No conectar ni asignar una señal `D` por analogía.** Ver [pinout completo del panel fotografiado](docs/06-pinout-fotografiado.md).
 
-## Registros
+## Documentación del desarrollo
 
-| Desplazamiento | Nombre | Acceso | Descripción |
-| --- | --- | --- | --- |
-| 0x00 | | | |
+| Documento | Propósito |
+|---|---|
+| [Índice de la fase documental](docs/README.md) | Estado y navegación |
+| [01 — Identificación del panel](docs/01-identificacion-panel.md) | Evidencia visual, marcajes y fuentes |
+| [02 — HUB75E y Tang Nano 9K](docs/02-interfaz-hub75e-y-tang-nano9k.md) | Señales, temporización conceptual, lógica y memoria |
+| [03 — Riesgos y procedimiento de pruebas](docs/03-riesgos-y-pruebas.md) | Seguridad, hipótesis, verificación y aceptación |
+| [04 — Plan y trazabilidad](docs/04-plan-y-trazabilidad.md) | Hitos, responsables, commits y criterios |
+| [05 — Declaración de uso de IA](docs/05-declaracion-uso-ia.md) | Apoyo de ChatGPT, límites y revisión humana |
+| [06 — Pinout de la placa](docs/06-pinout-fotografiado.md) | Los 16 contactos tal como los confirmó el equipo, comparación con HUB75E estándar |
+| [07 — Revisión de borrador previo](docs/07-revision-borrador-previo.md) | Evaluación de cuatro páginas del PDF de antecedentes, sin adjuntarlo ni asumir su validez |
+| [Fotografías de la PCB](docs/fotos/) | Evidencia original observada |
 
-## Pines
+## Arquitectura preliminar (no implementada)
 
-| Señal | Pin FPGA | Conector | Nota |
-| --- | --- | --- | --- |
-| | | | |
+```text
+FemtoRV32 / patrones de prueba
+            |
+     Bus y decodificador MMIO (por acordar)
+            |
+     Framebuffer en memoria FPGA (por definir)
+            |
+      FSM de barrido + generador de tiempos
+            |
+R1 G1 B1 / R2 G2 B2 / direcciones / CLK LAT OE
+            |
+     Adaptación de niveles, si se requiere
+            |
+          Panel RGB 64×64
+```
 
-## Simulación
+La interfaz HUB75E **no es SPI**: usa datos RGB paralelos, selección multiplexada de filas y un reloj de desplazamiento. Se deben diferenciar el reloj de la FPGA, el reloj de desplazamiento y la tasa de refresco. El PDF de antecedentes recibido es un **esbozo no validado**, analizado en el [documento 07](docs/07-revision-borrador-previo.md); no se adjunta al paquete. Los registros `0x480000` (imagen) y `0x4C0000` (control) son **propuestas de integración**, no una implementación demostrada.
 
-_(Cómo correr el testbench y qué se verificó. Archivos en `sim/`.)_
+## Plan de trabajo
 
-## Avances
+1. Confirmar proveedor, hoja de datos auténtica, alimentación, significado eléctrico del contacto `NC`, chips y orientación de conectores.
+2. Definir pinout seguro, presupuesto de GPIO/BSRAM, memoria de imagen y contrato MMIO.
+3. Crear diagramas `.drawio` de bloques, flujo de barrido y tiempos, coherentes con el diseño elegido.
+4. Implementar una FSM mínima en Verilog y pruebas autoverificables (`sim/`, VCD y GTKWave).
+5. Probar colores y filas en la placa con fuente verificada, registrar consumo, fotografías y vídeo.
+6. Integrar framebuffer con FemtoRV32; medir refresco, utilización y funcionamiento completo.
 
-| Fecha | Avance |
-| --- | --- |
-| | |
+**Registro académico:** cada integrante debe contribuir con commits individuales auténticos, describir pruebas que realmente haya ejecutado y poder sustentar cada decisión. Se trabajará directamente en `main` del repositorio oficial según el acuerdo del equipo, evitando mezclar modificaciones de otros módulos.
 
-## Pendientes y problemas
+## Referencias técnicas
 
--
+- [Sipeed Tang Nano 9K](https://wiki.sipeed.com/hardware/en/tang/Tang-Nano-9K/Nano-9K.html)
+- [Waveshare RGB Matrix P2.5 64×64 (solo referencia comparable)](https://www.waveshare.com/RGB-Matrix-P2.5-64x64.htm)
+- [TI SN74AHCT245 (posible adaptación de nivel)](https://www.ti.com/product/SN74AHCT245)
+
+Ninguna referencia comparable debe presentarse como el datasheet exacto de nuestra PCB.
