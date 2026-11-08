@@ -16,11 +16,11 @@
 | Identificador naranja | `S8803887 / M00300` | Etiqueta de trazabilidad aparente; no identifica inequívocamente fabricante |
 | C.I. del controlador | Se observan varios chips de control y registros | Referencias/función exactas desconocidas |
 
-![Fotografía posterior completa](fotos/01-vista-posterior-completa.jpg)
+![Fotografía posterior completa](fotos/01_identificacion_hardware/01-vista-posterior-completa.jpg)
 
-![Marcaje y conector de potencia](fotos/02-modelo-y-alimentacion.jpg)
+![Marcaje y conector de potencia](fotos/01_identificacion_hardware/02-modelo-y-alimentacion.jpg)
 
-![Serigrafía de HUB75E](fotos/03-serigrafia-conector-hub75e.jpg)
+![Serigrafía de HUB75E](fotos/01_identificacion_hardware/03-serigrafia-conector-hub75e.jpg)
 
 ### Transcripción aclarada del conector (dato suministrado por el equipo)
 

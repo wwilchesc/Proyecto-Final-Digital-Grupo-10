@@ -85,3 +85,7 @@ La interfaz HUB75E **no es SPI**: usa datos RGB paralelos, selección multiplexa
 - [TI SN74AHCT245 (posible adaptación de nivel)](https://www.ti.com/product/SN74AHCT245)
 
 Ninguna referencia comparable debe presentarse como el datasheet exacto de nuestra PCB.
+
+## Entregables H2 — diagramas conceptuales
+
+Se prepararon cinco diagramas editables de arquitectura, flujo, FSM, temporización y framebuffer. **Son propuestas de diseño y no pruebas de funcionamiento.** Cada uno tiene explicación técnica individual en [docs/diagramas/](docs/diagramas/README.md); existe además un índice de [fotografías y evidencias](docs/fotos/README.md). El contacto `NC` y el barrido real deben verificarse antes del conexionado definitivo y del RTL físico de filas.

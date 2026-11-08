@@ -35,3 +35,10 @@ La intención es establecer una base verificable antes de diseñar el controlado
 6. Registrar el resultado en Git mediante commits individuales acompañados de evidencia auténtica.
 
 **Nota:** Para cálculos se usa la Tang Nano 9K con reloj nominal de 27 MHz. Verificar la placa definitiva y sus bancos antes de asignar pines `.cst`; otros documentos del repositorio podrían reflejar versiones anteriores.
+
+## Diagramas conceptuales H2 y registro de evidencias
+
+- [Diagrama draw.io multipágina con vistas previas y explicaciones](diagramas/README.md).
+- [Organización y registro de evidencias fotográficas y de pruebas](fotos/README.md).
+
+**Estado:** diagramas propuestos; no constituyen RTL terminado ni simulación/fotografías de funcionamiento.

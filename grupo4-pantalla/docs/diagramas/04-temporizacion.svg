@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="1030" viewBox="0 0 1700 1030">
+<rect width="1700" height="1030" fill="#F8FAFD"/>
+<rect width="1700" height="115" fill="#12243A"/>
+<text x="850.0" y="53" text-anchor="middle" font-size="29" font-weight="700" fill="#FFFFFF" font-family="DejaVu Sans,Arial,sans-serif"><tspan x="850.0" y="53">Diagrama de tiempos conceptual</tspan></text>
+<text x="850.0" y="87" text-anchor="middle" font-size="16" font-weight="400" fill="#C9E4F2" font-family="DejaVu Sans,Arial,sans-serif"><tspan x="850.0" y="87">Sin mediciones · alineación referencial de señales · sin solapamiento de desplazamiento y visualización</tspan></text>
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#225DA8"/></marker></defs>
+<rect x="65" y="150" width="1570" height="62" rx="12" fill="#E9F1F9" stroke="#CBD5E1" stroke-width="2"/>
+<text x="850.0" y="188.0" text-anchor="middle" font-size="14" font-weight="400" fill="#162A40" font-family="DejaVu Sans,Arial,sans-serif"><tspan x="850.0" y="188.0">Etapas:   (1) CARGA 64 COLUMNAS   →   (2) BLANQUEO + DIRECCIÓN   →   (3) LAT   →   (4) VISUALIZACIÓN (DWELL)</tspan></text>
+<rect x="85" y="800" width="1525" height="65" rx="9" fill="#FFFFFF" stroke="#A33E40" stroke-width="2"/>
+<text x="847.5" y="837.5" text-anchor="middle" font-size="14" font-weight="400" fill="#162A40" font-family="DejaVu Sans,Arial,sans-serif"><tspan x="847.5" y="837.5">La dirección física de fila no está determinada (pin NC). Las duraciones son conceptuales; las restricciones de setup/hold exigen el datasheet real del panel.</tspan></text>
+<rect x="85" y="885" width="1525" height="67" rx="9" fill="#FFFFFF" stroke="#225DA8" stroke-width="2"/>
+<text x="847.5" y="923.5" text-anchor="middle" font-size="14" font-weight="400" fill="#162A40" font-family="DejaVu Sans,Arial,sans-serif"><tspan x="847.5" y="923.5">Con reloj de 27 MHz: Tsys ≈ 37,04 ns. El período de CLK de salida y el dwell se elegirán después de definir estados, latencia de BRAM y controladores.</tspan></text>
+<rect x="218" y="230" width="632" height="45" fill="#DAEAFE" stroke="#CDD7E4"/>
+<text x="534.0" y="259" text-anchor="middle" font-size="14" font-weight="700" fill="#162A40" font-family="DejaVu Sans,Arial,sans-serif"><tspan x="534.0" y="259">CARGA: 64 DATOS</tspan></text>
+<rect x="850" y="230" width="200" height="45" fill="#FDEAD2" stroke="#CDD7E4"/>
+<text x="950.0" y="259" text-anchor="middle" font-size="14" font-weight="700" fill="#162A40" font-family="DejaVu Sans,Arial,sans-serif"><tspan x="950.0" y="259">OE=1 / FILA</tspan></text>
+<rect x="1050" y="230" width="90" height="45" fill="#E9DAFF" stroke="#CDD7E4"/>
+<text x="1095.0" y="259" text-anchor="middle" font-size="14" font-weight="700" fill="#162A40" font-family="DejaVu Sans,Arial,sans-serif"><tspan x="1095.0" y="259">LATCH</tspan></text>
+<rect x="1140" y="230" width="402" height="45" fill="#DCF4E8" stroke="#CDD7E4"/>
+<text x="1341.0" y="259" text-anchor="middle" font-size="14" font-weight="700" fill="#162A40" font-family="DejaVu Sans,Arial,sans-serif"><tspan x="1341.0" y="259">MOSTRAR</tspan></text>
+<text x="110" y="318" font-size="20" font-family="DejaVu Sans,Arial" fill="#162A40" font-weight="700">CLK</text>
+<line x1="218" y1="338" x2="1542" y2="338" stroke="#D1DAE6" stroke-dasharray="3,4"/>
+<text x="110" y="416" font-size="20" font-family="DejaVu Sans,Arial" fill="#162A40" font-weight="700">RGB</text>
+<line x1="218" y1="436" x2="1542" y2="436" stroke="#D1DAE6" stroke-dasharray="3,4"/>
+<text x="110" y="514" font-size="20" font-family="DejaVu Sans,Arial" fill="#162A40" font-weight="700">OE</text>
+<line x1="218" y1="534" x2="1542" y2="534" stroke="#D1DAE6" stroke-dasharray="3,4"/>
+<text x="110" y="612" font-size="20" font-family="DejaVu Sans,Arial" fill="#162A40" font-weight="700">FILA</text>
+<line x1="218" y1="632" x2="1542" y2="632" stroke="#D1DAE6" stroke-dasharray="3,4"/>
+<text x="110" y="710" font-size="20" font-family="DejaVu Sans,Arial" fill="#162A40" font-weight="700">LAT</text>
+<line x1="218" y1="730" x2="1542" y2="730" stroke="#D1DAE6" stroke-dasharray="3,4"/>
+<polyline points="218,330 238,330 238,288 261,288 261,330 287,330 287,288 310,288 310,330 336,330 336,288 359,288 359,330 385,330 385,288 408,288 408,330 434,330 434,288 457,288 457,330 483,330 483,288 506,288 506,330 532,330 532,288 555,288 555,330 581,330 581,288 604,288 604,330 630,330 630,288 653,288 653,330 679,330 679,288 702,288 702,330 728,330 728,288 751,288 751,330 850,330 1542,330" fill="none" stroke="#225DA8" stroke-width="4" stroke-linejoin="round"/>
+<text x="725" y="285" text-anchor="middle" font-size="13" font-weight="700" fill="#225DA8" font-family="DejaVu Sans,Arial,sans-serif"><tspan x="725" y="285">...64 pulsos...</tspan></text>
+<polyline points="218,431 258,431 273,390 840,390 850,431 1542,431" fill="none" stroke="#087F84" stroke-width="4" stroke-linejoin="round"/>
+<text x="540" y="382" text-anchor="middle" font-size="13" font-weight="400" fill="#087F84" font-family="DejaVu Sans,Arial,sans-serif"><tspan x="540" y="382">RGB estable antes de cada ↑CLK</tspan></text>
+<polyline points="218,480 1140,480 1140,536 1522,536 1522,480 1542,480" fill="none" stroke="#AD6614" stroke-width="4" stroke-linejoin="round"/>
+<text x="1390" y="474" text-anchor="middle" font-size="13" font-weight="400" fill="#AD6614" font-family="DejaVu Sans,Arial,sans-serif"><tspan x="1390" y="474">OE=0: encendido</tspan></text>
+<polyline points="218,632 880,632 880,590 1542,590" fill="none" stroke="#A33E40" stroke-width="4" stroke-linejoin="round"/>
+<text x="965" y="582" text-anchor="middle" font-size="13" font-weight="400" fill="#A33E40" font-family="DejaVu Sans,Arial,sans-serif"><tspan x="965" y="582">fila nueva</tspan></text>
+<polyline points="218,730 1058,730 1058,685 1096,685 1096,730 1542,730" fill="none" stroke="#225DA8" stroke-width="4" stroke-linejoin="round"/>
+<line x1="850" y1="280" x2="850" y2="758" stroke="#97A8BC" stroke-width="2" stroke-dasharray="5 8"/>
+<line x1="1050" y1="280" x2="1050" y2="758" stroke="#97A8BC" stroke-width="2" stroke-dasharray="5 8"/>
+<line x1="1140" y1="280" x2="1140" y2="758" stroke="#97A8BC" stroke-width="2" stroke-dasharray="5 8"/>
+</svg>

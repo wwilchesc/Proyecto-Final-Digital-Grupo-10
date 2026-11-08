@@ -39,3 +39,8 @@ La información se separa en:
 
 La responsabilidad académica y técnica por el contenido, el diseño final, la seguridad eléctrica y la sustentación corresponde a los estudiantes. El uso de IA debe ajustarse a las reglas del docente y de la universidad; no sustituye el aprendizaje ni la experimentación real.
 
+## Actualización H2 — diagramas editables
+
+Se utilizó **ChatGPT (OpenAI)** para proponer y redactar la arquitectura del controlador HUB75E, el algoritmo de barrido, una máquina de estados, la temporización conceptual y una organización mínima de framebuffer RGB111. También ayudó a generar **dibujos editables `.drawio` y vistas previas PNG/SVG**, explicaciones Markdown y la estructura documental de evidencias.
+
+Estos artefactos son **propuestas**, no RTL implementado ni resultados de simulación o medición. Los cálculos de refresco son ejemplos hipotéticos explícitos. El equipo debe contrastar la información contra el hardware, justificar los cambios, diseñar y ejecutar por sí mismo las verificaciones y registrar responsables individuales. No se ha confirmado el esquema físico de selección de filas del panel (`NC`).

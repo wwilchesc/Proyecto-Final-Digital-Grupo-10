@@ -83,3 +83,9 @@ Cada estudiante debe ejecutar y explicar los commits de su propio aporte. Una co
 - Integración/SoC: formato MMIO, latencia del bus, mapa de memoria, clocks, pines, BRAM disponible.
 - Docente: criterios de evaluación individual y alcance académico confirmado.
 
+## Seguimiento H2 — documentación de arquitectura
+
+- **Preparado (pendiente de revisión humana):** cinco diagramas conceptuales y sus explicaciones, en [diagramas/](diagramas/README.md).
+- **Evidencia fotográfica:** organizada por identificación, conexión, simulación, funcionamiento, integración y mediciones. Véase [fotos/README.md](fotos/README.md).
+- **No realizado todavía:** validación de `NC`, RTL, testbench, conexión eléctrica y pruebas físicas.
+- **Responsables efectivos y revisiones:** completar según commits y evidencias reales, sin atribución automática a los seis integrantes.
