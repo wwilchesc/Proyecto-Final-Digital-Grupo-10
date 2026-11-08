@@ -9,7 +9,6 @@ Se utilizó **ChatGPT (OpenAI)** como herramienta de apoyo para:
 3. Formular una matriz inicial de riesgos eléctricos, temporales y de integración; registrar la aclaración posterior del equipo: el rótulo corresponde a dos contactos, `C` y `NC`.
 4. Preparar borradores de documentación técnica, planificación y criterios de prueba para revisión humana.
 5. Señalar explícitamente las limitaciones de la evidencia disponible y las verificaciones pendientes.
-6. Analizar un PDF manuscrito de cuatro páginas como **antecedente conceptual no validado**, sin atribuir autorías ni convertir el contenido en resultados experimentales.
 
 **No** se utilizó IA para afirmar que se ejecutaron pruebas físicas, simulaciones o mediciones. **No** se ha desarrollado ni verificado RTL del periférico como parte de esta fase documental. Los diagramas detallados, el código, las formas de onda y los resultados de prueba están pendientes.
 
@@ -40,6 +39,3 @@ La información se separa en:
 
 La responsabilidad académica y técnica por el contenido, el diseño final, la seguridad eléctrica y la sustentación corresponde a los estudiantes. El uso de IA debe ajustarse a las reglas del docente y de la universidad; no sustituye el aprendizaje ni la experimentación real.
 
-## Distinción sobre el PDF manuscrito
-
-El PDF denominado `proyecto.pdf` fue facilitado como material de trabajo preliminar. **No se incluye el archivo original** en esta entrega por indicación del equipo; solo se redactó una evaluación crítica en `07-revision-borrador-previo.md`. Las afirmaciones de aquel documento no se presentan como cálculos, pruebas o especificaciones definitivas del panel.

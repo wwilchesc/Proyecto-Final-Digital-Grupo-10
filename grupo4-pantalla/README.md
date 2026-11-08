@@ -45,7 +45,6 @@ El integrante que inspeccionó la placa aclaró la distribución de los contacto
 | [04 — Plan y trazabilidad](docs/04-plan-y-trazabilidad.md) | Hitos, responsables, commits y criterios |
 | [05 — Declaración de uso de IA](docs/05-declaracion-uso-ia.md) | Apoyo de ChatGPT, límites y revisión humana |
 | [06 — Pinout de la placa](docs/06-pinout-fotografiado.md) | Los 16 contactos tal como los confirmó el equipo, comparación con HUB75E estándar |
-| [07 — Revisión de borrador previo](docs/07-revision-borrador-previo.md) | Evaluación de cuatro páginas del PDF de antecedentes, sin adjuntarlo ni asumir su validez |
 | [Fotografías de la PCB](docs/fotos/) | Evidencia original observada |
 
 ## Arquitectura preliminar (no implementada)
@@ -66,7 +65,7 @@ R1 G1 B1 / R2 G2 B2 / direcciones / CLK LAT OE
           Panel RGB 64×64
 ```
 
-La interfaz HUB75E **no es SPI**: usa datos RGB paralelos, selección multiplexada de filas y un reloj de desplazamiento. Se deben diferenciar el reloj de la FPGA, el reloj de desplazamiento y la tasa de refresco. El PDF de antecedentes recibido es un **esbozo no validado**, analizado en el [documento 07](docs/07-revision-borrador-previo.md); no se adjunta al paquete. Los registros `0x480000` (imagen) y `0x4C0000` (control) son **propuestas de integración**, no una implementación demostrada.
+La interfaz HUB75E **no es SPI**: usa datos RGB paralelos, selección multiplexada de filas y un reloj de desplazamiento. Se deben diferenciar el reloj de la FPGA, el reloj de desplazamiento y la tasa de refresco. Los registros `0x480000` (imagen) y `0x4C0000` (control) son **propuestas de integración**, no una implementación demostrada.
 
 ## Plan de trabajo
 

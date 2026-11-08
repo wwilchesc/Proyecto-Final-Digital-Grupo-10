@@ -16,7 +16,6 @@ La intención es establecer una base verificable antes de diseñar el controlado
 | [04-plan-y-trazabilidad.md](04-plan-y-trazabilidad.md) | Hitos, entregables, dependencias y pautas de Git | Propuesta de coordinación |
 | [05-declaracion-uso-ia.md](05-declaracion-uso-ia.md) | Herramientas utilizadas y control humano del diseño | Declaración inicial |
 | [06-pinout-fotografiado.md](06-pinout-fotografiado.md) | Pinout aclarado por el equipo: `C / NC` y diferencias con HUB75E estándar | Pendiente de verificación eléctrica |
-| [07-revision-borrador-previo.md](07-revision-borrador-previo.md) | Revisión de las cuatro páginas manuscritas (sin adjuntar el PDF) | Antecedente, no diseño validado |
 | [fotos/](fotos/) | Fotografías del reverso suministradas para el reconocimiento | Evidencia visual |
 
 ## Identificación de trabajo

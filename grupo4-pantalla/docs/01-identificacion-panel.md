@@ -41,7 +41,7 @@ OE  GND
 
 **Alcance de la verificación:** la inscripción del segundo contacto de esa fila es `NC` según el equipo; esto **no equivale** a haber comprobado con multímetro que la patilla 12 esté desconectada. En la interfaz HUB75E convencional allí estaría `D` (selección de fila). Es una **incompatibilidad de serigrafía** que debe resolverse antes del cableado.
 
-Consultar [06 — Tabla completa de pinout](06-pinout-fotografiado.md) y [07 — Evaluación del esbozo anterior](07-revision-borrador-previo.md).
+Consultar [06 — Tabla completa de pinout](06-pinout-fotografiado.md).
 
 ## 2. Características deducidas (no medidas)
 

@@ -83,6 +83,3 @@ Cada estudiante debe ejecutar y explicar los commits de su propio aporte. Una co
 - Integración/SoC: formato MMIO, latencia del bus, mapa de memoria, clocks, pines, BRAM disponible.
 - Docente: criterios de evaluación individual y alcance académico confirmado.
 
-## 7. Antecedente del diseño de pantalla
-
-Se recibió un PDF de cuatro páginas con apuntes y esquemas del controlador. Se usó **solo como antecedente de estudio**, no se adjunta al repositorio ni se considera simulación, RTL terminado o pinout comprobado. [Ver revisión del borrador](07-revision-borrador-previo.md).
