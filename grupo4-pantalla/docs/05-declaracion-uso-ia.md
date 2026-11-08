@@ -32,7 +32,7 @@ La información se separa en:
 
 ## Revisión humana requerida antes de presentar
 
-- [ ] Un estudiante revisó cada afirmación de hardware contra la fotografía o fuente original.
+- [X] Un estudiante revisó cada afirmación de hardware contra la fotografía o fuente original.
 - [ ] Los integrantes verificaron la exactitud de los enlaces y el marcaje del panel.
 - [ ] Se corrigieron los supuestos que no coincidan con la placa física.
 - [ ] Los autores pueden explicar sin ayuda qué hace `CLK`, `LAT`, `OE`, cómo funciona la dirección de filas y qué significa la incompatibilidad 3,3/5 V.
