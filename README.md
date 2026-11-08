@@ -16,12 +16,12 @@ Vamos a construir una consola de videojuegos retro completa dentro de una FPGA: 
 
 | Elemento | Elección |
 | --- | --- |
-| Tarjeta | Sipeed Tang Primer 25K (FPGA Gowin GW5A-LV25) + Dock |
+| Tarjeta | Sipeed Tang Nano 9K (FPGA Gowin GW1NR-LV9QN88PC6/I5) |
 | Procesador | FemtoRV32 Quark (RISC-V RV32I), arquitectura Von Neumann |
 | Periféricos | Mapeados en memoria (MMIO); el software los atiende por sondeo |
-| Flujo de herramientas | Yosys → nextpnr-himbaechel → Apycula → openFPGALoader (todo abierto) |
+| Flujo de herramientas | Yosys → nextpnr-himbaechel → Apycula (gowin_pack) → openFPGALoader |
 | Simulación | Icarus Verilog + GTKWave |
-| Reloj | 50 MHz |
+| Reloj | 27 MHz (oscilador de la placa; pueden generarse otras frecuencias mediante PLL) |
 
 ## Arquitectura general
 
