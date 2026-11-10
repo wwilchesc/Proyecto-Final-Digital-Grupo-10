@@ -72,4 +72,5 @@ _(Cómo correr el testbench y qué se verificó. Archivos en `sim/`.)_
 -
 
 ### 3. Diagrama de Tiempos I2s
-   <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/86e51b37-bda5-4f7f-8892-375584ceab24" />
+   <img width="1343" height="192" alt="image" src="https://github.com/user-attachments/assets/adbdf91f-5a86-407c-8fda-9541d660c728" />
+
