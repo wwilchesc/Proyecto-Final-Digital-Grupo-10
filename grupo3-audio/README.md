@@ -36,41 +36,6 @@ El protocolo I2S (Inter-IC Sound) es un estándar de comunicación síncrono dis
 - [ ] Escribir el testbench
 - [ ] Probar en la placa
 
-## Diseño
-
-### 1. Diagrama de Flujo, caja negra y mas
-[Ver Diagramas de Flujo/ Cana Negra](./docs/Diagrama_de_Flujo.md)
-
-
-### 2. DataSheet
-[Tarjeta MAX98357A](./docs/MAX98357_ALLDATASHEET.pdf)
-
-## Registros
-
-| Desplazamiento | Nombre | Acceso | Descripción |
-| --- | --- | --- | --- |
-| 0x00 | | | |
-
-## Pines
-
-| Señal | Pin FPGA | Conector | Nota |
-| --- | --- | --- | --- |
-| | | | |
-
-## Simulación
-
-_(Cómo correr el testbench y qué se verificó. Archivos en `sim/`.)_
-
-## Avances
-
-| Fecha | Avance |
-| --- | --- |
-| | |
-
-## Pendientes y problemas
-
--
-
-### 3. Diagrama de Tiempos I2s
+### 1. Diagrama de Tiempos I2s
    <img width="1343" height="192" alt="image" src="https://github.com/user-attachments/assets/adbdf91f-5a86-407c-8fda-9541d660c728" />
 
