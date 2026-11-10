@@ -39,3 +39,7 @@ El protocolo I2S (Inter-IC Sound) es un estándar de comunicación síncrono dis
 ### 1. Diagrama de Tiempos I2s
    <img width="1343" height="192" alt="image" src="https://github.com/user-attachments/assets/adbdf91f-5a86-407c-8fda-9541d660c728" />
 
+### 2. Caja Negra
+<img width="1393" height="577" alt="caja_negra" src="https://github.com/user-attachments/assets/e3686cfc-3de0-45b7-aed8-e8de9020e9b0" />
+
+
