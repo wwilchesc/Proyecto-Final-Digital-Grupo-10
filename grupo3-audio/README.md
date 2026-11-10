@@ -70,3 +70,6 @@ _(Cómo correr el testbench y qué se verificó. Archivos en `sim/`.)_
 ## Pendientes y problemas
 
 -
+
+### 3. Diagrama de Tiempos I2s
+   <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/86e51b37-bda5-4f7f-8892-375584ceab24" />
