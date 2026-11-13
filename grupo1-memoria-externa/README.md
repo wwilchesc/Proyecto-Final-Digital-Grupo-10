@@ -35,26 +35,18 @@ Las respuestas a las actividades (clasificación del protocolo, diagrama de func
 
 ## Diseño
 
-Diagramas de flujo (clic para abrirlos en draw.io):
+En esta tabla se encuentran todos los diagramas realizados para los controladores SPI e I2C. **Ver** abre la imagen en GitHub y **Editar** la abre en draw.io; al guardar en draw.io el cambio queda en este repositorio.
 
-- [Diagrama de flujo desde el punto de vista del usuario](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Fwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2FGrupo1_Flujo_Usuario.drawio)
-- [Diagrama de flujo de lo que hace la máquina](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Fwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2FGrupo1_Flujo_Maquina.drawio)
-
-- [Diagrama de bloques, señales y tiempos](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Fwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2FGrupo1_Diagrama_Funcionamiento.drawio)
-
-### Diagramas del método de diseño (guía de la UART)
-
-En esta tabla se encuentran todos los diagramas realizados para los controladores SPI e I2C. Para abrir cualquiera, solo hay que darle clic al enlace.
-
-| Paso | Diagrama | Archivo en `docs/` | Estado |
-| --- | --- | --- | --- |
-| 1 | Caja negra (entradas y salidas) | `Grupo1_Caja_Negra.drawio` | [Subido](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Fwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2FGrupo1_Caja_Negra.drawio) |
-| 2 | Diagrama de tiempos | `Grupo1_Diagramas_de_Tiempo.drawio` | Pendiente |
-| 3 | Diagrama de flujo | `Grupo1_Flujo_Maquina.drawio` | [Subido](https://app.diagrams.net/#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Fwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2FGrupo1_Flujo_Maquina.drawio) |
-| 4 | Flujo clasificado (control y datapath) | `Grupo1_Flujo_Clasificado.drawio` | Pendiente |
-| 5 | ASMD y tabla de transferencias | `Grupo1_ASMD_Transferencias.drawio` | Pendiente |
-| 6 | Bloques control / datapath | `Grupo1_Bloques_Control_Datapath.drawio` | Pendiente |
-| 7 | Máquina de estados (FSM) | `Grupo1_Maquinas_de_Estado.drawio` | Pendiente |
+| Paso | Diagrama | Archivos |
+| --- | --- | --- |
+| 1 | Caja negra (entradas y salidas) | SPI ([Ver](docs/diagramas/1-caja-negra/Grupo1_Caja_Negra_SPI.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F1-caja-negra%2FGrupo1_Caja_Negra_SPI.drawio.png))<br>I2C ([Ver](docs/diagramas/1-caja-negra/Grupo1_Caja_Negra_I2C.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F1-caja-negra%2FGrupo1_Caja_Negra_I2C.drawio.png)) |
+| 2 | Diagrama de bloques | Bloques ([Ver](docs/diagramas/2-bloques/Grupo1_Diagrama_de_Bloques.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F2-bloques%2FGrupo1_Diagrama_de_Bloques.drawio.png)) |
+| 3 | Diagrama de tiempos | Señales y tiempos ([Ver](docs/diagramas/3-tiempos/Grupo1_Senales_y_Tiempos.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F3-tiempos%2FGrupo1_Senales_y_Tiempos.drawio.png))<br>Diagramas de tiempos ([Ver](docs/diagramas/3-tiempos/Grupo1_Diagramas_de_Tiempo.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F3-tiempos%2FGrupo1_Diagramas_de_Tiempo.drawio.png)) |
+| 4 | Diagrama de flujo | Vista del usuario ([Ver](docs/diagramas/4-flujo/Grupo1_Flujo_Usuario.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F4-flujo%2FGrupo1_Flujo_Usuario.drawio.png))<br>Lo que hace la máquina ([Ver](docs/diagramas/4-flujo/Grupo1_Flujo_Maquina.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F4-flujo%2FGrupo1_Flujo_Maquina.drawio.png))<br>Controladores SPI e I2C ([Ver](docs/diagramas/4-flujo/Grupo1_Flujo_Controladores_HW.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F4-flujo%2FGrupo1_Flujo_Controladores_HW.drawio.png)) |
+| 5 | Flujo clasificado (control y datapath) | Pendiente |
+| 6 | ASMD y tabla de transferencias | Pendiente |
+| 7 | Bloques control / datapath | Pendiente |
+| 8 | Máquina de estados (FSM) | Pendiente |
 
 ## Hojas de datos
 
@@ -85,6 +77,7 @@ _(Cómo correr el testbench y qué se verificó. Archivos en `sim/`.)_
 | 28/10/2026 | Tarea de actividades para todos los grupos: clasificación de SPI e I2C, diagrama de funcionamiento, mapa de pines, registros MMIO y lista de compras con precios |
 | 05/11/2026 | Se descarta la SPI-RAM 23LC1024: los gráficos van directo de la Flash a la BRAM. Diagramas, pines (12 → 8), registros y lista de compras actualizados |
 | 12/11/2026 | Diagrama de caja negra de SPI e I2C y espacios en este README para los demás diagramas del método de diseño |
+| 12/11/2026 | Diagramas como imagen editable de draw.io en `docs/diagramas/` y tabla de Diseño con enlaces para ver y editar cada uno |
 
 ## Pendientes y problemas
 
