@@ -76,7 +76,7 @@ _(Cómo correr el testbench y qué se verificó. Archivos en `sim/`.)_
 | 22/10/2026 | Diagramas de flujo del grupo: vista del usuario y lo que hace la máquina |
 | 28/10/2026 | Tarea de actividades para todos los grupos: clasificación de SPI e I2C, diagrama de funcionamiento, mapa de pines, registros MMIO y lista de compras con precios |
 | 05/11/2026 | Se descarta la SPI-RAM 23LC1024: los gráficos van directo de la Flash a la BRAM. Diagramas, pines (12 → 8), registros y lista de compras actualizados |
-| 12/11/2026 | Diagrama de caja negra de SPI e I2C y espacios en este README para los demás diagramas del método de diseño |
+| 12/11/2026 | Diagrama de caja negra de SPI e I2C separados y espacios en este README para los demás diagramas del método de diseño propuesto en el documento compartido por el profe|
 | 12/11/2026 | Diagramas como imagen editable de draw.io en `docs/diagramas/` y tabla de Diseño con enlaces para ver y editar cada uno |
 
 ## Pendientes y problemas
