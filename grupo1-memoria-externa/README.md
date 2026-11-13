@@ -35,7 +35,7 @@ Las respuestas a las actividades (clasificación del protocolo, diagrama de func
 
 ## Diseño
 
-En esta tabla se encuentran todos los diagramas realizados para los controladores SPI e I2C. **Ver** abre la imagen en GitHub y **Editar** la abre en draw.io; al guardar en draw.io el cambio queda en este repositorio.
+En esta tabla se encuentran todos los diagramas realizados para los controladores SPI e I2C. **Ver** abre la imagen en GitHub y **Editar** la abre en draw.io; al guardar en draw.io el cambio queda en este repositorio (POR FAVOR SI NO SON DEL GRUPO NO EDITAR LOS DRAW.IO).
 
 | Paso | Diagrama | Archivos |
 | --- | --- | --- |
