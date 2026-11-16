@@ -44,7 +44,7 @@ En esta tabla se encuentran todos los diagramas realizados para los controladore
 | 3 | Diagrama de tiempos | Señales y tiempos ([Ver](docs/diagramas/3-tiempos/Grupo1_Senales_y_Tiempos.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F3-tiempos%2FGrupo1_Senales_y_Tiempos.drawio.png))<br>Diagramas de tiempos ([Ver](docs/diagramas/3-tiempos/Grupo1_Diagramas_de_Tiempo.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F3-tiempos%2FGrupo1_Diagramas_de_Tiempo.drawio.png)) |
 | 4 | Diagrama de flujo | Vista del usuario ([Ver](docs/diagramas/4-flujo/Grupo1_Flujo_Usuario.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F4-flujo%2FGrupo1_Flujo_Usuario.drawio.png))<br>Lo que hace la máquina ([Ver](docs/diagramas/4-flujo/Grupo1_Flujo_Maquina.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F4-flujo%2FGrupo1_Flujo_Maquina.drawio.png))<br>Controladores SPI e I2C ([Ver](docs/diagramas/4-flujo/Grupo1_Flujo_Controladores_HW.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F4-flujo%2FGrupo1_Flujo_Controladores_HW.drawio.png)) |
 | 5 | Flujo clasificado (control y datapath) | Pendiente |
-| 6 | ASMD y tabla de transferencias | Pendiente |
+| 6 | ASMD y tabla de transferencias | ASMD SPI ([Ver](docs/diagramas/6-asmd/Grupo1_ASMD_SPI.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F6-asmd%2FGrupo1_ASMD_SPI.drawio.png)) |
 | 7 | Bloques control / datapath | Pendiente |
 | 8 | Máquina de estados (FSM) | Pendiente |
 
@@ -78,6 +78,7 @@ _(Cómo correr el testbench y qué se verificó. Archivos en `sim/`.)_
 | 05/11/2026 | Se descarta la SPI-RAM 23LC1024: los gráficos van directo de la Flash a la BRAM. Diagramas, pines (12 → 8), registros y lista de compras actualizados |
 | 12/11/2026 | Diagrama de caja negra de SPI e I2C separados y espacios en este README para los demás diagramas del método de diseño propuesto en el documento compartido por el profe|
 | 12/11/2026 | Diagramas como imagen editable de draw.io en `docs/diagramas/` y tabla de Diseño con enlaces para ver y editar cada uno |
+| 16/11/2026 | ASMD del controlador SPI: estados IDLE, CS_SETUP, LOAD, LOW, HIGH, FIN, CS_HOLD, CS_REST y DONE, con las transferencias T1 a T12, incluida T1c para continuar una lectura sin volver a mandar el comando |
 
 ## Pendientes y problemas
 
