@@ -36,7 +36,5 @@ El protocolo I2S (Inter-IC Sound) es un estándar de comunicación síncrono dis
 - [ ] Escribir el testbench
 - [ ] Probar en la placa
 
-### 2. Caja Negra
-<img width="1393" height="577" alt="caja_negra" src="https://github.com/user-attachments/assets/e3686cfc-3de0-45b7-aed8-e8de9020e9b0" />
 
 
