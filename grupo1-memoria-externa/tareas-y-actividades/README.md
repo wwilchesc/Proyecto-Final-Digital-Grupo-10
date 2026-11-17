@@ -52,7 +52,7 @@ Alimentación de la EEPROM: 3,3 V y GND de la tarjeta, con un condensador de 100
 
 | Desp. | Registro | Acceso | Contenido |
 | --- | --- | --- | --- |
-| 0x00 | CONTROL | L/E | bit0 START · bit1 RW (1 = escribir) · bits 15:8 comando · bit16 SIN_DIR (comando sin dirección) · bits 18:17 bytes a leer (1 o 3) |
+| 0x00 | CONTROL | L/E | bit0 START · bit1 RW (1 = escribir) · bits 15:8 comando · bit16 SIN_DIR (comando sin dirección) · bits 18:17 bytes a leer (1 o 3) · bit19 MANTENER (deja CS en 0 al terminar) · bit20 CONTINUAR (sigue con los datos sin volver a mandar comando ni dirección; solo después de MANTENER) |
 | 0x04 | ADDR | L/E | Dirección de 24 bits |
 | 0x08 | WDATA | L/E | Byte a escribir |
 | 0x0C | RDATA | L | Dato leído (8 bits, o 24 para el ID de la Flash) |
