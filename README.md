@@ -2,12 +2,12 @@
 
 Proyecto del curso **Electrónica Digital 1** — Universidad Nacional de Colombia.
 
-Vamos a construir una consola de videojuegos retro completa dentro de una FPGA: un procesador RISC-V propio, una pantalla LED de 64×64, teclado, sonido y memoria para guardar récords. Todo el hardware se describe en Verilog y el software (menú y juegos) corre sobre el procesador.
+Vamos a construir una consola de videojuegos retro completa dentro de una FPGA: un procesador RISC-V propio, una pantalla LED de 64×64, 2 joysticks, sonido y memoria para guardar récords. Todo el hardware se describe en Verilog y el software (menú y juegos) corre sobre el procesador.
 
 ## Qué va a hacer la consola
 
 - Al encender muestra un logo, revisa sus memorias y abre un **menú de juegos**.
-- El jugador elige un juego con el **teclado PS/2** y juega en el **panel LED 64×64**.
+- El jugador elige un juego con el **Joystick** y juega en el **panel LED 64×64**.
 - Cada evento tiene su **sonido** (moneda, daño, ganar, perder, menú).
 - Los **récords** (top 5 por juego, con iniciales) se guardan en una memoria que no se borra al apagar.
 - Una sola pantalla: la escena del juego y una barra superior con puntos y vidas.
@@ -27,7 +27,7 @@ Vamos a construir una consola de videojuegos retro completa dentro de una FPGA: 
 
 ```
                  ┌──────────────────────── FPGA ────────────────────────┐
- Teclado PS/2 ──►│ Receptor PS/2 ─┐                                     │
+ Joystick SPI ──►│ Receptor  SPI ─┐                                     │
                  │                │                                     │
                  │   FemtoRV32 ◄──┼── Bus + decodificador de direcciones│
                  │   + BRAM       │                                     │
