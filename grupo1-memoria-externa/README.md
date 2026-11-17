@@ -80,6 +80,7 @@ _(Cómo correr el testbench y qué se verificó. Archivos en `sim/`.)_
 | 12/11/2026 | Diagramas como imagen editable de draw.io en `docs/diagramas/` y tabla de Diseño con enlaces para ver y editar cada uno |
 | 16/11/2026 | ASMD del controlador SPI: estados IDLE, CS_SETUP, LOAD, LOW, HIGH, FIN, CS_HOLD, CS_REST y DONE, con las transferencias T1 a T12, incluida T1c para continuar una lectura sin volver a mandar el comando |
 | 16/11/2026 | Tabla de transferencias por flanco del controlador SPI: estado y condición, estado siguiente, registros que cambian en cada flanco y salida done |
+| 17/11/2026 | Registros del SPI: se agregan MANTENER (bit19) y CONTINUAR (bit20) al registro CONTROL, en tareas y actividades |
 
 ## Pendientes y problemas
 
