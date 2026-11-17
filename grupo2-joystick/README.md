@@ -30,103 +30,120 @@ El joystick entrega dos voltajes analógicos, uno por eje, entre 0 y 3.3 V. Como
 
 # 1. Terminología básica
 
-En esta sección explicamos los términos que usamos a lo largo de la documentación. Los redactamos con palabras simples y, cuando nos ayuda a entenderlos, con una analogía, para que cualquier persona pueda seguir el resto del documento sin conocimientos previos.
+En esta sección se explican los principales conceptos que se utilizan en el desarrollo del periférico. La idea es conocer primero los componentes, las señales y los términos relacionados con la comunicación entre dispositivos, para entender con mayor facilidad el funcionamiento del sistema y las etapas de implementación.
 
-## El proyecto en una frase
+## 1.1. Descripción general del proyecto
 
-El joystick produce voltajes. Un chip los convierte en números y se los entrega a la FPGA. La FPGA deja esos números en unas "casillas" que el procesador puede leer.
+El proyecto consiste en desarrollar un periférico que permita conectar dos joysticks analógicos a un procesador FemtoRV implementado en una FPGA Tang Nano.
 
-## Los componentes
+Cuando se mueve un joystick, sus ejes generan señales de voltaje que cambian según la posición de la palanca. Estas señales llegan al conversor MCP3008, que se encarga de transformarlas en valores digitales. Después, la FPGA recibe los datos mediante comunicación SPI y los guarda en registros para que el procesador pueda consultarlos.
 
-Primero presentamos las piezas que intervienen en nuestro periférico.
+## 1.2. Componentes principales
 
-| Término | Cómo lo explicamos |
+Antes de explicar la comunicación entre los dispositivos, es importante identificar la función que cumple cada uno dentro del proyecto.
+
+| Término | Descripción |
 |---|---|
-| **Joystick analógico** | Una palanca con dos potenciómetros (perillas variables), uno por eje. Al moverla, el voltaje de cada eje cambia de forma continua entre 0 V y 3.3 V. Centrada da ~1.65 V. Su botón es un interruptor aparte (apretado o no). |
-| **Señal analógica** | Una señal que puede valer cualquier valor intermedio, como un regulador de volumen. |
-| **Señal digital** | Una señal que solo vale 0 o 1, como un interruptor. Los chips digitales solo entienden esto. |
-| **FPGA (Tang Nano)** | Un chip cuyos circuitos internos se pueden reconfigurar. En nuestro diseño hace de "cerebro" del periférico. Es solo digital, por eso no puede medir un voltaje directamente. |
-| **ADC (conversor analógico-digital)** | Un traductor que mide un voltaje y lo entrega como número. |
-| **MCP3008** | El ADC concreto que usamos. Tiene 8 entradas y entrega números de 10 bits. |
-| **FemtoRV** | El procesador (tipo RISC-V) que ejecuta el juego. Lee los valores del joystick desde nuestro periférico. |
-| **SoC** | "Sistema en un chip": el procesador y sus periféricos, todo dentro de la FPGA. |
-| **Periférico** | Un bloque que ayuda al procesador con una tarea concreta. El nuestro se encarga del joystick. |
+| **Joystick analógico** | Es una palanca que permite detectar movimientos en dos direcciones, X y Y. Cada eje tiene un potenciómetro que modifica su voltaje dependiendo de la posición. En nuestro caso trabajamos con un rango de 0 a 3,3 V, por lo que en el centro se espera un valor cercano a 1,65 V. También cuenta con un botón que funciona como interruptor. |
+| **Señal analógica** | Es una señal cuyo valor puede cambiar de manera continua dentro de un rango determinado. Por ejemplo, el voltaje que entrega un joystick cuando se mueve. |
+| **Señal digital** | Es una señal que representa información mediante dos niveles lógicos, 0 y 1. Estos niveles permiten que los circuitos digitales procesen y transmitan información. |
+| **FPGA (Tang Nano)** | Es un dispositivo que permite configurar circuitos digitales según las necesidades del proyecto. La utilizamos para implementar el periférico y controlar la comunicación con el ADC. |
+| **ADC (conversor analógico-digital)** | Es un circuito que convierte una señal analógica, como un voltaje, en un valor numérico que puede procesar un sistema digital. |
+| **MCP3008** | Es el conversor ADC que utilizamos. Tiene ocho canales de entrada y una resolución de 10 bits. Se comunica con la FPGA mediante SPI. |
+| **FemtoRV** | Es un procesador basado en la arquitectura RISC-V. En nuestro sistema ejecuta el programa del juego y obtiene la información de los joysticks leyendo los registros del periférico. |
+| **SoC (System on Chip)** | Es un sistema que integra un procesador y diferentes periféricos dentro de un mismo chip. En este proyecto, estos elementos se implementan en la FPGA. |
+| **Periférico** | Es un módulo que realiza una función específica y se comunica con el procesador. En nuestro caso, permite obtener la posición de los joysticks y el estado de sus botones. |
 
-## Bits, números y resolución
+## 1.3. Bits, resolución y representación de los datos
 
-Aquí explicamos cómo se representa la medida del voltaje.
+Como el MCP3008 convierte voltajes en números, necesitamos entender cómo se representan esos valores y qué significa trabajar con una resolución de 10 bits.
 
-| Término | Cómo lo explicamos |
+| Término | Descripción |
 |---|---|
-| **Bit** | La unidad mínima de información: 0 o 1. |
-| **Byte** | Un grupo de 8 bits. |
-| **10 bits** | El ADC entrega un número de 0 a 1023 (1024 valores posibles). |
-| **Resolución** | Qué tan fino mide el ADC. Con 3.3 V repartidos en 1024 pasos, cada paso vale ≈ 3.22 mV. |
-| **Ejemplo** | 0 V → 0, 1.65 V → ~512, 3.3 V → 1023. |
-| **MSB / LSB** | El bit más significativo (el de más peso, el primero que sale) y el menos significativo (el último). |
-| **B9 … B0** | Los 10 bits del resultado. B9 es el MSB y B0 es el LSB. |
-| **VREF** | El voltaje de referencia, que define el valor máximo medible. En nuestro caso son 3.3 V. |
-| **Muestreo** | Tomar una "foto" del voltaje en un instante. El chip la guarda un momento para medirla con calma. |
-| **Conversión** | El proceso de convertir esa foto del voltaje en el número de 10 bits. |
+| **Bit** | Es la unidad más pequeña de información digital y puede tomar el valor de 0 o 1. |
+| **Byte** | Es un conjunto de 8 bits. |
+| **10 bits** | Significa que el resultado de una conversión puede representarse mediante 1024 valores diferentes, desde 0 hasta 1023. |
+| **Resolución** | Indica el cambio de voltaje correspondiente a un paso del ADC. Si utilizamos una referencia de 3,3 V, cada paso equivale aproximadamente a 3,22 mV. |
+| **Ejemplo de conversión** | Con una referencia de 3,3 V, una entrada de 0 V produce un valor de 0; una de 1,65 V produce aproximadamente 512, y una cercana a 3,3 V produce 1023. |
+| **MSB (Most Significant Bit)** | Es el bit de mayor peso dentro de un número binario. En el formato de lectura que usamos, es el primer bit del resultado que transmite el ADC. |
+| **LSB (Least Significant Bit)** | Es el bit de menor peso. En nuestro caso, corresponde al último bit del resultado transmitido. |
+| **B9 a B0** | Son los diez bits que forman el resultado de la conversión. B9 es el más significativo y B0 el menos significativo. |
+| **VREF (voltaje de referencia)** | Es el voltaje que establece el rango de medición del ADC. Para nuestro diseño utilizamos 3,3 V. |
+| **Muestreo** | Es el momento en el que el ADC toma el valor de la señal analógica para realizar la medición. |
+| **Conversión** | Es el proceso mediante el cual el ADC transforma el voltaje medido en un número digital de 10 bits. |
 
-## El protocolo SPI
+## 1.4. Comunicación SPI
 
-SPI es un "idioma" para que dos chips se hablen. Nos ayuda pensarlo como una conversación en la que uno pregunta y el otro responde, con un metrónomo marcando el ritmo.
+Para intercambiar información entre la FPGA y el MCP3008 utilizamos el protocolo SPI. Este permite transmitir datos de manera serial, es decir, un bit a la vez.
 
-| Término | Cómo lo explicamos |
+La FPGA controla la comunicación y selecciona el canal que necesita leer, mientras que el MCP3008 realiza la conversión y devuelve el resultado.
+
+| Término | Descripción |
 |---|---|
-| **SPI** | El protocolo de comunicación que usamos entre la FPGA y el ADC. |
-| **Maestro** | Quien manda y decide cuándo se habla. En nuestro diseño es la FPGA. |
-| **Esclavo** | Quien obedece y responde. En nuestro diseño es el MCP3008. |
-| **SCLK** (reloj) | El metrónomo. Cada pulso marca "ahora cambia un bit" o "ahora lee un bit". Lo genera el maestro. |
-| **CS** (chip select) | El "levanto la mano para hablarte". En **bajo** el chip escucha y en **alto** lo ignora todo. Lo bajamos al inicio de una conversión y lo subimos al final. |
-| **MOSI / DIN** | La línea por donde el maestro envía datos al ADC (la pregunta). |
-| **MISO / DOUT** | La línea por donde el ADC envía datos al maestro (la respuesta, el número). |
-| **Flanco de subida** | El instante en que SCLK pasa de 0 a 1. |
-| **Flanco de bajada** | El instante en que SCLK pasa de 1 a 0. |
-| **Modo 0 (CPOL=0, CPHA=0)** | Una de las "reglas de etiqueta" de SPI: SCLK descansa en 0, los datos se leen en el flanco de subida y cambian en el de bajada. Ambos chips deben usar el mismo modo. |
-| **Alta impedancia** | La línea queda "desconectada", sin mandar ni 0 ni 1. El ADC deja DOUT así mientras no tiene nada que decir. |
+| **SPI (Serial Peripheral Interface)** | Es un protocolo de comunicación serial que permite intercambiar datos entre dispositivos electrónicos. |
+| **Maestro** | Es el dispositivo que controla la comunicación y genera la señal de reloj. En nuestro caso es la FPGA. |
+| **Esclavo** | Es el dispositivo que responde a las instrucciones del maestro. En este proyecto corresponde al MCP3008. |
+| **SCLK (Serial Clock)** | Es la señal de reloj que sincroniza la transmisión de datos. La genera la FPGA. |
+| **CS (Chip Select)** | Es la señal que permite seleccionar el ADC. Cuando está en 0, el MCP3008 puede recibir instrucciones. Cuando vuelve a 1, termina la comunicación. |
+| **MOSI / DIN** | Es la línea por la que la FPGA envía los bits de configuración al MCP3008, como la selección del canal que desea medir. |
+| **MISO / DOUT** | Es la línea por la que el MCP3008 envía a la FPGA los bits correspondientes al resultado de la conversión. |
+| **Flanco de subida** | Es el instante en que una señal digital cambia de 0 a 1. |
+| **Flanco de bajada** | Es el instante en que una señal digital cambia de 1 a 0. |
+| **Modo 0 (CPOL = 0, CPHA = 0)** | Es una configuración de SPI en la que el reloj permanece en 0 cuando no está transmitiendo datos. La información se lee en el flanco de subida y se actualiza en el de bajada. |
+| **Alta impedancia (Hi-Z)** | Es un estado en el que una salida deja de controlar eléctricamente la línea. El MCP3008 utiliza este estado en DOUT cuando no está transmitiendo datos. |
 
-## La trama (la "pregunta" y la "respuesta")
+## 1.5. Estructura de la trama SPI
 
-La trama es lo que la FPGA y el ADC se dicen en cada conversación.
+Cada vez que necesitamos conocer el valor de un eje del joystick, la FPGA inicia una comunicación con el MCP3008. Primero envía los bits que indican qué canal debe medir y después recibe el resultado.
 
-| Término | Cómo lo explicamos |
+Para nuestro diseño consideramos una secuencia de 17 pulsos de reloj, suficientes para enviar la configuración y recibir los 10 bits de la conversión.
+
+| Término | Descripción |
 |---|---|
-| **Trama** | La secuencia completa de bits de una conversación. En nuestro caso son 17 pulsos de SCLK. |
-| **Start bit** | Un 1 que avisa "empieza la petición". |
-| **SGL/DIFF** | Elige cómo medir. En 1 (single-ended) mide cada entrada contra tierra y en 0 mide la diferencia entre dos entradas. Nosotros usamos 1. |
-| **D2 D1 D0** | Tres bits que eligen el canal (de 0 a 7). Por ejemplo, 000 es el canal 0. |
-| **Canal (CH0 … CH7)** | Cada una de las 8 entradas del ADC. Usamos CH0 a CH3, uno por eje de cada joystick. |
-| **Pulso de muestreo** | Un pulso en el que el ADC toma la "foto" del voltaje y no pasa información. |
-| **Null bit (bit nulo)** | Un 0 de relleno que el ADC envía justo antes del resultado. Lo ignoramos. |
+| **Trama** | Es la secuencia de bits que se transmite durante una comunicación. Incluye la configuración del ADC y los datos de respuesta. |
+| **Start bit** | Es un bit con valor 1 que indica al MCP3008 el inicio de una solicitud. |
+| **SGL/DIFF** | Permite seleccionar el tipo de medición. Con valor 1 se utiliza el modo de entrada individual (*single-ended*), que mide cada canal respecto a tierra. Con valor 0 se utiliza el modo diferencial. En nuestro diseño usamos el valor 1. |
+| **D2, D1 y D0** | Son tres bits que permiten seleccionar uno de los ocho canales del MCP3008. Por ejemplo, 000 corresponde a CH0 y 001 a CH1. |
+| **Canales CH0 a CH7** | Son las ocho entradas analógicas disponibles. Para los dos joysticks utilizamos cuatro canales, del CH0 al CH3, uno por cada eje. |
+| **Periodo de muestreo** | Es el intervalo durante el cual el ADC adquiere el valor del voltaje de entrada. Después de recibir los bits de selección, necesita un ciclo adicional de reloj para completar esta etapa. |
+| **Null bit** | Es un bit con valor 0 que aparece antes de los diez bits del resultado. No forma parte del valor de la conversión, por lo que la FPGA debe ignorarlo. |
 
-## Los tiempos del datasheet
+Después del bit nulo, el MCP3008 envía el resultado comenzando por B9 y terminando en B0. Una vez recibidos los diez bits, la FPGA puede finalizar la comunicación y almacenar el valor obtenido.
 
-El datasheet es el manual del fabricante. Estos son los límites que indica y que debemos respetar en el diseño:
+## 1.6. Parámetros de tiempo del MCP3008
 
-| Término | Cómo lo explicamos |
+Para que la comunicación funcione correctamente, debemos respetar los tiempos establecidos por el fabricante en el *datasheet* del MCP3008.
+
+Estos parámetros determinan la velocidad a la que podemos transmitir información y los intervalos mínimos que deben existir entre algunas señales.
+
+| Parámetro | Descripción |
 |---|---|
-| **fCLK (SCLK máximo)** | La velocidad máxima del reloj. A 3.3 V usamos ≤ 1.35 MHz (1.35 millones de pulsos por segundo) por seguridad. |
-| **tHI / tLO** | El tiempo mínimo que SCLK debe estar en alto y en bajo, 125 ns cada uno. |
-| **tSUCS** | El tiempo mínimo entre bajar CS y el primer pulso de SCLK (100 ns). El chip necesita un instante para "despertar". |
-| **tCSH** | El tiempo mínimo que CS debe estar en alto entre una conversión y la siguiente (270 ns). Es un descanso entre una y otra. |
-| **ns, µs, MHz** | Nanosegundo (una milmillonésima de segundo), microsegundo (una millonésima) y megahercio (millones de pulsos por segundo). |
-| **ksps** | Miles de muestras por segundo. El MCP3008 llega a 75 ksps a 3.3 V, de sobra para un joystick. |
-| **Divisor de reloj** | Un contador que ralentiza el reloj rápido de la FPGA (27 MHz, por ejemplo) hasta la velocidad más lenta de SCLK. |
+| **fCLK (frecuencia de SCLK)** | Indica la velocidad del reloj utilizado en la comunicación. El fabricante especifica un máximo de 1,35 MHz para una alimentación de 2,7 V y de 3,6 MHz para 5 V. Como nuestro sistema funciona a 3,3 V, utilizamos 1,35 MHz como límite conservador de diseño. |
+| **tHI / tLO** | Son los tiempos mínimos durante los cuales SCLK debe mantenerse en nivel alto y bajo. Según el *datasheet*, ambos deben ser de al menos 125 ns. |
+| **tSUCS** | Es el tiempo mínimo que debe transcurrir entre la activación de CS y el primer flanco de subida del reloj. Su valor mínimo es 100 ns. |
+| **tCSH** | Es el tiempo mínimo durante el cual CS debe permanecer en alto antes de iniciar una nueva comunicación. El valor indicado es 270 ns. |
+| **ns (nanosegundo)** | Es una unidad de tiempo equivalente a una milmillonésima parte de un segundo. |
+| **µs (microsegundo)** | Es una unidad de tiempo equivalente a una millonésima parte de un segundo. |
+| **MHz (megahercio)** | Es una unidad de frecuencia que representa un millón de ciclos por segundo. |
+| **ksps (kilomuestras por segundo)** | Indica cuántos miles de muestras puede realizar un ADC cada segundo. El MCP3008 tiene una capacidad especificada de 75 ksps a 2,7 V y 200 ksps a 5 V. |
+| **Divisor de reloj** | Es un circuito que permite obtener una frecuencia menor a partir del reloj principal de la FPGA. Por ejemplo, podemos dividir un reloj de 27 MHz para generar el SCLK que necesita el MCP3008. |
 
-## Términos que usaremos en las siguientes tareas
+En nuestro caso, no necesitamos realizar conversiones a una velocidad tan alta, ya que los movimientos de los joysticks son relativamente lentos. Lo importante es que las lecturas se realicen con suficiente frecuencia para detectar los cambios de posición sin retrasos perceptibles durante el juego.
 
-| Término | Cómo lo explicamos |
+## 1.7. Conceptos para la implementación del periférico
+
+Finalmente, hay algunos términos que utilizaremos cuando comencemos a desarrollar el circuito en Verilog y a conectarlo con el procesador FemtoRV.
+
+| Término | Descripción |
 |---|---|
-| **Registro** | Una casilla de memoria que guarda un valor. Nuestro periférico tendrá varias: una para X, otra para Y, otra para el botón, etc. |
-| **Mapa de memoria / dirección base (0x43_0000)** | Cada periférico tiene su "dirección postal". El procesador lee en `0x43_0000` y siguientes para hablar con el joystick. |
-| **Verilog** | El lenguaje con el que describimos el circuito dentro de la FPGA. |
-| **FSM (máquina de estados)** | Un circuito que sigue una lista de pasos en orden. La nuestra será: bajar CS, enviar el comando, leer los 10 bits, subir CS. |
-| **Testbench** | Un "banco de pruebas" simulado donde comprobamos el diseño con un ADC falso antes de llevarlo a la placa. |
-# 2. SPI y como funciona
+| **Registro** | Es un conjunto de bits que permite almacenar información dentro de un circuito digital. Utilizaremos registros para conservar los valores de los ejes y otros datos del periférico. |
+| **Mapa de memoria** | Es la organización de las direcciones que utiliza el procesador para acceder a la memoria y a los periféricos. |
+| **Dirección base (`0x43_0000`)** | Es la dirección asignada a nuestro periférico dentro del mapa de memoria del sistema. A partir de ella se definen las posiciones donde el procesador podrá consultar los datos. |
+| **Verilog** | Es un lenguaje de descripción de hardware que utilizamos para diseñar los circuitos digitales que se implementarán en la FPGA. |
+| **FSM (máquina de estados finitos)** | Es una forma de organizar el funcionamiento de un circuito mediante estados definidos. En nuestro diseño permite controlar los pasos de comunicación SPI, desde la activación de CS hasta la recepción de los datos. |
+| **Testbench** | Es un entorno de simulación que permite comprobar el funcionamiento de un circuito antes de implementarlo físicamente. Podemos utilizarlo para simular las respuestas del MCP3008 y verificar que la FPGA interprete correctamente los datos. |
 
-En esta sección explicamos cómo conversan la FPGA y el MCP3008: cuándo se mueve cada señal, qué bits viajan en cada pulso y cómo vamos a convertirlo en un circuito. Los términos que usamos están definidos en [1. Terminología básica](01-terminologia.md).
+Con estos conceptos podemos entender el recorrido de la información dentro del sistema: los joysticks generan los voltajes, el MCP3008 los convierte en números digitales y la FPGA se encarga de recibirlos y almacenarlos. Finalmente, el procesador FemtoRV consulta esos registros para utilizar los movimientos y botones dentro del juego.
 
 ## 2.1 La idea general
 
