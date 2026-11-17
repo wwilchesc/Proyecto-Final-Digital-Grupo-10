@@ -33,7 +33,7 @@ Las respuestas a las actividades (clasificación del protocolo, diagrama de func
 
 **[Abrir la carpeta de tareas y actividades](tareas-y-actividades/)**
 
-## Diseño
+## Criterio A: flujo de diseño del periférico
 
 En esta tabla se encuentran todos los diagramas realizados para los controladores SPI e I2C. **Ver** abre la imagen en GitHub y **Editar** la abre en draw.io; al guardar en draw.io el cambio queda en este repositorio (POR FAVOR SI NO SON DEL GRUPO NO EDITAR LOS DRAW.IO).
 
@@ -47,6 +47,22 @@ En esta tabla se encuentran todos los diagramas realizados para los controladore
 | 6 | ASMD y tabla de transferencias | ASMD SPI ([Ver](docs/diagramas/6-asmd/Grupo1_ASMD_SPI.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F6-asmd%2FGrupo1_ASMD_SPI.drawio.png))<br>Tabla de transferencias SPI ([Ver](docs/diagramas/6-asmd/Grupo1_Tabla_Transferencias_SPI.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F6-asmd%2FGrupo1_Tabla_Transferencias_SPI.drawio.png)) |
 | 7 | Bloques control / datapath | Pendiente |
 | 8 | Máquina de estados (FSM) | Pendiente |
+| 9 | Testbench y simulación (casos sacados de la tabla de transferencias) | Pendiente |
+
+## Criterio B: integración al SoC
+
+En esta tabla se encuentra lo que pide la guía `uart-riscv.pdf` para conectar los controladores SPI e I2C al procesador. **Ver** abre el archivo en GitHub y **Editar** lo abre en draw.io.
+
+| Ítem | Qué es | Archivos |
+| --- | --- | --- |
+| 1 | Región del mapa y `cs` | Flash SPI `0x42_0000` · EEPROM I2C `0x46_0000` ([Ver](#qué-hace-este-grupo)) |
+| 2 | Mapa de registros MMIO | SPI e I2C ([Ver](tareas-y-actividades/README.md#4-registros-de-control-mmio)) |
+| 3 | Decodificador local (`addr[4:0]` → registro) | Pendiente |
+| 4 | Diagrama del adaptador de bus (bus ↔ registros, mux de lectura a `d_out`) | Pendiente |
+| 5 | Semántica START / BUSY / DONE (DONE retenido hasta que la CPU lo lee) | Pendiente |
+| 6 | Diagrama de tiempos del handshake bus ↔ core | Pendiente |
+| 7 | Verificación de registros y de SoC (testbench) | Pendiente |
+| 8 | Pines y restricciones (`.cst`) | Tabla de pines ([Ver](tareas-y-actividades/README.md#3-mapa-de-hardware-y-conteo-de-pines)) · `.cst` pendiente |
 
 ## Hojas de datos
 
@@ -81,6 +97,7 @@ _(Cómo correr el testbench y qué se verificó. Archivos en `sim/`.)_
 | 16/11/2026 | ASMD del controlador SPI: estados IDLE, CS_SETUP, LOAD, LOW, HIGH, FIN, CS_HOLD, CS_REST y DONE, con las transferencias T1 a T12, incluida T1c para continuar una lectura sin volver a mandar el comando |
 | 16/11/2026 | Tabla de transferencias por flanco del controlador SPI: estado y condición, estado siguiente, registros que cambian en cada flanco y salida done |
 | 17/11/2026 | Registros del SPI: se agregan MANTENER (bit19) y CONTINUAR (bit20) al registro CONTROL, en tareas y actividades |
+| 17/11/2026 | README: la tabla de diseño queda como criterio A (con el paso 9, testbench) y se agrega la tabla del criterio B, integración al SoC |
 
 ## Pendientes y problemas
 
