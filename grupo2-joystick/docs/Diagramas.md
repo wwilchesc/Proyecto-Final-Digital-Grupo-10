@@ -2,4 +2,5 @@ Diagramas de Flujo, Diagrama de Tiempo y Diagrama de Caja Negra se encuentra en 
 
 
 ![Diagrama de Tiempo](/grupo2-joystick/docs/Diagrama_de_Tiempo.png)
-![Diagrama](/grupo2-joystick/docs/Diagramas_Joystick.png)
+![Diagrama de Bloques](/grupo2-joystick/docs/Diagrama_de_Bloques.png)
+![Diagramas](/grupo2-joystick/docs/Diagramas_Joystick.png)
