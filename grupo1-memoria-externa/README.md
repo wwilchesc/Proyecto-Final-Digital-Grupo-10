@@ -46,7 +46,7 @@ En esta tabla se encuentran todos los diagramas realizados para los controladore
 | 5 | Flujo clasificado (control y datapath) | SPI ([Ver](docs/diagramas/5-flujo-clasificado/Grupo1_Flujo_Clasificado_SPI.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F5-flujo-clasificado%2FGrupo1_Flujo_Clasificado_SPI.drawio.png)) |
 | 6 | ASMD y tabla de transferencias | ASMD SPI ([Ver](docs/diagramas/6-asmd/Grupo1_ASMD_SPI.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F6-asmd%2FGrupo1_ASMD_SPI.drawio.png))<br>Tabla de transferencias SPI ([Ver](docs/diagramas/6-asmd/Grupo1_Tabla_Transferencias_SPI.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F6-asmd%2FGrupo1_Tabla_Transferencias_SPI.drawio.png))<br>ASMD I2C ([Ver](docs/diagramas/6-asmd/Grupo1_ASMD_I2C.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F6-asmd%2FGrupo1_ASMD_I2C.drawio.png)) |
 | 7 | Bloques control / datapath | SPI ([Ver](docs/diagramas/7-control-datapath/Grupo1_Bloques_Control_Datapath_SPI.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F7-control-datapath%2FGrupo1_Bloques_Control_Datapath_SPI.drawio.png)) |
-| 8 | Máquina de estados (FSM) | Pendiente |
+| 8 | Máquina de estados (FSM) | SPI ([Ver](docs/diagramas/8-maquinas-de-estado/Grupo1_FSM_SPI.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F8-maquinas-de-estado%2FGrupo1_FSM_SPI.drawio.png)) |
 | 9 | Testbench y simulación (casos sacados de la tabla de transferencias) | Pendiente |
 
 ## Criterio B: integración al SoC
@@ -102,6 +102,7 @@ _(Cómo correr el testbench y qué se verificó. Archivos en `sim/`.)_
 | 19/11/2026 | Tabla de transferencias del SPI corregida (reemplaza la del 16/11): agrega T1n, la condición CS_n en T1 y T1c, y la tabla "Definición de fase" con hay_datos, falta fase, MOSI y last, para que coincida con el ASMD |
 | 19/11/2026 | Flujo clasificado del SPI (paso 5): cada bloque del flujo marcado como control o datapath, con la rama de CONTINUAR y hay_datos |
 | 19/11/2026 | Bloques control / datapath del SPI (paso 7): registros MMIO, control (FSM de 9 estados) y datapath (divisor, mux de carga por fase, registro sh de 32 bits con MOSI = sh[31], contador de bits, registro rx), con las órdenes y banderas entre ellos y los pines WP_n y HOLD_n |
+| 19/11/2026 | Máquina de estados del SPI (paso 8): 9 estados con las mismas transiciones del ASMD, incluidas T1c y T1n para CONTINUAR, y MOSI como salida de LOW y HIGH |
 
 ## Pendientes y problemas
 
