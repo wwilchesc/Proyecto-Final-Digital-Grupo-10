@@ -98,6 +98,7 @@ _(Cómo correr el testbench y qué se verificó. Archivos en `sim/`.)_
 | 16/11/2026 | Tabla de transferencias por flanco del controlador SPI: estado y condición, estado siguiente, registros que cambian en cada flanco y salida done |
 | 17/11/2026 | Registros del SPI: se agregan MANTENER (bit19) y CONTINUAR (bit20) al registro CONTROL, en tareas y actividades |
 | 17/11/2026 | README: la tabla de diseño queda como criterio A (con el paso 9, testbench) y se agrega la tabla del criterio B, integración al SoC |
+| 19/11/2026 | ASMD del SPI corregido (reemplaza la versión del 16/11): se define la fase (CMD, DIR, DAT) con su valor, número de bits y fase siguiente; MOSI = sh[31] en LOW y HIGH; IDLE ya no fuerza CS_n = 1, para que CONTINUAR funcione; se agrega T1n para cuando no hay datos que mover |
 
 ## Pendientes y problemas
 
