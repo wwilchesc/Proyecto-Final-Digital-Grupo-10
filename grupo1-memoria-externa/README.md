@@ -107,6 +107,7 @@ _(Cómo correr el testbench y qué se verificó. Archivos en `sim/`.)_
 | 22/11/2026 | RTL del datapath SPI (`rtl/spi_datapath.v`): divisor de tick, mux val(fase)/n(fase), registro sh de 32 bits con MOSI = sh[31], contador bits con last, registro rx de 24 bits y registros SCK y CS_n, todos actualizados en el flanco de subida |
 | 22/11/2026 | RTL del control SPI (`rtl/spi_control.v`): FSM de 9 estados con el enfoque A de la guía (próximo estado y órdenes combinacionales, registros en subida); cada rama lleva el ID de su fila en la tabla de transferencias (H1, T1, T1c, T1n … T12) |
 | 22/11/2026 | Periférico SPI (`rtl/perip_spi.v`): registros MMIO, decodificador local (escritura solo con BUSY = 0), DONE retenido hasta leer STATUS, lectura registrada para el bus del Quark e instancias del control y el datapath. `rtl/README.md` explica la correspondencia entre el código y la tabla de transferencias |
+| 22/11/2026 | Modelo de simulación de la Flash W25Q64 en modo 0 (`sim/flash_model.v`): comandos 0x9F (JEDEC ID), 0x03 (lectura), 0x06 (WREN), 0x02 (page program) y 0x05 (status) |
 
 ## Pendientes y problemas
 
