@@ -103,6 +103,7 @@ _(Cómo correr el testbench y qué se verificó. Archivos en `sim/`.)_
 | 19/11/2026 | Flujo clasificado del SPI (paso 5): cada bloque del flujo marcado como control o datapath, con la rama de CONTINUAR y hay_datos |
 | 19/11/2026 | Bloques control / datapath del SPI (paso 7): registros MMIO, control (FSM de 9 estados) y datapath (divisor, mux de carga por fase, registro sh de 32 bits con MOSI = sh[31], contador de bits, registro rx), con las órdenes y banderas entre ellos y los pines WP_n y HOLD_n |
 | 19/11/2026 | Máquina de estados del SPI (paso 8): 9 estados con las mismas transiciones del ASMD, incluidas T1c y T1n para CONTINUAR, y MOSI como salida de LOW y HIGH |
+| 22/11/2026 | Registros del SPI: STATUS agrega bit2 CS_ACTIVO, para que el software sepa si CS_n quedó en 0 por MANTENER antes de usar CONTINUAR |
 
 ## Pendientes y problemas
 

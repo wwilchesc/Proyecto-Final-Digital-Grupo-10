@@ -56,7 +56,7 @@ Alimentación de la EEPROM: 3,3 V y GND de la tarjeta, con un condensador de 100
 | 0x04 | ADDR | L/E | Dirección de 24 bits |
 | 0x08 | WDATA | L/E | Byte a escribir |
 | 0x0C | RDATA | L | Dato leído (8 bits, o 24 para el ID de la Flash) |
-| 0x10 | STATUS | L | bit0 BUSY · bit1 DONE (se limpia al leer) |
+| 0x10 | STATUS | L | bit0 BUSY · bit1 DONE (se limpia al leer) · bit2 CS_ACTIVO (CS_n quedó en 0 por MANTENER) |
 | 0x14 | CLK_DIV | L/E | SCK = 50 MHz / (2·(CLK_DIV+1)); reset 1 → 12,5 MHz |
 
 **I2C** (`0x46_0000`):
