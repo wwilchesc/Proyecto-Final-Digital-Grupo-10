@@ -1,0 +1,72 @@
+VCD info: dumpfile perip_spi_tb.vcd opened for output.
+
+== Reset (R)
+ok    CLK_DIV tras reset = 0x00000001
+ok    STATUS tras reset = 0x00000000
+ok    CS_n tras reset = 0x00000001
+ok    WP_n y HOLD_n en 1 = 0x00000003
+
+== JEDEC ID (0x9F, sin direccion, 3 bytes)
+ok    STATUS en curso {CS_ACTIVO, DONE, BUSY} = 0x00000005
+ok    STATUS al terminar (DONE = 1, BUSY = 0) = 0x00000002
+ok    DONE se limpia al leer STATUS = 0x00000000
+ok    RDATA = JEDEC ID = 0x00ef4017
+ok    periodo de SCK con CLK_DIV = 1 (ns) = 0x00000050
+
+== Lectura 0x03, 1 byte en 0x000010
+ok    RDATA = mem[0x10] = 0x0000004a
+
+== Lectura 0x03, 3 bytes en 0x000020
+ok    RDATA = mem[0x20..0x22] = 0x007a7b78
+      ciclos de reloj de START a done: 236 (ticks = 118 con CLK_DIV = 1)
+
+== Lectura de 4 bytes en 0x000040 con MANTENER y CONTINUAR
+ok    STATUS tras MANTENER (CS sigue activo) = 0x00000006
+ok    CS_n sigue en 0 = 0x00000000
+      parte 1 (comando + direccion + 3 bytes): 229 ciclos
+ok    bytes 1 a 3 = 0x001a1b18
+ok    STATUS tras CONTINUAR sin MANTENER (CS liberado) = 0x00000002
+      parte 2 (CONTINUAR, 1 byte + liberar CS): 42 ciclos
+ok    CS_n vuelve a 1 = 0x00000001
+ok    byte 4 = 0x00000019
+
+== T1n: CONTINUAR sin datos que mover
+ok    T1n termina sin pulsos de SCK = 0x00000000
+ok    y libera CS_n = 0x00000001
+
+== Escritura: WREN (0x06) y PAGE PROGRAM (0x02) en 0x000005
+ok    lectura de comprobacion = 0xC3 = 0x000000c3
+
+== Escritura con BUSY = 1 se ignora
+ok    CLK_DIV no cambio = 0x00000001
+
+== CLK_DIV = 3
+ok    periodo de SCK con CLK_DIV = 3 (ns) = 0x000000a0
+ok    RDATA = JEDEC ID = 0x00ef4017
+
+== Reset en medio de una transaccion
+ok    CS_n en 1 tras reset = 0x00000001
+ok    STATUS = 0 tras reset = 0x00000000
+
+== Cobertura de la tabla de transferencias (veces que se ejecuto cada fila)
+      H1 : 76
+      T1 : 11
+     T1c : 1
+     T1n : 1
+      H2 : 961
+      T2 : 11
+      T3 : 27
+      T4 : 388
+      T5 : 362
+      T6 : 15
+      T7 : 11
+      T8 : 10
+     T8m : 2
+      T9 : 10
+     T10 : 10
+     T11 : 10
+    T11d : 10
+     T12 : 12
+
+43 comprobaciones, 0 errores
+PASS: perip_spi (MMIO, JEDEC, lectura, MANTENER/CONTINUAR, escritura, BUSY, DONE retenido, reset)

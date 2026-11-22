@@ -47,7 +47,7 @@ En esta tabla se encuentran todos los diagramas realizados para los controladore
 | 6 | ASMD y tabla de transferencias | ASMD SPI ([Ver](docs/diagramas/6-asmd/Grupo1_ASMD_SPI.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F6-asmd%2FGrupo1_ASMD_SPI.drawio.png))<br>Tabla de transferencias SPI ([Ver](docs/diagramas/6-asmd/Grupo1_Tabla_Transferencias_SPI.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F6-asmd%2FGrupo1_Tabla_Transferencias_SPI.drawio.png))<br>ASMD I2C ([Ver](docs/diagramas/6-asmd/Grupo1_ASMD_I2C.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F6-asmd%2FGrupo1_ASMD_I2C.drawio.png)) <br>Tabla de transferencias I2C ([Ver](docs/diagramas/6-asmd/Grupo1_Tabla_Transferencias_I2C.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F6-asmd%2FGrupo1_Tabla_Transferencias_I2C.drawio.png)) |
 | 7 | Bloques control / datapath | SPI ([Ver](docs/diagramas/7-control-datapath/Grupo1_Bloques_Control_Datapath_SPI.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F7-control-datapath%2FGrupo1_Bloques_Control_Datapath_SPI.drawio.png)) |
 | 8 | Máquina de estados (FSM) | SPI ([Ver](docs/diagramas/8-maquinas-de-estado/Grupo1_FSM_SPI.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F8-maquinas-de-estado%2FGrupo1_FSM_SPI.drawio.png)) |
-| 9 | Testbench y simulación (casos sacados de la tabla de transferencias) | Pendiente |
+| 9 | Testbench y simulación (casos sacados de la tabla de transferencias) | SPI ([Banco y resultados](sim/README.md) · [Ondas](sim/ondas_jedec_id.png)) |
 
 ## Criterio B: integración al SoC
 
@@ -61,7 +61,7 @@ En esta tabla se encuentra lo que pide la guía `uart-riscv.pdf` para conectar l
 | 4 | Diagrama del adaptador de bus (bus ↔ registros, mux de lectura a `d_out`) | Pendiente |
 | 5 | Semántica START / BUSY / DONE (DONE retenido hasta que la CPU lo lee) | SPI: BUSY = busy_core ∨ start y DONE retenido en [`rtl/perip_spi.v`](rtl/perip_spi.v) |
 | 6 | Diagrama de tiempos del handshake bus ↔ core | Pendiente |
-| 7 | Verificación de registros y de SoC (testbench) | Pendiente |
+| 7 | Verificación de registros y de SoC (testbench) | SPI: registros por el bus ([`sim/perip_spi_tb.v`](sim/perip_spi_tb.v)) · SoC pendiente |
 | 8 | Pines y restricciones (`.cst`) | Tabla de pines ([Ver](tareas-y-actividades/README.md#3-mapa-de-hardware-y-conteo-de-pines)) · `.cst` pendiente |
 
 ## Hojas de datos
@@ -83,7 +83,7 @@ En esta tabla se encuentra lo que pide la guía `uart-riscv.pdf` para conectar l
 
 ## Simulación
 
-_(Cómo correr el testbench y qué se verificó. Archivos en `sim/`.)_
+**SPI**: `make sim` en `sim/` (Icarus Verilog). El banco `perip_spi_tb.v` usa el periférico por el bus con un modelo de la Flash y comprueba JEDEC ID, lecturas de 1, 3 y 4 bytes (MANTENER + CONTINUAR), T1n, escritura, BUSY, DONE retenido, CLK_DIV y reset; además verifica que se ejecute cada fila de la tabla de transferencias. Resultado: **43 comprobaciones, 0 errores**. Detalle en [`sim/README.md`](sim/README.md).
 
 ## Avances
 
@@ -108,6 +108,7 @@ _(Cómo correr el testbench y qué se verificó. Archivos en `sim/`.)_
 | 22/11/2026 | RTL del control SPI (`rtl/spi_control.v`): FSM de 9 estados con el enfoque A de la guía (próximo estado y órdenes combinacionales, registros en subida); cada rama lleva el ID de su fila en la tabla de transferencias (H1, T1, T1c, T1n … T12) |
 | 22/11/2026 | Periférico SPI (`rtl/perip_spi.v`): registros MMIO, decodificador local (escritura solo con BUSY = 0), DONE retenido hasta leer STATUS, lectura registrada para el bus del Quark e instancias del control y el datapath. `rtl/README.md` explica la correspondencia entre el código y la tabla de transferencias |
 | 22/11/2026 | Modelo de simulación de la Flash W25Q64 en modo 0 (`sim/flash_model.v`): comandos 0x9F (JEDEC ID), 0x03 (lectura), 0x06 (WREN), 0x02 (page program) y 0x05 (status) |
+| 22/11/2026 | Testbench del SPI (paso 9): `sim/perip_spi_tb.v` por el bus MMIO con el modelo de la Flash; 43 comprobaciones sin errores y cobertura de las 18 filas de la tabla de transferencias. Se suben el log, el Makefile y las imágenes de las ondas |
 
 ## Pendientes y problemas
 
