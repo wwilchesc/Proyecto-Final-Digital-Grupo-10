@@ -1,5 +1,7 @@
 """Dibuja las formas de onda de un VCD (alternativa a una captura de GTKWave).
-Uso: python3 vcd_a_png.py perip_spi_tb.vcd salida.png t_ini_ns t_fin_ns
+Uso: python3 vcd_a_png.py perip_spi_tb.vcd salida.png t_ini_ns t_fin_ns ["titulo"] [spi|handshake]
+  spi:       senales del controlador (estado, fase, SCK, MOSI, MISO, bits, rx)
+  handshake: senales del bus y de STATUS (cs, wr, rd, addr, d_in, BUSY, DONE, d_out)
 """
 import sys, re
 import matplotlib
@@ -25,6 +27,21 @@ WANT = [  # (ruta, etiqueta)
     ("perip_spi_tb.dut.done_core", "done"),
     ("perip_spi_tb.dut.r_done", "STATUS.DONE"),
 ]
+if len(sys.argv) > 6 and sys.argv[6] == "handshake":
+    WANT = [
+        ("perip_spi_tb.clk", "clk"),
+        ("perip_spi_tb.cs", "cs"),
+        ("perip_spi_tb.wr", "wr"),
+        ("perip_spi_tb.rd", "rd"),
+        ("perip_spi_tb.addr", "addr"),
+        ("perip_spi_tb.d_in", "d_in"),
+        ("perip_spi_tb.dut.start", "start"),
+        ("perip_spi_tb.dut.busy", "BUSY"),
+        ("perip_spi_tb.spi_cs_n", "spi_cs_n"),
+        ("perip_spi_tb.dut.done_core", "done (core)"),
+        ("perip_spi_tb.dut.r_done", "STATUS.DONE"),
+        ("perip_spi_tb.d_out", "d_out"),
+    ]
 ESTADOS = ["IDLE", "CS_SETUP", "LOAD", "LOW", "HIGH", "FIN", "CS_HOLD", "CS_REST", "DONE"]
 FASES = ["CMD", "DIR", "DAT", "?"]
 
@@ -97,6 +114,7 @@ for ax, (p, label) in zip(axes, WANT):
             if label == "estado" and n is not None: txt = ESTADOS[n] if n < len(ESTADOS) else str(n)
             elif label == "fase" and n is not None: txt = FASES[n]
             elif label == "rx" and n is not None: txt = f"{n:06X}"
+            elif label in ("addr", "d_in", "d_out") and n is not None: txt = f"0x{n:X}"
             elif n is not None: txt = str(n)
             else: txt = "x"
             ax.fill_between([ta, tb], 0.1, 0.9, color="#e8f1e4", edgecolor="#5a8a4a", lw=0.8)

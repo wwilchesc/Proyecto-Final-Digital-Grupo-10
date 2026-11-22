@@ -39,3 +39,16 @@ PASS: perip_spi (MMIO, JEDEC, lectura, MANTENER/CONTINUAR, escritura, BUSY, DONE
 ```
 
 La salida completa está en `perip_spi_tb.log`. Las formas de onda están en `perip_spi_tb.vcd` (se abre con GTKWave), y en `ondas_jedec_id.png` y `ondas_jedec_inicio.png`, dibujadas con `vcd_a_png.py`.
+
+## Handshake bus ↔ core
+
+`ondas_handshake_inicio.png` y `ondas_handshake_fin.png` muestran la simulación de la misma lectura del JEDEC ID que dibuja el diagrama `docs/diagramas/9-integracion/Grupo1_Tiempos_Handshake.drawio.png`:
+
+1. La CPU escribe CONTROL = 0x79F01 (START, comando 0x9F, SIN_DIR, NB = 3). En el ciclo siguiente `start` vale 1, BUSY sube y CS_n baja.
+2. Mientras la transacción está en curso, STATUS se lee como 0x5 (CS_ACTIVO y BUSY).
+3. El core pasa por DONE (`done` de un ciclo). BUSY baja y STATUS.DONE queda en 1.
+4. La CPU lee STATUS = 0x2 y DONE se limpia, así que la siguiente lectura da 0x0.
+5. La CPU lee RDATA = 0xEF4017.
+
+Para generar las imágenes: `python3 vcd_a_png.py perip_spi_tb.vcd salida.png t_ini t_fin "titulo" handshake`.
+
