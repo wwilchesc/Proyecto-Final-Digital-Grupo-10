@@ -60,7 +60,7 @@ En esta tabla se encuentra lo que pide la guía `uart-riscv.pdf` para conectar l
 | 3 | Decodificador local (`addr[4:0]` → registro) | SPI: decodificador de registros en [`rtl/perip_spi.v`](rtl/perip_spi.v) |
 | 4 | Diagrama del adaptador de bus (bus ↔ registros, mux de lectura a `d_out`) | Pendiente |
 | 5 | Semántica START / BUSY / DONE (DONE retenido hasta que la CPU lo lee) | SPI: BUSY = busy_core ∨ start y DONE retenido en [`rtl/perip_spi.v`](rtl/perip_spi.v) |
-| 6 | Diagrama de tiempos del handshake bus ↔ core | Pendiente |
+| 6 | Diagrama de tiempos del handshake bus ↔ core | SPI: lectura del JEDEC ID ([Ver](docs/diagramas/9-integracion/Grupo1_Tiempos_Handshake.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F9-integracion%2FGrupo1_Tiempos_Handshake.drawio.png)) |
 | 7 | Verificación de registros y de SoC (testbench) | SPI: registros por el bus ([`sim/perip_spi_tb.v`](sim/perip_spi_tb.v)) · SoC pendiente |
 | 8 | Pines y restricciones (`.cst`) | Tabla de pines ([Ver](tareas-y-actividades/README.md#3-mapa-de-hardware-y-conteo-de-pines)) · `.cst` pendiente |
 
@@ -116,6 +116,7 @@ En esta tabla se encuentra lo que pide la guía `uart-riscv.pdf` para conectar l
 | 22/11/2026 | Modelo de simulación de la Flash W25Q64 en modo 0 (`sim/flash_model.v`): comandos 0x9F (JEDEC ID), 0x03 (lectura), 0x06 (WREN), 0x02 (page program) y 0x05 (status) |
 | 22/11/2026 | Testbench del SPI (paso 9): `sim/perip_spi_tb.v` por el bus MMIO con el modelo de la Flash; 43 comprobaciones sin errores y cobertura de las 18 filas de la tabla de transferencias. Se suben el log, el Makefile y las imágenes de las ondas |
 | 22/11/2026 | Firmware del SPI (`firmware/spi_flash.h` y `spi_flash_example.c`): registros con volatile y funciones para JEDEC ID, lectura, lectura en bloque con MANTENER y CONTINUAR y grabación de un byte. Falta compilarlo para RISC-V cuando esté el SoC del grupo 6 |
+| 22/11/2026 | Diagrama de tiempos del handshake bus ↔ core del SPI (`docs/diagramas/9-integracion/`): lectura del JEDEC ID con escritura de CONTROL, sondeo de STATUS (BUSY, DONE retenido) y lectura de RDATA |
 
 ## Pendientes y problemas
 
