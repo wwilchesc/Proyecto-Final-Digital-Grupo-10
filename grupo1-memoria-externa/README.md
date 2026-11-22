@@ -73,7 +73,13 @@ En esta tabla se encuentra lo que pide la guía `uart-riscv.pdf` para conectar l
 
 | Desplazamiento | Nombre | Acceso | Descripción |
 | --- | --- | --- | --- |
-| 0x00 | | | |
+| **SPI** `0x42_0000` | | | |
+| 0x00 | CONTROL | L/E | bit0 START · bit1 RW · bits 15:8 COMANDO · bit16 SIN_DIR · bits 18:17 NB · bit19 MANTENER · bit20 CONTINUAR |
+| 0x04 | ADDR | L/E | Dirección de 24 bits |
+| 0x08 | WDATA | L/E | Byte a escribir |
+| 0x0C | RDATA | L | Dato leído (8 o 24 bits) |
+| 0x10 | STATUS | L | bit0 BUSY · bit1 DONE (se limpia al leer) · bit2 CS_ACTIVO |
+| 0x14 | CLK_DIV | L/E | SCK = f_clk / (2·(CLK_DIV+1)); reset 1 |
 
 ## Pines
 
@@ -109,6 +115,7 @@ En esta tabla se encuentra lo que pide la guía `uart-riscv.pdf` para conectar l
 | 22/11/2026 | Periférico SPI (`rtl/perip_spi.v`): registros MMIO, decodificador local (escritura solo con BUSY = 0), DONE retenido hasta leer STATUS, lectura registrada para el bus del Quark e instancias del control y el datapath. `rtl/README.md` explica la correspondencia entre el código y la tabla de transferencias |
 | 22/11/2026 | Modelo de simulación de la Flash W25Q64 en modo 0 (`sim/flash_model.v`): comandos 0x9F (JEDEC ID), 0x03 (lectura), 0x06 (WREN), 0x02 (page program) y 0x05 (status) |
 | 22/11/2026 | Testbench del SPI (paso 9): `sim/perip_spi_tb.v` por el bus MMIO con el modelo de la Flash; 43 comprobaciones sin errores y cobertura de las 18 filas de la tabla de transferencias. Se suben el log, el Makefile y las imágenes de las ondas |
+| 22/11/2026 | Firmware del SPI (`firmware/spi_flash.h` y `spi_flash_example.c`): registros con volatile y funciones para JEDEC ID, lectura, lectura en bloque con MANTENER y CONTINUAR y grabación de un byte. Falta compilarlo para RISC-V cuando esté el SoC del grupo 6 |
 
 ## Pendientes y problemas
 
