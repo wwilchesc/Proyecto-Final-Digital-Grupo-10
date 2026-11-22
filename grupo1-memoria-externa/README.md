@@ -105,6 +105,7 @@ _(Cómo correr el testbench y qué se verificó. Archivos en `sim/`.)_
 | 19/11/2026 | Máquina de estados del SPI (paso 8): 9 estados con las mismas transiciones del ASMD, incluidas T1c y T1n para CONTINUAR, y MOSI como salida de LOW y HIGH |
 | 22/11/2026 | Registros del SPI: STATUS agrega bit2 CS_ACTIVO, para que el software sepa si CS_n quedó en 0 por MANTENER antes de usar CONTINUAR |
 | 22/11/2026 | RTL del datapath SPI (`rtl/spi_datapath.v`): divisor de tick, mux val(fase)/n(fase), registro sh de 32 bits con MOSI = sh[31], contador bits con last, registro rx de 24 bits y registros SCK y CS_n, todos actualizados en el flanco de subida |
+| 22/11/2026 | RTL del control SPI (`rtl/spi_control.v`): FSM de 9 estados con el enfoque A de la guía (próximo estado y órdenes combinacionales, registros en subida); cada rama lleva el ID de su fila en la tabla de transferencias (H1, T1, T1c, T1n … T12) |
 
 ## Pendientes y problemas
 
