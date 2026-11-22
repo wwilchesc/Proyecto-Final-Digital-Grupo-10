@@ -57,9 +57,9 @@ En esta tabla se encuentra lo que pide la guía `uart-riscv.pdf` para conectar l
 | --- | --- | --- |
 | 1 | Región del mapa y `cs` | Flash SPI `0x42_0000` · EEPROM I2C `0x46_0000` ([Ver](#qué-hace-este-grupo)) |
 | 2 | Mapa de registros MMIO | SPI e I2C ([Ver](tareas-y-actividades/README.md#4-registros-de-control-mmio)) |
-| 3 | Decodificador local (`addr[4:0]` → registro) | Pendiente |
+| 3 | Decodificador local (`addr[4:0]` → registro) | SPI: decodificador de registros en [`rtl/perip_spi.v`](rtl/perip_spi.v) |
 | 4 | Diagrama del adaptador de bus (bus ↔ registros, mux de lectura a `d_out`) | Pendiente |
-| 5 | Semántica START / BUSY / DONE (DONE retenido hasta que la CPU lo lee) | Pendiente |
+| 5 | Semántica START / BUSY / DONE (DONE retenido hasta que la CPU lo lee) | SPI: BUSY = busy_core ∨ start y DONE retenido en [`rtl/perip_spi.v`](rtl/perip_spi.v) |
 | 6 | Diagrama de tiempos del handshake bus ↔ core | Pendiente |
 | 7 | Verificación de registros y de SoC (testbench) | Pendiente |
 | 8 | Pines y restricciones (`.cst`) | Tabla de pines ([Ver](tareas-y-actividades/README.md#3-mapa-de-hardware-y-conteo-de-pines)) · `.cst` pendiente |
@@ -106,6 +106,7 @@ _(Cómo correr el testbench y qué se verificó. Archivos en `sim/`.)_
 | 22/11/2026 | Registros del SPI: STATUS agrega bit2 CS_ACTIVO, para que el software sepa si CS_n quedó en 0 por MANTENER antes de usar CONTINUAR |
 | 22/11/2026 | RTL del datapath SPI (`rtl/spi_datapath.v`): divisor de tick, mux val(fase)/n(fase), registro sh de 32 bits con MOSI = sh[31], contador bits con last, registro rx de 24 bits y registros SCK y CS_n, todos actualizados en el flanco de subida |
 | 22/11/2026 | RTL del control SPI (`rtl/spi_control.v`): FSM de 9 estados con el enfoque A de la guía (próximo estado y órdenes combinacionales, registros en subida); cada rama lleva el ID de su fila en la tabla de transferencias (H1, T1, T1c, T1n … T12) |
+| 22/11/2026 | Periférico SPI (`rtl/perip_spi.v`): registros MMIO, decodificador local (escritura solo con BUSY = 0), DONE retenido hasta leer STATUS, lectura registrada para el bus del Quark e instancias del control y el datapath. `rtl/README.md` explica la correspondencia entre el código y la tabla de transferencias |
 
 ## Pendientes y problemas
 
