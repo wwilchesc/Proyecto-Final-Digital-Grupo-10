@@ -136,6 +136,7 @@ En esta tabla se encuentra lo que pide la guía `uart-riscv.pdf` para conectar l
 | 23/11/2026 | Periférico I2C (`rtl/perip_i2c.v`): registros MMIO (CONTROL, TX_DATA, RX_DATA, STATUS, CLK_DIV), decodificador local (escritura solo con BUSY = 0), DONE retenido, lectura registrada y pines de drenador abierto. `rtl/README.md` agrega la sección del I2C con la correspondencia con la tabla de transferencias y las decisiones de diseño |
 | 23/11/2026 | Modelo de simulación de la EEPROM 24LC256 (`sim/eeprom_model.v`): dirección 0x50, escritura, lectura aleatoria con START repetido, lectura secuencial, ACK/NACK y estiramiento de reloj configurable |
 | 23/11/2026 | Testbench del I2C (paso 9): `sim/perip_i2c_tb.v` por el bus MMIO con el modelo de la EEPROM; 36 comprobaciones sin errores y cobertura de las 14 filas de la tabla de transferencias. El Makefile de `sim/` agrega `make sim-i2c` y `make todo`, y `sim/README.md` agrega la sección del I2C |
+| 23/11/2026 | Firmware del I2C (`firmware/i2c_eeprom.h` y `i2c_eeprom_example.c`): registros con volatile, funciones `i2c_cmd` (dar una orden y esperar BUSY = 0) e `i2c_send` (enviar un byte y devolver ACK_IN), `eeprom_write` con espera del ciclo de grabación (ACK polling) y `eeprom_read` con START repetido; el ejemplo comprueba la presencia de la EEPROM, graba 4 bytes y los lee de vuelta. Compila para RV32I; falta integrarlo al SoC |
 
 ## Pendientes y problemas
 
