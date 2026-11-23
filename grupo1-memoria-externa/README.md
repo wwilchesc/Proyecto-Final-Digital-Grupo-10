@@ -104,11 +104,13 @@ En esta tabla se encuentra lo que pide la guía `uart-riscv.pdf` para conectar l
 | 16/11/2026 | Tabla de transferencias por flanco del controlador SPI: estado y condición, estado siguiente, registros que cambian en cada flanco y salida done |
 | 17/11/2026 | Registros del SPI: se agregan MANTENER (bit19) y CONTINUAR (bit20) al registro CONTROL, en tareas y actividades |
 | 17/11/2026 | README: la tabla de diseño queda como criterio A (con el paso 9, testbench) y se agrega la tabla del criterio B, integración al SoC |
+| 18/11/2026 | ASMD del controlador I2C (paso 6): estados IDLE, ST_1 a ST_4 (START), B_1 a B_4 y B_END (byte de 9 bits con ACK), SP_1 a SP_4 (STOP), SCL_WAIT, WAIT y DONE, con las transferencias T1 a T7 (T1w, T1r y T1p según la orden) |
 | 19/11/2026 | ASMD del SPI corregido (reemplaza la versión del 16/11): se define la fase (CMD, DIR, DAT) con su valor, número de bits y fase siguiente; MOSI = sh[31] en LOW y HIGH; IDLE ya no fuerza CS_n = 1, para que CONTINUAR funcione; se agrega T1n para cuando no hay datos que mover |
 | 19/11/2026 | Tabla de transferencias del SPI corregida (reemplaza la del 16/11): agrega T1n, la condición CS_n en T1 y T1c, y la tabla "Definición de fase" con hay_datos, falta fase, MOSI y last, para que coincida con el ASMD |
 | 19/11/2026 | Flujo clasificado del SPI (paso 5): cada bloque del flujo marcado como control o datapath, con la rama de CONTINUAR y hay_datos |
 | 19/11/2026 | Bloques control / datapath del SPI (paso 7): registros MMIO, control (FSM de 9 estados) y datapath (divisor, mux de carga por fase, registro sh de 32 bits con MOSI = sh[31], contador de bits, registro rx), con las órdenes y banderas entre ellos y los pines WP_n y HOLD_n |
 | 19/11/2026 | Máquina de estados del SPI (paso 8): 9 estados con las mismas transiciones del ASMD, incluidas T1c y T1n para CONTINUAR, y MOSI como salida de LOW y HIGH |
+| 19/11/2026 | Tabla de transferencias por flanco del controlador I2C (paso 6): estado y condición, estado siguiente, registros que cambian en cada flanco, done y valor de `sda_bit` en cada bit |
 | 22/11/2026 | Registros del SPI: STATUS agrega bit2 CS_ACTIVO, para que el software sepa si CS_n quedó en 0 por MANTENER antes de usar CONTINUAR |
 | 22/11/2026 | RTL del datapath SPI (`rtl/spi_datapath.v`): divisor de tick, mux val(fase)/n(fase), registro sh de 32 bits con MOSI = sh[31], contador bits con last, registro rx de 24 bits y registros SCK y CS_n, todos actualizados en el flanco de subida |
 | 22/11/2026 | RTL del control SPI (`rtl/spi_control.v`): FSM de 9 estados con el enfoque A de la guía (próximo estado y órdenes combinacionales, registros en subida); cada rama lleva el ID de su fila en la tabla de transferencias (H1, T1, T1c, T1n … T12) |
@@ -118,6 +120,9 @@ En esta tabla se encuentra lo que pide la guía `uart-riscv.pdf` para conectar l
 | 22/11/2026 | Firmware del SPI (`firmware/spi_flash.h` y `spi_flash_example.c`): registros con volatile y funciones para JEDEC ID, lectura, lectura en bloque con MANTENER y CONTINUAR y grabación de un byte. Falta compilarlo para RISC-V cuando esté el SoC del grupo 6 |
 | 22/11/2026 | Diagrama de tiempos del handshake bus ↔ core del SPI (`docs/diagramas/9-integracion/`): lectura del JEDEC ID con escritura de CONTROL, sondeo de STATUS (BUSY, DONE retenido) y lectura de RDATA |
 | 22/11/2026 | Handshake del SPI simulado: `sim/ondas_handshake_inicio.png` y `sim/ondas_handshake_fin.png` muestran la misma secuencia del diagrama (STATUS = 0x5 en curso, 0x2 al terminar, 0x0 después de leerlo y RDATA = 0xEF4017), tomada del VCD de `perip_spi_tb` |
+| 22/11/2026 | Flujo clasificado del I2C (paso 5): órdenes START, WRITE/READ y STOP, con cada bloque marcado como control o datapath y la espera de SCL = 1 por estiramiento de reloj |
+| 22/11/2026 | Bloques control / datapath del I2C (paso 7): registros MMIO, control (FSM de 17 estados con registros n, ret e is_read) y datapath (contador de cuarto, bcnt, tx, rx, ACK_IN, sincronizadores y salidas de drenador abierto) |
+| 22/11/2026 | Máquina de estados del I2C (paso 8): 17 estados (IDLE, ST_1…ST_4, B_1…B_4, B_END, SP_1…SP_4, SCL_WAIT, WAIT y DONE) con las mismas transiciones del ASMD |
 
 ## Pendientes y problemas
 
