@@ -1,0 +1,63 @@
+VCD info: dumpfile perip_i2c_tb.vcd opened for output.
+
+== Reset (R)
+ok    CLK_DIV tras reset (100 kHz a 50 MHz) = 0x0000007c
+ok    STATUS tras reset {DONE, ACK_IN, BUSY} = 0x00000002
+ok    SCL y SDA sueltas = 0x00000003
+
+== START + direccion 0xA0 a 100 kHz
+ok    STATUS tras START (DONE) = 0x00000006
+ok    ACK de la EEPROM (ACK_IN = 0) = 0x00000004
+      periodo de SCL medido: 10220 ns (97847 Hz)
+ok    SCL <= 100 kHz y a menos de 3 % (periodo entre 10000 y 10300 ns) = 0x00000001
+ok    bus libre tras STOP = 0x00000003
+
+== Escritura de un byte: 0x5C en 0x0012
+ok    ACK direccion de dispositivo = 0x00000000
+ok    ACK direccion alta = 0x00000000
+ok    ACK direccion baja = 0x00000000
+ok    ACK dato = 0x00000000
+ok    la EEPROM guardo 0x5C = 0x0000005c
+
+== Lectura aleatoria de 0x0012 (START repetido y NACK)
+ok    ACK direccion de lectura = 0x00000000
+ok    RX_DATA = 0x0000005c
+
+== Lectura secuencial de 2 bytes (ACK y luego NACK)
+ok    byte 1 (con ACK) = 0x00000011
+ok    byte 2 (con NACK) = 0x00000022
+
+== Direccion que no existe: NACK
+ok    ACK_IN = 1 (nadie respondio) = 0x00000006
+
+== Prioridad: START y WRITE en la misma orden -> solo START
+ok    no se envio ningun byte = 0x00000000
+
+== Estiramiento de reloj (SCL_WAIT)
+ok    ACK con estiramiento = 0x00000000
+
+== Escritura con BUSY = 1 se ignora
+ok    CLK_DIV no cambio = 0x00000004
+
+== Reset en medio de una transaccion
+ok    el maestro suelta SCL y SDA tras reset = 0x00000000
+ok    STATUS tras reset = 0x00000002
+
+== Cobertura de la tabla de transferencias del I2C
+     H1 : 192
+     T1 : 11
+    T1w : 17
+    T1r : 3
+    T1p : 7
+     T2 : 607
+     T3 : 153
+     T4 : 19
+     H2 : 606
+     T5 : 190
+     H3 : 9918
+     T6 : 36
+    T6r : 778
+     T7 : 37
+
+36 comprobaciones, 0 errores
+PASS: perip_i2c (MMIO, START/STOP, escritura y lectura de la EEPROM, ACK/NACK, prioridad, estiramiento de reloj, BUSY, reset)
