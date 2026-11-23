@@ -52,3 +52,50 @@ La salida completa está en `perip_spi_tb.log`. Las formas de onda están en `pe
 
 Para generar las imágenes: `python3 vcd_a_png.py perip_spi_tb.vcd salida.png t_ini t_fin "titulo" handshake`.
 
+
+---
+
+# Simulación del controlador I2C
+
+## Cómo correrla
+
+Con Icarus Verilog, desde la carpeta `grupo1-memoria-externa`:
+
+```
+iverilog -g2012 -o perip_i2c_tb.vvp sim/perip_i2c_tb.v sim/eeprom_model.v \
+         rtl/perip_i2c.v rtl/i2c_control.v rtl/i2c_datapath.v
+vvp perip_i2c_tb.vvp
+gtkwave perip_i2c_tb.vcd
+```
+
+O con `make sim-i2c` desde esta carpeta (`make sim` sigue corriendo el SPI y `make todo` corre los dos).
+
+## Qué se prueba
+
+El banco `perip_i2c_tb.v` usa el periférico **por el bus**, igual que el del SPI: escribe y lee los registros MMIO con accesos de un ciclo y lectura registrada. SCL y SDA tienen resistencias de pull-up (`pullup`) y al otro lado está `eeprom_model.v`, un modelo de la 24LC256 (dirección 0x50) que entiende escritura, lectura aleatoria con START repetido y lectura secuencial, responde ACK/NACK y puede estirar el reloj.
+
+| Caso | Qué comprueba | Filas de la tabla |
+| --- | --- | --- |
+| Reset | CLK_DIV = 124, STATUS = 0x2 (ACK_IN = 1), SCL y SDA sueltas | R |
+| START + 0xA0 | DONE al terminar, ACK de la EEPROM (ACK_IN = 0), periodo de SCL medido (10 220 ns ≈ 97,8 kHz) y bus libre después del STOP | T1, T1w, T1p, T2 … T7 |
+| Escritura de un byte | 0x5C en la dirección 0x0012: ACK en dispositivo, dirección alta, dirección baja y dato; la EEPROM lo guarda | T1w, T3, T4 |
+| Lectura aleatoria | START repetido, 0xA1, lectura con NACK: RX_DATA = 0x5C | T1r, T3, T4 |
+| Lectura secuencial | 2 bytes, el primero con ACK y el segundo con NACK: 0x11 y 0x22 | T1r |
+| Dirección que no existe | Nadie responde: ACK_IN = 1 | T4 |
+| Prioridad | START y WRITE en la misma orden: solo se hace START | T1 |
+| Estiramiento de reloj | La EEPROM mantiene SCL en 0 3 µs después de cada ACK; el maestro espera en SCL_WAIT | H2, T5 |
+| BUSY | Una escritura de CLK_DIV con BUSY = 1 se ignora | we = cs ∧ wr ∧ ¬BUSY |
+| Reset en medio | Suelta SCL y SDA y deja STATUS = 0x2 | R |
+
+Al final, el banco cuenta cuántas veces se ejecutó **cada fila de la tabla de transferencias del I2C** (H1, T1, T1w, T1r, T1p, T2, T3, T4, H2, T5, H3, T6, T6r, T7) y falla si alguna no se ejecutó.
+
+## Resultado
+
+```
+36 comprobaciones, 0 errores
+PASS: perip_i2c (MMIO, START/STOP, escritura y lectura de la EEPROM, ACK/NACK, prioridad, estiramiento de reloj, BUSY, reset)
+```
+
+La salida completa está en `perip_i2c_tb.log`. Las formas de onda quedan en `perip_i2c_tb.vcd` (no se sube al repositorio; se genera al correr la simulación).
+
+**Nota sobre la frecuencia**: con CLK_DIV = 124 a 50 MHz, SCL queda en ≈ 97,8 kHz y no en 100 kHz exactos, porque cada estado de acción gasta un ciclo y el sincronizador de SCL agrega unos más (511 ciclos por bit en vez de 500). Sigue dentro del modo estándar (≤ 100 kHz).
