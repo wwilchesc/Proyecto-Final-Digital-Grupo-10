@@ -22,7 +22,7 @@ _(Describir el periférico y su función dentro de la consola.)_
 - [x] Definir los registros de cada controlador
 - [x] Diagramas de flujo, de bloques y de tiempos
 - [ ] Diseñar el controlador SPI (Flash de la tarjeta)
-- [ ] Diseñar el controlador I2C (EEPROM 24LC256)
+- [x] Diseñar el controlador I2C (EEPROM 24LC256)
 - [ ] Definir el formato de la tabla de récords
 - [ ] Escribir los testbenches
 - [ ] Probar en la placa
@@ -57,9 +57,9 @@ En esta tabla se encuentra lo que pide la guía `uart-riscv.pdf` para conectar l
 | --- | --- | --- |
 | 1 | Región del mapa y `cs` | Flash SPI `0x42_0000` · EEPROM I2C `0x46_0000` ([Ver](#qué-hace-este-grupo)) |
 | 2 | Mapa de registros MMIO | SPI e I2C ([Ver](tareas-y-actividades/README.md#4-registros-de-control-mmio)) |
-| 3 | Decodificador local (`addr[4:0]` → registro) | SPI: decodificador de registros en [`rtl/perip_spi.v`](rtl/perip_spi.v) |
+| 3 | Decodificador local (`addr[4:0]` → registro) | SPI: decodificador de registros en [`rtl/perip_spi.v`](rtl/perip_spi.v)<br>I2C: decodificador de registros en [`rtl/perip_i2c.v`](rtl/perip_i2c.v) |
 | 4 | Diagrama del adaptador de bus (bus ↔ registros, mux de lectura a `d_out`) | Pendiente |
-| 5 | Semántica START / BUSY / DONE (DONE retenido hasta que la CPU lo lee) | SPI: BUSY = busy_core ∨ start y DONE retenido en [`rtl/perip_spi.v`](rtl/perip_spi.v) |
+| 5 | Semántica START / BUSY / DONE (DONE retenido hasta que la CPU lo lee) | SPI: BUSY = busy_core ∨ start y DONE retenido en [`rtl/perip_spi.v`](rtl/perip_spi.v)<br>I2C: BUSY = busy_core ∨ go y DONE retenido en [`rtl/perip_i2c.v`](rtl/perip_i2c.v) |
 | 6 | Diagrama de tiempos del handshake bus ↔ core | SPI: lectura del JEDEC ID ([Ver](docs/diagramas/9-integracion/Grupo1_Tiempos_Handshake.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F9-integracion%2FGrupo1_Tiempos_Handshake.drawio.png))<br>simulación ([inicio](sim/ondas_handshake_inicio.png) · [fin](sim/ondas_handshake_fin.png)) |
 | 7 | Verificación de registros y de SoC (testbench) | SPI: registros por el bus ([`sim/perip_spi_tb.v`](sim/perip_spi_tb.v)) · SoC pendiente |
 | 8 | Pines y restricciones (`.cst`) | Tabla de pines ([Ver](tareas-y-actividades/README.md#3-mapa-de-hardware-y-conteo-de-pines)) · `.cst` pendiente |
@@ -80,6 +80,12 @@ En esta tabla se encuentra lo que pide la guía `uart-riscv.pdf` para conectar l
 | 0x0C | RDATA | L | Dato leído (8 o 24 bits) |
 | 0x10 | STATUS | L | bit0 BUSY · bit1 DONE (se limpia al leer) · bit2 CS_ACTIVO |
 | 0x14 | CLK_DIV | L/E | SCK = f_clk / (2·(CLK_DIV+1)); reset 1 |
+| **I2C** `0x46_0000` | | | |
+| 0x00 | CONTROL | E | bit0 START · bit1 STOP · bit2 WRITE · bit3 READ · bit4 ACK_OUT (0 = ACK, 1 = NACK al leer). Prioridad START > WRITE > READ > STOP |
+| 0x04 | TX_DATA | L/E | Byte a enviar |
+| 0x08 | RX_DATA | L | Byte recibido |
+| 0x0C | STATUS | L | bit0 BUSY · bit1 ACK_IN (0 = el esclavo respondió) · bit2 DONE (se limpia al leer) |
+| 0x10 | CLK_DIV | L/E | SCL = f_clk / (4·(CLK_DIV+1)); reset 124 (≈ 97,8 kHz a 50 MHz) |
 
 ## Pines
 
@@ -123,6 +129,9 @@ En esta tabla se encuentra lo que pide la guía `uart-riscv.pdf` para conectar l
 | 22/11/2026 | Flujo clasificado del I2C (paso 5): órdenes START, WRITE/READ y STOP, con cada bloque marcado como control o datapath y la espera de SCL = 1 por estiramiento de reloj |
 | 22/11/2026 | Bloques control / datapath del I2C (paso 7): registros MMIO, control (FSM de 17 estados con registros n, ret e is_read) y datapath (contador de cuarto, bcnt, tx, rx, ACK_IN, sincronizadores y salidas de drenador abierto) |
 | 22/11/2026 | Máquina de estados del I2C (paso 8): 17 estados (IDLE, ST_1…ST_4, B_1…B_4, B_END, SP_1…SP_4, SCL_WAIT, WAIT y DONE) con las mismas transiciones del ASMD |
+| 23/11/2026 | RTL del datapath I2C (`rtl/i2c_datapath.v`): contador de cuarto (tick), bcnt con bit_last, registro tx que desplaza, registro rx, ACK_IN, selector sda_bit, sincronizadores de 2 etapas para SCL y SDA y salidas de drenador abierto |
+| 23/11/2026 | RTL del control I2C (`rtl/i2c_control.v`): FSM de 17 estados con el enfoque A de la guía; cada rama lleva el ID de su fila en la tabla de transferencias (H1, T1, T1w, T1r, T1p … T7), y los estados de acción usan WAIT y SCL_WAIT con los registros n y ret |
+| 23/11/2026 | Periférico I2C (`rtl/perip_i2c.v`): registros MMIO (CONTROL, TX_DATA, RX_DATA, STATUS, CLK_DIV), decodificador local (escritura solo con BUSY = 0), DONE retenido, lectura registrada y pines de drenador abierto. `rtl/README.md` agrega la sección del I2C con la correspondencia con la tabla de transferencias y las decisiones de diseño |
 
 ## Pendientes y problemas
 
