@@ -91,103 +91,141 @@ La FSM del código posee **10 estados**: `S_READ`, `S_WAIT`, `S_BITS`, `S_CLK1`,
 
 El **refresco del panel** ocurre continuamente; la **actualización de fotogramas del juego** dependerá del procesador. Son procesos distintos.
 
-
 ## 5. Diagramas del controlador de pantalla G4
 
-Los siguientes diagramas describen la arquitectura del
-controlador de pantalla HUB75E para la consola, tomando
-como referencia el funcionamiento del código desarrollado
-en la Prueba 2 y la integración prevista con FemtoRV32.
+Los diagramas describen tanto la **interfaz propuesta para la consola RISC-V** como el **barrido implementado en `PRUEBA_2`**. Las conexiones MMIO y el cambio de banco son propuestas de integración; la FSM y las señales HUB75 se pueden contrastar con `hub75_control.v` y `hub75_datapath.v`.
 
-### 5.1. Diagrama de caja negra
+### 5.1. Caja negra y características
 
 ![Diagrama de caja negra](DiagramaCajaNegra.drawio.png)
 
-**Figura 1. Diagrama de caja negra del controlador G4.**
+**Figura 1. Entradas y salidas del controlador G4.** La caja negra corresponde al controlador de la FPGA, no al panel físico. El procesador generará los fotogramas del juego y escribirá sus píxeles mediante una interfaz MMIO todavía pendiente. El controlador convertirá los datos en señales HUB75E.
 
-Representa las entradas y salidas del controlador de
-pantalla. El procesador RISC-V proporcionará los datos
-de los fotogramas mediante una interfaz MMIO, mientras
-que el controlador generará las señales RGB, de selección
-de filas y de control necesarias para el panel HUB75E.
+**Interfaz prevista con el SoC:**
 
-La interfaz MMIO corresponde a la arquitectura propuesta
-para la consola final y está pendiente de integración.
+| Señal | Dirección y ancho | Significado |
+|---|---|---|
+| `clk` | Entrada, 1 bit | Reloj principal de la lógica; el prototipo utiliza 27 MHz. |
+| `rst` | Entrada, 1 bit | Reinicio de control y datapath; síncrono y activo en alto en estos módulos. |
+| `d_in[31:0]` | Entrada, 32 bits | Dato que escribe el procesador en el periférico. |
+| `bus_addr[4:0]` | Entrada, 5 bits | Dirección **local de registro MMIO**; no debe confundirse con la dirección de fila del panel. |
+| `cs_fb`, `cs_ctrl` | Entradas, 1 bit c/u | Selecciones propuestas para framebuffer y registros de control. |
+| `rd`, `wr` | Entradas, 1 bit c/u | Solicitudes de lectura y escritura del procesador. |
+| `d_out[31:0]` | Salida, 32 bits | Dato que el periférico devolverá al procesador. |
+
+**Salidas físicas al panel HUB75E:**
+
+| Señal | Ancho | Qué hace |
+|---|---:|---|
+| `r1`, `g1`, `b1` | 3 × 1 bit | Un bit de cada color del píxel de la mitad superior. |
+| `r2`, `g2`, `b2` | 3 × 1 bit | Un bit de cada color del píxel de la mitad inferior, en la misma columna. |
+| `addr[4:0]` | 5 bits | Selecciona una de 32 parejas de filas. |
+| `hub_clk` | 1 bit | Pulso **enviado al panel** que desplaza los datos RGB una posición de columna; no es el reloj `clk` de la FPGA ni un `baud_tick` interno. |
+| `hub_lat` | 1 bit | Transfiere los 64 valores desplazados a los registros de salida del panel; **no selecciona la fila**. |
+| `hub_oe` | 1 bit | Habilita la iluminación cuando está en `0` y la deshabilita cuando está en `1`. |
+
+Se envían **seis bits RGB en paralelo** porque se cargan dos píxeles simultáneamente: uno superior y uno inferior. Sin embargo, cada píxel se almacena con **24 bits RGB888**: ocho de rojo, ocho de verde y ocho de azul. El controlador selecciona un bit por canal según el plano actual y utiliza distintos tiempos de iluminación para representar la intensidad.
 
 ### 5.2. Diagrama de bloques y señales
 
+El diagrama divide el sistema en **framebuffer, datapath y FSM**. El framebuffer almacena colores; el datapath mantiene contadores y selecciona bits RGB; la FSM determina cuándo se realizan las operaciones. El adaptador MMIO permitirá que el procesador escriba fotogramas, pero todavía no está implementado en el RTL consultado.
 
 ```mermaid
 flowchart LR
     SOC[SoC RISC-V]
     PANEL[Panel HUB75E 64x64]
-
     subgraph G4[Controlador G4]
-        MMIO[Adaptador MMIO<br/>POR IMPLEMENTAR]
-        BANK[Gestor doble buffer<br/>hub75_top.v]
+        MMIO[Adaptador MMIO<br/>PENDIENTE]
+        BANK[Gestor doble buffer<br/>PROPUESTO]
         FB[Framebuffer RGB888<br/>framebuffer.v]
         DP[Datapath<br/>hub75_datapath.v]
         FSM[FSM de 10 estados<br/>hub75_control.v]
     end
-
-    SOC -->|"d_in, direcciones y control MMIO"| MMIO
+    SOC -->|"d_in y control MMIO"| MMIO
     MMIO -->|"d_out[31:0]"| SOC
-    MMIO -->|"we, waddr[11:0], wdata[23:0]"| FB
-    MMIO -.->|"aviso de fotograma completo: por definir"| BANK
-    BANK -->|"wr_bank, disp_bank"| FB
+    MMIO -.->|"we, waddr[11:0], wdata[23:0]"| FB
+    MMIO -.->|"cuadro completo: por definir"| BANK
+    BANK -.->|"wr_bank, disp_bank"| FB
     DP -->|"fb_addr_top, fb_addr_bot (12 bits c/u)"| FB
     FB -->|"pix_top, pix_bot (24 bits c/u)"| DP
-    FSM -->|"ordenes: cargar RGB, contadores y temporizador"| DP
+    FSM -->|"load_rgb, inc/clr de contadores, load_addr"| DP
     DP -->|"col_last, row_last, plane_last, timer_done"| FSM
-    FSM -->|"frame_done"| BANK
-    DP -->|"RGB (6), addr (5)"| PANEL
+    DP -->|"RGB (6 bits), addr (5 bits)"| PANEL
     FSM -->|"hub_clk, hub_lat, hub_oe"| PANEL
-
     classDef pendiente stroke:#b7791f,stroke-width:2px,stroke-dasharray:4 4;
-    class MMIO pendiente;
+    class MMIO,BANK pendiente;
 ```
 
-**Figura 2. Arquitectura interna del controlador G4.**
+**Figura 2. Comunicación entre los bloques internos.** Las conexiones punteadas representan funcionalidades previstas para la integración, no módulos Verilog comprobados.
 
-El sistema se organiza en un framebuffer, un datapath y
-una unidad de control (FSM). El framebuffer almacena los
-píxeles RGB888; el datapath selecciona los datos de color
-y gestiona los contadores de fila, columna y plano; y la
-FSM coordina las operaciones de barrido.
+**Datos y direcciones:**
 
-La arquitectura contempla un adaptador MMIO que permitirá
-recibir los fotogramas generados por el procesador.
+| Señal | Ancho | Función |
+|---|---:|---|
+| `we` | 1 bit | Habilitación de escritura propuesta desde MMIO. |
+| `waddr[11:0]` | 12 bits | Dirección de escritura de uno de los 4096 píxeles. |
+| `wdata[23:0]` | 24 bits | Valor RGB888 del píxel que se escribirá. |
+| `fb_addr_top`, `fb_addr_bot` | 12 bits c/u | Direcciones de lectura de dos píxeles simultáneos: filas `row` y `row+32`, misma columna. |
+| `pix_top`, `pix_bot` | 24 bits c/u | Dos píxeles que entrega la memoria al datapath. |
+| `wr_bank`, `disp_bank` | 1 bit c/u | Banco de escritura y de visualización previstos para un futuro doble buffer. |
 
-### 5.3. Diagrama de tiempos
+En el código consultado, `framebuffer.v` declara una memoria RGB888 inicializada mediante `image.hex` y la lee de forma **síncrona** en cada flanco positivo de `clk`. No tiene entradas `we`, `waddr`, `wdata` ni selector de banco. Estas señales del diagrama representan el **diseño por implementar**, no interfaces ya existentes.
+
+**Órdenes de la FSM al datapath (todas de 1 bit):**
+
+| Señal | Operación |
+|---|---|
+| `load_rgb` | Guarda los seis bits del plano de color seleccionado. |
+| `inc_col` / `clr_col` | Incrementa o reinicia la columna (`col`). |
+| `inc_row` / `clr_row` | Incrementa o reinicia la pareja de filas (`row`). |
+| `inc_plane` / `clr_plane` | Incrementa o reinicia el plano RGB (`plane`). |
+| `load_addr` | Registra `addr ← row` para seleccionar la fila del panel. |
+| `inc_timer` / `clr_timer` | Incrementa o reinicia el contador de iluminación (`timer`). |
+
+**Condiciones del datapath hacia la FSM (1 bit cada una):**
+
+| Señal | Vale 1 cuando… | Consecuencia |
+|---|---|---|
+| `col_last` | `col = 63` | La FSM termina las columnas y genera el pulso `hub_lat`. |
+| `row_last` | `row = 31` | Se debe cambiar de plano o reiniciar el recorrido. |
+| `plane_last` | `plane = 7` | Se completó el último plano. |
+| `timer_done` | `timer = T_BASE << plane` | La FSM finaliza la iluminación y desactiva la salida. |
+
+La idea es que **la FSM decide** qué operación se necesita y **el datapath la ejecuta**, actualizando registros al siguiente flanco ascendente de `clk`.
+
+### 5.3. Diagrama de tiempos del barrido HUB75E
 
 ![Diagrama de tiempos](DiagramaTiempos.png)
 
-**Figura 3. Temporización del barrido HUB75E.**
+**Figura 3. Última columna y período de visualización de una pareja de filas (plano 0).** Un flanco de `clk` equivale aproximadamente a 37,04 ns con el reloj de 27 MHz. La figura amplía la última columna (`col = 63`), en lugar de repetir las 64 columnas.
 
-El diagrama representa la secuencia de lectura y
-desplazamiento de datos RGB, el pulso de almacenamiento
-y el periodo de iluminación de una pareja de filas.
+| Flanco | Estado después del flanco | Operación observada |
+|---|---|---|
+| 0–1 | `S_READ` → `S_WAIT` | Se solicita y recibe el último par de píxeles de memoria. |
+| 2 | `S_BITS` | Se capturan los seis bits RGB del plano actual. |
+| 3–4 | `S_CLK1` → `S_CLK0` | `hub_clk` pasa a 1 y luego a 0: el panel desplaza una columna. |
+| 5 | `S_LAT1` | `hub_lat` sube y `hub_oe` mantiene los LED apagados. |
+| 6 | `S_LAT0` | `hub_lat` baja; `col` se reinicia. |
+| 7 | `S_ADDR` | Se registra la dirección de fila `addr = row`. |
+| 8–16 | `S_SHOW` | `hub_oe = 0`; se ilumina mientras `timer` avanza de 0 hasta 8. |
+| 17 | `S_BLANK` | `hub_oe = 1`, terminando la iluminación. |
+| 18 | `S_READ` | Se continúa con la siguiente pareja de filas o plano. |
 
-La señal `hub_clk` desplaza los datos de las columnas,
-`hub_lat` transfiere los datos cargados, `addr[4:0]`
-selecciona la pareja de filas y `hub_oe` controla su
-iluminación.
+**Interpretación:** `hub_clk` genera un pulso por columna; la FSM emplea **cinco ciclos** del reloj principal por columna. Tras desplazar 64 columnas, `hub_lat` captura los datos. `addr` selecciona la pareja de filas y `hub_oe` determina durante cuánto tiempo estarán visibles. El temporizador no cambia el color almacenado, sino el intervalo de iluminación.
 
-La temporización presentada corresponde al comportamiento
-del controlador implementado en la Prueba 2.
+**Planos de color:** `plane` toma valores de 0 a 7 y selecciona cuál de los ocho bits de cada canal RGB se transmite. El plano 0 representa el bit menos significativo y el plano 7 el más significativo. El tiempo programado se calcula mediante `T_BASE × 2^plane` (en el prototipo `T_BASE = 8`). Como el contador empieza en 0 y `timer_done` se evalúa en el flanco, durante el plano 0 `hub_oe` permanece en 0 **nueve ciclos**. Así se representan distintos niveles de brillo utilizando líneas digitales de 0 o 1.
 
-### 5.4. Siguientes etapas del método
+Al terminar el tiempo de visualización, la FSM apaga la salida y continúa con la siguiente fila o plano. El **refresco HUB75E** se repite continuamente aunque el videojuego todavía no haya generado un fotograma nuevo. El cambio de fotograma por MMIO es un proceso diferente que queda pendiente de integración.
 
-| Etapa | Estado |
-|---|---|
-| Diagrama de flujo | Por consolidar y contrastar con el RTL |
-| Clasificación control/datapath | Por formalizar |
-| ASMD y transferencias T1–T14 | Por validar con el código |
-| Arquitectura control/datapath | Identificada en el RTL |
-| FSM de diez estados | Reconstruida desde el código |
-| Testbench y simulación | Hay bancos de prueba; faltan resultados documentados |
+### 5.4. Relación con el ASMD
 
-En el **ASMD** se especifica qué registros cambian y bajo qué condiciones. **T1–T14 son transferencias u operaciones del control, no catorce estados**.
+La FSM implementada en `hub75_control.v` contiene **diez estados**. El ASMD describe las decisiones y transferencias entre registros que se ejecutan en esos estados. Las transferencias **T1–T14 no son catorce estados**, sino acciones y alternativas condicionadas de los diez estados.
+
+- [ASMD y explicación de los estados](docs/diagramas/6.ASMD/06.asmd-rtl-hub75.md).
+- [Tabla de transferencias T1–T14](docs/07-tabla-transferencias-hub75.md).
+- [Código de Prueba 2](Prueba_de_funcionamiento/PRUEBA_2/).
+
+La integración MMIO, la gestión de nuevos fotogramas y su verificación por simulación siguen siendo trabajos pendientes.
 
 ## 6. Código y pruebas de referencia
 
