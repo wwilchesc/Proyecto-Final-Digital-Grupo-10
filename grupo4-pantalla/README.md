@@ -19,7 +19,6 @@ La lista proviene de la documentación del equipo de pantalla (grupos 4 y 5). No
 Diseñar y documentar el **controlador de visualización** de una matriz LED RGB de **64 × 64 píxeles** con interfaz **HUB75E**. En la consola final, el procesador ejecutará el juego y escribirá sus **fotogramas** en una memoria de imagen (*framebuffer*). El controlador G4 leerá esos píxeles y generará continuamente las señales de barrido del panel.
 
 Se distinguen dos etapas:
-
 - **Prototipo `PRUEBA_2_video`:** un PC envía imágenes por UART; la FPGA las recibe, las almacena y las muestra. Esta ruta sirve para estudiar y probar el hardware.
 - **Consola final:** los fotogramas vendrán del procesador FemtoRV32 mediante un adaptador **MMIO** pendiente de integración. No se necesita un PC ni una UART dedicada para mostrar el juego; la UART común del SoC puede destinarse a depuración.
 
@@ -92,23 +91,103 @@ La FSM del código posee **10 estados**: `S_READ`, `S_WAIT`, `S_BITS`, `S_CLK1`,
 
 El **refresco del panel** ocurre continuamente; la **actualización de fotogramas del juego** dependerá del procesador. Son procesos distintos.
 
-## 5. Diagramas y método de diseño
 
-Siguiendo la guía UART del profesor, la documentación de G4 se organiza en:
+## 5. Diagramas del controlador de pantalla G4
 
-| Etapa | Contenido | Estado |
-|---|---|---|
-| 1. Caja negra | Controlador frente al SoC y al panel | Propuesta MMIO por integrar |
-| 2. Bloques y señales | Framebuffer, control, datapath e interfaces | Reconstruido desde Prueba 2 |
-| 3. Tiempos | `clk`, RGB, `hub_clk`, `hub_lat`, `addr`, `hub_oe` | Elaborado para el barrido |
-| 4. Flujo | Secuencia de lectura, desplazamiento y visualización | Por consolidar |
-| 5. Clasificación | Señales de control y operaciones del datapath | Por formalizar |
-| 6. ASMD y transferencias | Operaciones y condiciones T1–T14 | Por validar con el RTL |
-| 7. Arquitectura control/datapath | Órdenes y condiciones de estado | Identificada en el RTL |
-| 8. FSM | Diez estados y transiciones | Reconstruida desde el código |
-| 9. Verificación | Testbench, formas de onda y resultados | Pruebas incluidas; resultados por registrar |
+Los siguientes diagramas describen la arquitectura del
+controlador de pantalla HUB75E para la consola, tomando
+como referencia el funcionamiento del código desarrollado
+en la Prueba 2 y la integración prevista con FemtoRV32.
 
-En el **ASMD** se especificará qué registros cambian y bajo qué condiciones. **T1–T14** son transferencias u operaciones del control; **no son catorce estados**.
+### 5.1. Diagrama de caja negra
+
+![Diagrama de caja negra](DiagramaCajaNegra.drawio.png)
+
+**Figura 1. Diagrama de caja negra del controlador G4.**
+
+Representa las entradas y salidas del controlador de
+pantalla. El procesador RISC-V proporcionará los datos
+de los fotogramas mediante una interfaz MMIO, mientras
+que el controlador generará las señales RGB, de selección
+de filas y de control necesarias para el panel HUB75E.
+
+La interfaz MMIO corresponde a la arquitectura propuesta
+para la consola final y está pendiente de integración.
+
+### 5.2. Diagrama de bloques y señales
+
+
+```mermaid
+flowchart LR
+    SOC[SoC RISC-V]
+    PANEL[Panel HUB75E 64x64]
+
+    subgraph G4[Controlador G4]
+        MMIO[Adaptador MMIO<br/>POR IMPLEMENTAR]
+        BANK[Gestor doble buffer<br/>hub75_top.v]
+        FB[Framebuffer RGB888<br/>framebuffer.v]
+        DP[Datapath<br/>hub75_datapath.v]
+        FSM[FSM de 10 estados<br/>hub75_control.v]
+    end
+
+    SOC -->|"d_in, direcciones y control MMIO"| MMIO
+    MMIO -->|"d_out[31:0]"| SOC
+    MMIO -->|"we, waddr[11:0], wdata[23:0]"| FB
+    MMIO -.->|"aviso de fotograma completo: por definir"| BANK
+    BANK -->|"wr_bank, disp_bank"| FB
+    DP -->|"fb_addr_top, fb_addr_bot (12 bits c/u)"| FB
+    FB -->|"pix_top, pix_bot (24 bits c/u)"| DP
+    FSM -->|"ordenes: cargar RGB, contadores y temporizador"| DP
+    DP -->|"col_last, row_last, plane_last, timer_done"| FSM
+    FSM -->|"frame_done"| BANK
+    DP -->|"RGB (6), addr (5)"| PANEL
+    FSM -->|"hub_clk, hub_lat, hub_oe"| PANEL
+
+    classDef pendiente stroke:#b7791f,stroke-width:2px,stroke-dasharray:4 4;
+    class MMIO pendiente;
+```
+
+**Figura 2. Arquitectura interna del controlador G4.**
+
+El sistema se organiza en un framebuffer, un datapath y
+una unidad de control (FSM). El framebuffer almacena los
+píxeles RGB888; el datapath selecciona los datos de color
+y gestiona los contadores de fila, columna y plano; y la
+FSM coordina las operaciones de barrido.
+
+La arquitectura contempla un adaptador MMIO que permitirá
+recibir los fotogramas generados por el procesador.
+
+### 5.3. Diagrama de tiempos
+
+![Diagrama de tiempos](DiagramaTiempos.png)
+
+**Figura 3. Temporización del barrido HUB75E.**
+
+El diagrama representa la secuencia de lectura y
+desplazamiento de datos RGB, el pulso de almacenamiento
+y el periodo de iluminación de una pareja de filas.
+
+La señal `hub_clk` desplaza los datos de las columnas,
+`hub_lat` transfiere los datos cargados, `addr[4:0]`
+selecciona la pareja de filas y `hub_oe` controla su
+iluminación.
+
+La temporización presentada corresponde al comportamiento
+del controlador implementado en la Prueba 2.
+
+### 5.4. Siguientes etapas del método
+
+| Etapa | Estado |
+|---|---|
+| Diagrama de flujo | Por consolidar y contrastar con el RTL |
+| Clasificación control/datapath | Por formalizar |
+| ASMD y transferencias T1–T14 | Por validar con el código |
+| Arquitectura control/datapath | Identificada en el RTL |
+| FSM de diez estados | Reconstruida desde el código |
+| Testbench y simulación | Hay bancos de prueba; faltan resultados documentados |
+
+En el **ASMD** se especifica qué registros cambian y bajo qué condiciones. **T1–T14 son transferencias u operaciones del control, no catorce estados**.
 
 ## 6. Código y pruebas de referencia
 
@@ -144,7 +223,8 @@ El `Makefile` del prototipo incluye `make sim` y `make sim-video`. Los resultado
 - [Plan y trazabilidad](docs/04-plan-y-trazabilidad.md)
 - [Declaración de uso de IA](docs/05-declaracion-uso-ia.md)
 - [Pinout fotografiado](docs/06-pinout-fotografiado.md)
-- [Diagramas](docs/diagramas/README.md)
+- [Diagramas anteriores](docs/diagramas/README.md)
 - [Fotografías y evidencias](docs/fotos/README.md)
 - [Documentación de Tang Nano 9K](https://wiki.sipeed.com/hardware/en/tang/Tang-Nano-9K/Nano-9K.html)
 
+Los diagramas antiguos deben actualizarse o identificarse como propuestas anteriores. Cada integrante debe poder explicar las transferencias, el código y las verificaciones que presente en la entrega.
