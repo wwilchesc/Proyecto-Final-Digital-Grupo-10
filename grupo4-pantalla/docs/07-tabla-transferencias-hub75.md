@@ -10,7 +10,7 @@
 - `hub_clk_next`, `hub_lat_next` y `hub_oe_next` se transfieren a salidas registradas al siguiente flanco; `—` significa **conservar el valor anterior**, no forzar cero.
 - Todas las órdenes del datapath son cero si no figuran en la fila (valores por defecto de `always @(*)`).
 
-## 2. Tabla exhaustiva T1–T14
+## 2. Tabla T1–T14
 
 | T | Estado actual | Condición | Órdenes del datapath (`=1`) | Cambio de salida registrado en el flanco | Estado siguiente |
 |---|---|---|---|---|---|
@@ -82,4 +82,4 @@ En el RTL, `t_limit = T_BASE << plane`. La prueba existente comprueba una duraci
 3. Establecer cómo se escribe la imagen desde CPU: el `framebuffer.v` actual solamente se inicializa desde `image.hex`, no implementa MMIO.
 4. Resolver discrepancias entre RGB111 conceptual y RGB888 del prototipo.
 
-**Nota de atribución:** esta tabla analiza archivos del proyecto y no reivindica autoría del Verilog previo. Elaboración asistida por IA; revisar el contenido técnico antes de incorporarlo al repositorio.
+**Nota de atribución:** esta tabla analiza archivos del proyecto y no reivindica autoría del Verilog previo. Elaboración asistida por IA.
