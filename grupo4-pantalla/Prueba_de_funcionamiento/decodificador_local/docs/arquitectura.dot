@@ -1,0 +1,27 @@
+digraph HUB75_MMIO {
+  graph [rankdir=LR, bgcolor="white", pad="0.2", nodesep="0.45", ranksep="0.55", fontsize=12, fontname="DejaVu Sans"];
+  node [shape=box, style="rounded,filled", fillcolor="#ECF4FF", color="#3478BA", fontname="DejaVu Sans", fontsize=10];
+  edge [fontname="DejaVu Sans", fontsize=9, color="#475569"];
+  cpu [label="FemtoRV32 / Bus SoC\nADDR, DATA, RD, WR",fillcolor="#E2E8F0",color="#64748B"];
+  global [label="Decodificador global G6\nCS_CONTROL: región 0x004C_0000",fillcolor="#FEF3C7",color="#D97706"];
+  local [label="Decodificador LOCAL B.3\naddr[4:0], cs, rd, wr\n0x00 | 0x04 | 0x08", fillcolor="#DBEAFE",color="#2563EB",penwidth=2];
+  ctrl [label="CONTROL (R/W)\nbit 0: DISPLAY_EN"];
+  status [label="STATUS (R)\nbit 0: DISPLAY_EN"];
+  frames [label="FRAMES (R)\ncontador de cuadros"];
+  readmux [label="Mux de lectura\nd_out[31:0] registrado", fillcolor="#D1FAE5",color="#059669"];
+  core [label="Controlador HUB75E\nFSM + datapath (ya existente)",fillcolor="#D1FAE5",color="#059669"];
+  oe [label="OE al panel\nhub_oe_core | !DISPLAY_EN",fillcolor="#D1FAE5",color="#059669"];
+  cpu -> global [label="dirección completa"];
+  global -> local [label="cs=1, offset local"];
+  local -> ctrl [label="wr_control"];
+  local -> status [label="rd_status"];
+  local -> frames [label="rd_frames"];
+  local -> ctrl [label="rd_control",color="#2563EB"];
+  ctrl -> readmux;
+  status -> readmux;
+  frames -> readmux;
+  readmux -> cpu [label="dato tras flanco",color="#059669",constraint=false];
+  ctrl -> oe [label="DISPLAY_EN"];
+  core -> oe [label="hub_oe_core"];
+  core -> frames [label="frame_done (falta exponer)",style=dashed];
+}
