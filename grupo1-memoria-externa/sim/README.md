@@ -24,17 +24,20 @@ El banco `perip_spi_tb.v` usa el periférico **por el bus**, igual que lo haría
 | Lectura 0x03 de 1 y de 3 bytes | Comando + dirección de 24 bits + datos | T6 (CMD → DIR → DAT) |
 | Lectura de 4 bytes | 3 bytes con MANTENER (CS sigue en 0, STATUS = 0x6) y 1 byte más con CONTINUAR | T8m, T1c |
 | CONTINUAR sin datos | NB = 0 y RW = 0: termina sin pulsos de SCK y libera CS | T1n |
+| CONTINUAR dos veces seguidas | 8 bytes en tres partes: MANTENER, luego CONTINUAR + MANTENER (CS sigue en 0) y CONTINUAR final que libera CS | T8m, T1c (2 veces) |
+| CONTINUAR sin datos con MANTENER | T1n con MANTENER deja CS en 0 sin pulsos de SCK, y el siguiente CONTINUAR lee el byte que sigue (la Flash no perdió la posición) | T1n, T8m, T1c |
+| CONTINUAR con CS_n = 1 | Rama "No" del rombo: si CS ya se liberó, CONTINUAR hace la transacción completa (T1) y se lee el JEDEC ID | T1 |
 | Escritura | WREN (0x06) y PAGE PROGRAM (0x02) de un byte, y lectura de comprobación | RW = 1 |
 | BUSY | Una escritura de registro con BUSY = 1 se ignora | we = cs ∧ wr ∧ ¬BUSY |
 | CLK_DIV | Periodo de SCK = 2·(CLK_DIV+1) ciclos: 80 ns con CLK_DIV = 1 y 160 ns con CLK_DIV = 3 a 50 MHz | divisor |
 | Reset en medio | Cancela la transacción y deja CS_n = 1 y STATUS = 0 | R |
 
-Al final, el banco cuenta cuántas veces se ejecutó **cada fila de la tabla de transferencias** (H1, H2, T1 … T12) y falla si alguna no se ejecutó.
+Al final, el banco cuenta cuántas veces se ejecutó **cada fila de la tabla de transferencias** (H1, H2, T1 … T12) y falla si alguna no se ejecutó. Las filas menos usadas, T1c y T1n, se ejecutan 4 y 2 veces.
 
 ## Resultado
 
 ```
-43 comprobaciones, 0 errores
+53 comprobaciones, 0 errores
 PASS: perip_spi (MMIO, JEDEC, lectura, MANTENER/CONTINUAR, escritura, BUSY, DONE retenido, reset)
 ```
 

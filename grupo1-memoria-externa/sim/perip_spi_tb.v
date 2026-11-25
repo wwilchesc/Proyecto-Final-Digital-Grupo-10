@@ -237,6 +237,50 @@ module perip_spi_tb;
         check("T1n termina sin pulsos de SCK", sck_last, 0);
         check("y libera CS_n", spi_cs_n, 1);
 
+        // ---- T1c otra vez: lectura de 8 bytes en tres partes (T8m, T1c, T1c) ----
+        $display("\n== T1c (2): lectura de 8 bytes en 0x000080 con dos CONTINUAR seguidos");
+        bus_write(ADDR, 32'h000080);
+        bus_write(CONTROL, START | CMD(8'h03) | NB(3) | MANTENER);
+        wait_idle(st);
+        bus_read(RDATA, rdata);
+        check("bytes 0x80 a 0x82", rdata,
+              {8'b0, 8'h80 ^ 8'h5A, 8'h81 ^ 8'h5A, 8'h82 ^ 8'h5A});
+        bus_write(CONTROL, START | NB(3) | CONTINUAR | MANTENER);   // T1c y T8m
+        wait_idle(st);
+        check("CONTINUAR + MANTENER deja CS activo", st, 32'h6);
+        bus_read(RDATA, rdata);
+        check("bytes 0x83 a 0x85", rdata,
+              {8'b0, 8'h83 ^ 8'h5A, 8'h84 ^ 8'h5A, 8'h85 ^ 8'h5A});
+        bus_write(CONTROL, START | NB(2) | CONTINUAR);              // T1c y T8
+        wait_idle(st);
+        check("CS_n vuelve a 1 al final", spi_cs_n, 1);
+        bus_read(RDATA, rdata);
+        check("bytes 0x86 y 0x87", rdata, {16'b0, 8'h86 ^ 8'h5A, 8'h87 ^ 8'h5A});
+
+        // ---- T1n otra vez: CONTINUAR sin datos con MANTENER no rompe la lectura ----
+        $display("\n== T1n (2): CONTINUAR sin datos con MANTENER, y la lectura sigue");
+        bus_write(ADDR, 32'h0000A0);
+        bus_write(CONTROL, START | CMD(8'h03) | NB(1) | MANTENER);
+        wait_idle(st);
+        bus_read(RDATA, rdata);
+        check("byte 0xA0", rdata, {24'b0, 8'hA0 ^ 8'h5A});
+        sck_last = 0;
+        bus_write(CONTROL, START | NB(0) | CONTINUAR | MANTENER);   // T1n y T8m
+        wait_idle(st);
+        check("T1n sin pulsos de SCK", sck_last, 0);
+        check("T1n con MANTENER deja CS activo", st, 32'h6);
+        bus_write(CONTROL, START | NB(1) | CONTINUAR);              // T1c
+        wait_idle(st);
+        bus_read(RDATA, rdata);
+        check("el siguiente byte es 0xA1 (la Flash siguio)", rdata, {24'b0, 8'hA1 ^ 8'h5A});
+
+        // ---- CONTINUAR con CS_n = 1: rama No del rombo, va por T1 ----
+        $display("\n== CONTINUAR con CS_n = 1 va por T1 (transaccion completa)");
+        bus_write(CONTROL, START | CMD(8'h9F) | SIN_DIR | NB(3) | CONTINUAR);
+        wait_idle(st);
+        bus_read(RDATA, rdata);
+        check("RDATA = JEDEC ID (se envio el comando)", rdata, 32'h00EF4017);
+
         // ---- Escritura: 0x06 (WREN) y 0x02 (PAGE PROGRAM) de un byte ----
         $display("\n== Escritura: WREN (0x06) y PAGE PROGRAM (0x02) en 0x000005");
         bus_write(CONTROL, START | CMD(8'h06) | SIN_DIR);           // solo comando

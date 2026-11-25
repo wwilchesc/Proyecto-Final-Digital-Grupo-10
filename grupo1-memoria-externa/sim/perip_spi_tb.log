@@ -34,6 +34,22 @@ ok    byte 4 = 0x00000019
 ok    T1n termina sin pulsos de SCK = 0x00000000
 ok    y libera CS_n = 0x00000001
 
+== T1c (2): lectura de 8 bytes en 0x000080 con dos CONTINUAR seguidos
+ok    bytes 0x80 a 0x82 = 0x00dadbd8
+ok    CONTINUAR + MANTENER deja CS activo = 0x00000006
+ok    bytes 0x83 a 0x85 = 0x00d9dedf
+ok    CS_n vuelve a 1 al final = 0x00000001
+ok    bytes 0x86 y 0x87 = 0x0000dcdd
+
+== T1n (2): CONTINUAR sin datos con MANTENER, y la lectura sigue
+ok    byte 0xA0 = 0x000000fa
+ok    T1n sin pulsos de SCK = 0x00000000
+ok    T1n con MANTENER deja CS activo = 0x00000006
+ok    el siguiente byte es 0xA1 (la Flash siguio) = 0x000000fb
+
+== CONTINUAR con CS_n = 1 va por T1 (transaccion completa)
+ok    RDATA = JEDEC ID (se envio el comando) = 0x00ef4017
+
 == Escritura: WREN (0x06) y PAGE PROGRAM (0x02) en 0x000005
 ok    lectura de comprobacion = 0xC3 = 0x000000c3
 
@@ -49,24 +65,24 @@ ok    CS_n en 1 tras reset = 0x00000001
 ok    STATUS = 0 tras reset = 0x00000000
 
 == Cobertura de la tabla de transferencias (veces que se ejecuto cada fila)
-      H1 : 76
-      T1 : 11
-     T1c : 1
-     T1n : 1
-      H2 : 961
-      T2 : 11
-      T3 : 27
-      T4 : 388
-      T5 : 362
-      T6 : 15
-      T7 : 11
-      T8 : 10
-     T8m : 2
-      T9 : 10
-     T10 : 10
-     T11 : 10
-    T11d : 10
-     T12 : 12
+      H1 : 116
+      T1 : 14
+     T1c : 4
+     T1n : 2
+      H2 : 1320
+      T2 : 14
+      T3 : 38
+      T4 : 564
+      T5 : 527
+      T6 : 20
+      T7 : 17
+      T8 : 13
+     T8m : 6
+      T9 : 13
+     T10 : 13
+     T11 : 13
+    T11d : 13
+     T12 : 19
 
-43 comprobaciones, 0 errores
+53 comprobaciones, 0 errores
 PASS: perip_spi (MMIO, JEDEC, lectura, MANTENER/CONTINUAR, escritura, BUSY, DONE retenido, reset)
