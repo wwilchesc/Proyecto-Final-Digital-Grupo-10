@@ -6,6 +6,8 @@
 //   0x06  WRITE ENABLE
 //   0x02  PAGE PROGRAM      -> graba bytes (solo si se dio 0x06 antes)
 //   0x05  READ STATUS 1     -> bit1 = WEL
+//   0x20  SECTOR ERASE      -> deja la memoria del modelo en 0xFF (solo si
+//                              se dio 0x06 antes)
 // Muestrea MOSI en la subida de SCK y cambia MISO en la bajada (modo 0).
 
 `timescale 1ns/1ps
@@ -45,7 +47,7 @@ module flash_model #(
 
     // Fin de una transaccion
     always @(posedge cs_n) begin
-        if (cmd == 8'h02) wel = 1'b0;   // el page program consume WEL
+        if (cmd == 8'h02 || cmd == 8'h20) wel = 1'b0;   // grabar y borrar consumen WEL
         miso = 1'b0;
     end
 
@@ -76,9 +78,11 @@ module flash_model #(
             if (cmd == 8'h06) wel = 1'b1;
             if (cmd == 8'h9F || cmd == 8'h05) data_phase = 1'b1;
         end else if (bit_cnt > 8 && bit_cnt <= 32 &&
-                     (cmd == 8'h03 || cmd == 8'h02)) begin
+                     (cmd == 8'h03 || cmd == 8'h02 || cmd == 8'h20)) begin
             addr = {addr[22:0], mosi};
             if (bit_cnt == 32) data_phase = 1'b1;
+            if (bit_cnt == 32 && cmd == 8'h20 && wel)
+                for (i = 0; i < MEM_BYTES; i = i + 1) mem[i] = 8'hFF;
         end else if (bit_cnt > 32 && cmd == 8'h02 && ((bit_cnt - 32) % 8 == 0)) begin
             if (wel) mem[addr % MEM_BYTES] = in_byte;
             addr = addr + 1;
