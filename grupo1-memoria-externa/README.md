@@ -21,7 +21,7 @@ _(Describir el periférico y su función dentro de la consola.)_
 - [x] Estudiar los protocolos SPI e I2C y las hojas de datos de las memorias
 - [x] Definir los registros de cada controlador
 - [x] Diagramas de flujo, de bloques y de tiempos
-- [ ] Diseñar el controlador SPI (Flash de la tarjeta)
+- [x] Diseñar el controlador SPI (Flash de la tarjeta)
 - [x] Diseñar el controlador I2C (EEPROM 24LC256)
 - [ ] Definir el formato de la tabla de récords
 - [x] Escribir los testbenches
@@ -149,4 +149,6 @@ En esta tabla se encuentra lo que pide la guía `uart-riscv.pdf` para conectar l
 
 ## Pendientes y problemas
 
--
+- Probar en la Tang Primer 25K: leer el JEDEC ID de la Flash y escribir y leer la EEPROM, y grabar el video como evidencia.
+- Pasar a la Tang Nano 9K del SoC: cambiar el reloj (27 MHz, pin 52), los pines (Flash en 59 a 62) y `CLK_DIV` del I2C a 67, como explica [`fpga/README.md`](fpga/README.md).
+- Definir con el grupo 5 el formato de la tabla de récords.
