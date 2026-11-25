@@ -1,0 +1,33 @@
+VCD info: dumpfile prueba_grupo1_tb.vcd opened for output.
+
+=== Grupo 1 - memoria externa | prueba en placa | corrida #00 ===
+[SPI] JEDEC ID (0x9F)                  : EF4017   OK   
+[SPI] borrar sector 0x7FF000 (0x20)    : FFFFFF   OK   
+[SPI] grabar 5A en 0x7FF000 y leer     : 5AFFFF   OK   
+[SPI] 4.o byte con MANTENER+CONTINUAR  : FF       OK   
+[I2C] la EEPROM 0x50 responde ACK      : --       OK   
+[I2C] grabar 5A en 0x0010 y leer       : 5A       OK   
+RESULTADO   SPI: OK      I2C: OK   
+== Corrida 0
+ok    LEDs {I2C, SPI} = 0x00000003
+ok    Flash: byte grabado (0x5A) = 0x0000005a
+ok    EEPROM: byte en 0x0010 (0x5A) = 0x0000005a
+ok    JEDEC ID leido = 0x00ef4017
+
+
+=== Grupo 1 - memoria externa | prueba en placa | corrida #01 ===
+[SPI] JEDEC ID (0x9F)                  : EF4017   OK   
+[SPI] borrar sector 0x7FF000 (0x20)    : FFFFFF   OK   
+[SPI] grabar 5B en 0x7FF000 y leer     : 5BFFFF   OK   
+[SPI] 4.o byte con MANTENER+CONTINUAR  : FF       OK   
+[I2C] la EEPROM 0x50 responde ACK      : --       OK   
+[I2C] grabar 5B en 0x0010 y leer       : 5B       OK   
+RESULTADO   SPI: OK      I2C: OK   
+== Corrida 1
+ok    LEDs {I2C, SPI} = 0x00000003
+ok    Flash: byte grabado (0x5B) = 0x0000005b
+ok    EEPROM: byte en 0x0010 (0x5B) = 0x0000005b
+ok    FALLA en el reporte = 0x00000000
+
+8 comprobaciones, 0 errores
+PASS: prueba_grupo1 (SPI e I2C por memoria_externa, reporte por UART y LEDs)

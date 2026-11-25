@@ -139,3 +139,18 @@ PASS: memoria_externa (decodificador de region, mux de lectura, SPI e I2C por el
 ```
 
 La salida completa está en `memoria_externa_tb.log`.
+
+---
+
+# Simulación de la prueba en placa (`fpga/prueba_grupo1.v`)
+
+`make sim-prueba` desde esta carpeta. El banco `prueba_grupo1_tb.v` conecta la prueba en placa con los modelos de la Flash y de la EEPROM, acorta las esperas y sube la velocidad de la UART para que la simulación termine pronto. Decodifica la UART e imprime el reporte tal como saldría en la terminal.
+
+Hace dos corridas: la que arranca sola después del reset (byte de prueba 0x5A) y otra con el botón de repetir (0x5B). En cada una comprueba los LEDs, el byte que quedó grabado en la Flash y en la EEPROM, y que el reporte no diga FALLA. Para esta prueba, `flash_model.v` también entiende el borrado de sector (0x20).
+
+```
+8 comprobaciones, 0 errores
+PASS: prueba_grupo1 (SPI e I2C por memoria_externa, reporte por UART y LEDs)
+```
+
+La salida completa, con los dos reportes, está en `prueba_grupo1_tb.log`. Si se quita la EEPROM del banco, las dos líneas del I2C dicen FALLA y el LED del I2C queda apagado, mientras el SPI sigue en OK.
