@@ -71,7 +71,23 @@ La 24LC256 va en una protoboard: pin 6 (SCL) a K4, pin 5 (SDA) a J4, pin 8 a 3,3
 
 ### Pasos
 
-1. Crear un proyecto en Gowin IDE con el dispositivo **GW5A-LV25MG121NC1/I0** y agregar `fpga/prueba_grupo1.v`, los 7 archivos de `rtl/` (`memoria_externa.v`, `perip_spi.v`, `spi_control.v`, `spi_datapath.v`, `perip_i2c.v`, `i2c_control.v`, `i2c_datapath.v`) y `fpga/prueba_grupo1_25k.cst`. El módulo superior es `prueba_grupo1`.
+**Forma rápida (consola Tcl de Gowin).** En Gowin FPGA Designer, pestaña **Console** (abajo), pegar estas líneas una por una cambiando `D` por la carpeta donde está `grupo1-memoria-externa`:
+
+```
+create_project -name prueba_grupo1 -dir C:/Users/USUARIO/Desktop/prueba -pn GW5A-LV25MG121NC1/I0 -device_version A
+set D C:/ruta/a/grupo1-memoria-externa
+foreach f {fpga/prueba_grupo1.v rtl/memoria_externa.v rtl/perip_spi.v rtl/spi_control.v rtl/spi_datapath.v rtl/perip_i2c.v rtl/i2c_control.v rtl/i2c_datapath.v} {add_file -type verilog $D/$f}
+add_file -type cst $D/fpga/prueba_grupo1_25k.cst
+add_file -type sdc $D/fpga/prueba_grupo1.sdc
+set_option -top_module prueba_grupo1 -verilog_std sysv2017 -use_mspi_as_gpio 1 -use_cpu_as_gpio 1 -use_ready_as_gpio 1 -use_done_as_gpio 1 -use_i2c_as_gpio 1
+run all
+```
+
+Con Gowin V1.9.11.03 Education esto genera `impl/pnr/prueba_grupo1.fs` sin errores: usa 1683 LUT (8 %) y 472 registros (3 %), y la frecuencia máxima es 96,5 MHz para un reloj de 50 MHz (`prueba_grupo1.sdc`), así que cumple tiempos. Todos los pines quedan donde dice el `.cst`.
+
+**Forma con ventanas**, si se prefiere:
+
+1. Crear un proyecto en Gowin IDE con el dispositivo **GW5A-LV25MG121NC1/I0** y agregar `fpga/prueba_grupo1.v`, los 7 archivos de `rtl/` (`memoria_externa.v`, `perip_spi.v`, `spi_control.v`, `spi_datapath.v`, `perip_i2c.v`, `i2c_control.v`, `i2c_datapath.v`), `fpga/prueba_grupo1_25k.cst` y `fpga/prueba_grupo1.sdc`. El módulo superior es `prueba_grupo1`.
 2. En **Project → Configuration → Place & Route → Dual-Purpose Pin**, marcar *Use MSPI*, *Use CPU*, *Use READY*, *Use DONE* y *Use I2C as regular IO*.
 3. Sintetizar, hacer place & route y programar **en SRAM** (no en la Flash, para no tocar la Flash mientras se prueba).
 4. Abrir una terminal serie (PuTTY, la de Arduino o la de VS Code) en el puerto COM de la tarjeta a **115200 8N1**.
