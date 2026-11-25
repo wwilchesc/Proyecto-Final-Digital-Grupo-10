@@ -61,7 +61,7 @@ En esta tabla se encuentra lo que pide la guía `uart-riscv.pdf` para conectar l
 | 4 | Diagrama del adaptador de bus (bus ↔ registros, mux de lectura a `d_out`) | Diagrama del adaptador de bus del FemtoRV32 ↔ SPI e I2C ([Ver](docs/diagramas/9-integracion/Grupo1_Adaptador_de_Bus.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F9-integracion%2FGrupo1_Adaptador_de_Bus.drawio.png))<br>Código: [`rtl/memoria_externa.v`](rtl/memoria_externa.v) |
 | 5 | Semántica START / BUSY / DONE (DONE retenido hasta que la CPU lo lee) | SPI: BUSY = busy_core ∨ start y DONE retenido en [`rtl/perip_spi.v`](rtl/perip_spi.v)<br>I2C: BUSY = busy_core ∨ go y DONE retenido en [`rtl/perip_i2c.v`](rtl/perip_i2c.v)<br>Diagrama de START / BUSY / DONE de los dos ([Ver](docs/diagramas/9-integracion/Grupo1_Start_Busy_Done.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F9-integracion%2FGrupo1_Start_Busy_Done.drawio.png)) |
 | 6 | Diagrama de tiempos del handshake bus ↔ core | SPI: lectura del JEDEC ID ([Ver](docs/diagramas/9-integracion/Grupo1_Tiempos_Handshake.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F9-integracion%2FGrupo1_Tiempos_Handshake.drawio.png))<br>simulación ([inicio](sim/ondas_handshake_inicio.png) · [fin](sim/ondas_handshake_fin.png)) |
-| 7 | Verificación de registros y de SoC (testbench) | SPI: registros por el bus ([`sim/perip_spi_tb.v`](sim/perip_spi_tb.v))<br>I2C: registros por el bus ([`sim/perip_i2c_tb.v`](sim/perip_i2c_tb.v)) · SoC pendiente |
+| 7 | Verificación de registros y de SoC (testbench) | SPI: registros por el bus ([`sim/perip_spi_tb.v`](sim/perip_spi_tb.v))<br>I2C: registros por el bus ([`sim/perip_i2c_tb.v`](sim/perip_i2c_tb.v)) · SoC pendiente<br>Bloque completo con las señales del bus del FemtoRV32 ([`sim/memoria_externa_tb.v`](sim/memoria_externa_tb.v) · [log](sim/memoria_externa_tb.log)): 10 comprobaciones, 0 errores |
 | 8 | Pines y restricciones (`.cst`) | Tabla de pines ([Ver](tareas-y-actividades/README.md#3-mapa-de-hardware-y-conteo-de-pines)) · `.cst` pendiente |
 
 ## Hojas de datos
@@ -96,6 +96,8 @@ En esta tabla se encuentra lo que pide la guía `uart-riscv.pdf` para conectar l
 ## Simulación
 
 **SPI**: `make sim` en `sim/` (Icarus Verilog). El banco `perip_spi_tb.v` usa el periférico por el bus con un modelo de la Flash y comprueba JEDEC ID, lecturas de 1, 3 y 4 bytes (MANTENER + CONTINUAR), T1n, escritura, BUSY, DONE retenido, CLK_DIV y reset; además verifica que se ejecute cada fila de la tabla de transferencias. Resultado: **43 comprobaciones, 0 errores**. Detalle en [`sim/README.md`](sim/README.md).
+
+**Bloque completo**: `make sim-mem` en `sim/`. El banco `memoria_externa_tb.v` usa `memoria_externa.v` con las señales del bus del FemtoRV32 y la Flash y la EEPROM conectadas a la vez, y comprueba el decodificador de región, el mux de lectura, el JEDEC ID, una escritura y lectura de la EEPROM y los dos periféricos trabajando al mismo tiempo. Resultado: 10 comprobaciones, 0 errores.
 
 **I2C**: `make sim-i2c` en `sim/`. El banco `perip_i2c_tb.v` usa el periférico por el bus con un modelo de la EEPROM 24LC256 y pull-ups en SCL y SDA, y comprueba START/STOP, escritura de un byte, lectura aleatoria con START repetido, lectura secuencial con ACK y NACK, dirección sin respuesta, prioridad de órdenes, estiramiento de reloj, BUSY y reset; además cuenta que se ejecuten las 14 filas de la tabla de transferencias. Resultado: 36 comprobaciones, 0 errores.
 
@@ -140,6 +142,7 @@ En esta tabla se encuentra lo que pide la guía `uart-riscv.pdf` para conectar l
 | 25/11/2026 | Diagrama del decodificador local (criterio B, ítem 3): `addr[4:0]` elige el registro del SPI (CONTROL, ADDR, WDATA, RDATA, STATUS, CLK_DIV) o del I2C (CONTROL, TX_DATA, RX_DATA, STATUS, CLK_DIV), con escritura solo si BUSY = 0 |
 | 25/11/2026 | Adaptador de bus (criterio B, ítem 4): diagrama y `rtl/memoria_externa.v`, el bloque que recibe el grupo 6. Decodifica la región (0x0042 → SPI, 0x0046 → I2C), saca `sel` para el mux global del SoC, arma `addr`, `d_in`, `wr = OR(mem_wmask)` y `rd = mem_rstrb`, y elige la respuesta con `sel_q` registrado porque la lectura llega un ciclo después |
 | 25/11/2026 | Diagrama de la semántica START / BUSY / DONE del SPI y del I2C (criterio B, ítem 5): START es un pulso de un ciclo, BUSY = busy_core ∨ start para que la CPU no vea BUSY = 0 justo después de dar la orden, y DONE se retiene hasta que la CPU lee STATUS |
+| 25/11/2026 | Testbench del bloque completo (`sim/memoria_externa_tb.v`): `memoria_externa.v` con las señales del bus del FemtoRV32, la Flash y la EEPROM conectadas a la vez; 10 comprobaciones sin errores. El Makefile agrega `make sim-mem` y `sim/README.md` la sección del bloque |
 
 ## Pendientes y problemas
 

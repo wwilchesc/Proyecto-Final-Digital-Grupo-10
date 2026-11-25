@@ -99,3 +99,40 @@ PASS: perip_i2c (MMIO, START/STOP, escritura y lectura de la EEPROM, ACK/NACK, p
 La salida completa está en `perip_i2c_tb.log`. Las formas de onda quedan en `perip_i2c_tb.vcd` (no se sube al repositorio; se genera al correr la simulación).
 
 **Nota sobre la frecuencia**: con CLK_DIV = 124 a 50 MHz, SCL queda en ≈ 97,8 kHz y no en 100 kHz exactos, porque cada estado de acción gasta un ciclo y el sincronizador de SCL agrega unos más (511 ciclos por bit en vez de 500). Sigue dentro del modo estándar (≤ 100 kHz).
+
+---
+
+# Simulación del bloque completo (`memoria_externa`)
+
+## Cómo correrla
+
+`make sim-mem` desde esta carpeta, o desde `grupo1-memoria-externa`:
+
+```
+iverilog -g2012 -o mem.vvp sim/memoria_externa_tb.v sim/flash_model.v sim/eeprom_model.v \
+         rtl/memoria_externa.v rtl/perip_spi.v rtl/spi_control.v rtl/spi_datapath.v \
+         rtl/perip_i2c.v rtl/i2c_control.v rtl/i2c_datapath.v
+vvp mem.vvp
+```
+
+## Qué se prueba
+
+El banco `memoria_externa_tb.v` maneja el bloque con **las mismas señales del bus del FemtoRV32 Quark** (`mem_addr`, `mem_wdata`, `mem_wmask`, `mem_rstrb`, `mem_rdata`), con la Flash y la EEPROM conectadas a la vez:
+
+| Caso | Qué comprueba | Diagrama |
+| --- | --- | --- |
+| Decodificador de región | `sel` = 1 con 0x0042_xxxx y 0x0046_xxxx, y 0 con otra región | Decodificador local |
+| Mux de lectura | CLK_DIV del SPI (1) y del I2C (124) por la misma `mem_rdata`; otra región lee 0 | Adaptador de bus |
+| Escritura en otra región | No llega a ningún periférico | Adaptador de bus |
+| Flash por el bus | JEDEC ID = 0xEF4017 | START / BUSY / DONE |
+| EEPROM por el bus | Escribir 0xA5 en 0x0003 y leerlo | START / BUSY / DONE |
+| Los dos a la vez | El SPI lee mientras el I2C termina un byte, sin mezclar respuestas | Adaptador de bus |
+
+## Resultado
+
+```
+10 comprobaciones, 0 errores
+PASS: memoria_externa (decodificador de region, mux de lectura, SPI e I2C por el bus del Quark)
+```
+
+La salida completa está en `memoria_externa_tb.log`.

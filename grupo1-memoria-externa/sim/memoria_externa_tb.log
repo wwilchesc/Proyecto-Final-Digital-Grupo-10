@@ -1,0 +1,22 @@
+VCD info: dumpfile memoria_externa_tb.vcd opened for output.
+
+== Decodificador de region y mux de lectura
+ok    sel con 0x0042_xxxx = 0x00000001
+ok    sel con 0x0046_xxxx = 0x00000001
+ok    sel con otra region (0x0041) = 0x00000000
+ok    CLK_DIV del SPI = 0x00000001
+ok    CLK_DIV del I2C = 0x0000007c
+ok    otra region lee 0 = 0x00000000
+ok    escritura en otra region no activa el SPI = 0x00000001
+
+== Flash por el bus: JEDEC ID
+ok    RDATA del SPI = 0x00ef4017
+
+== EEPROM por el bus: escribir 0xA5 en 0x0003 y leerlo
+ok    RX_DATA del I2C = 0x000000a5
+
+== Los dos a la vez: el SPI trabaja mientras el I2C termina un byte
+ok    RDATA del SPI (mem[0x10]) = 0x0000004a
+
+10 comprobaciones, 0 errores
+PASS: memoria_externa (decodificador de region, mux de lectura, SPI e I2C por el bus del Quark)

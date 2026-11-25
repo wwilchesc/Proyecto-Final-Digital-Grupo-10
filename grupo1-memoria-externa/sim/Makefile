@@ -1,5 +1,5 @@
 # Simulacion de los perifericos del Grupo 1.
-# Uso: make sim | make sim-i2c | make todo | make ondas | make ondas-i2c | make clean
+# Uso: make sim | make sim-i2c | make sim-mem | make todo | make ondas | make ondas-i2c | make clean
 RTL_SPI = ../rtl/perip_spi.v ../rtl/spi_control.v ../rtl/spi_datapath.v
 TB_SPI  = perip_spi_tb.v flash_model.v
 
@@ -26,10 +26,20 @@ perip_i2c_tb.vvp: $(TB_I2C) $(RTL_I2C)
 ondas-i2c: sim-i2c
 	gtkwave perip_i2c_tb.vcd
 
-# ---- Los dos ----
-todo: sim sim-i2c
+# ---- Bloque completo (SPI + I2C por el bus del Quark) ----
+RTL_MEM = ../rtl/memoria_externa.v $(RTL_SPI) $(RTL_I2C)
+TB_MEM  = memoria_externa_tb.v flash_model.v eeprom_model.v
+
+sim-mem: memoria_externa_tb.vvp
+	vvp memoria_externa_tb.vvp | tee memoria_externa_tb.log
+
+memoria_externa_tb.vvp: $(TB_MEM) $(RTL_MEM)
+	iverilog -g2012 -Wall -o $@ $(TB_MEM) $(RTL_MEM)
+
+# ---- Todos ----
+todo: sim sim-i2c sim-mem
 
 clean:
-	rm -f perip_spi_tb.vvp perip_spi_tb.vcd perip_i2c_tb.vvp perip_i2c_tb.vcd
+	rm -f perip_spi_tb.vvp perip_spi_tb.vcd perip_i2c_tb.vvp perip_i2c_tb.vcd memoria_externa_tb.vvp memoria_externa_tb.vcd
 
-.PHONY: sim sim-i2c todo ondas ondas-i2c clean
+.PHONY: sim sim-i2c sim-mem todo ondas ondas-i2c clean
