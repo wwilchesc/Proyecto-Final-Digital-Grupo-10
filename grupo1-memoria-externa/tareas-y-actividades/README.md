@@ -45,6 +45,8 @@ Resumen de las señales:
 Alimentación de la EEPROM: 3,3 V y GND de la tarjeta, con un condensador de 100 nF entre VCC y GND junto al chip. 24LC256: A0, A1, A2 y WP (1, 2, 3, 7) a GND, y una resistencia de 4,7 kΩ de SDA y de SCL a 3,3 V.
 
 > Los pines de la FPGA son la asignación propuesta del proyecto; se confirman con el grupo 6 contra el esquemático del Dock antes de cablear. Los de la Flash, además, requieren usar sus pines de configuración (MSPI) como E/S de usuario.
+>
+> Estos pines son de la **Tang Primer 25K**. Los de la Flash coinciden con la definición de la tarjeta en LiteX y ya están en [`fpga/tang_primer_25k.cst`](../fpga/tang_primer_25k.cst). Para la Tang Nano 9K cambian el reloj y los pines; ver [`fpga/README.md`](../fpga/README.md).
 
 ## 4. Registros de control (MMIO)
 

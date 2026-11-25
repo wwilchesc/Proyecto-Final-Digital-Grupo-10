@@ -1,0 +1,38 @@
+// tang_primer_25k.cst
+// Restricciones de pines del Grupo 1 (memoria externa) para la Tang Primer 25K
+// (GW5A-LV25MG121), con los nombres de puertos de rtl/memoria_externa.v.
+//
+// - Flash SPI: es la NOR Flash de 64 Mbit de la tarjeta, conectada a los pines
+//   MSPI de la FPGA. En Gowin IDE hay que marcar
+//   Project > Configuration > Place & Route > Dual-Purpose Pin >
+//   "Use MSPI as regular IO".
+// - EEPROM I2C 24LC256: cableada por fuera, con pull-up de 4,7 kOhm a 3,3 V
+//   en SCL y en SDA.
+// - Reloj de la tarjeta: 50 MHz. Los valores de reset de CLK_DIV estan
+//   calculados para esta frecuencia (SCK = 12,5 MHz, SCL ~ 100 kHz).
+//
+// Para la Tang Nano 9K ver fpga/README.md (cambian el reloj y los pines).
+
+// ---- Reloj ----
+IO_LOC  "clk" E2;
+IO_PORT "clk" IO_TYPE=LVCMOS33 PULL_MODE=NONE;
+
+// ---- Flash SPI de la tarjeta ----
+IO_LOC  "spi_cs_n" E6;
+IO_PORT "spi_cs_n" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC  "spi_sck" E7;
+IO_PORT "spi_sck" IO_TYPE=LVCMOS33 PULL_MODE=NONE;
+IO_LOC  "spi_mosi" D6;
+IO_PORT "spi_mosi" IO_TYPE=LVCMOS33 PULL_MODE=NONE;
+IO_LOC  "spi_miso" E5;
+IO_PORT "spi_miso" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC  "spi_wp_n" D5;
+IO_PORT "spi_wp_n" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC  "spi_hold_n" E4;
+IO_PORT "spi_hold_n" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+
+// ---- EEPROM I2C (drenador abierto) ----
+IO_LOC  "i2c_scl" K4;
+IO_PORT "i2c_scl" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC  "i2c_sda" J4;
+IO_PORT "i2c_sda" IO_TYPE=LVCMOS33 PULL_MODE=UP;
