@@ -2,5 +2,5 @@ Diagramas de Flujo y Diagrama de Caja Negra se encuentra en el [Draw.io](https:/
 
 
 ![Diagrama de Tiempo](/grupo2-joystick/docs/Diagrama_de_tiempo.png)
-![Diagrama de Bloques](/grupo2-joystick/docs/Diagrama_de_Bloque.jpg)
+![Diagrama de Bloques](/grupo2-joystick/docs/Diagrama_de_bloque.png)
 ![Diagramas](/grupo2-joystick/docs/Diagramas_Joystick.png)
