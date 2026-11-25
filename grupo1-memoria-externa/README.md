@@ -144,6 +144,7 @@ En esta tabla se encuentra lo que pide la guía `uart-riscv.pdf` para conectar l
 | 25/11/2026 | Diagrama de la semántica START / BUSY / DONE del SPI y del I2C (criterio B, ítem 5): START es un pulso de un ciclo, BUSY = busy_core ∨ start para que la CPU no vea BUSY = 0 justo después de dar la orden, y DONE se retiene hasta que la CPU lee STATUS |
 | 25/11/2026 | Testbench del bloque completo (`sim/memoria_externa_tb.v`): `memoria_externa.v` con las señales del bus del FemtoRV32, la Flash y la EEPROM conectadas a la vez; 10 comprobaciones sin errores. El Makefile agrega `make sim-mem` y `sim/README.md` la sección del bloque |
 | 25/11/2026 | Testbench del SPI: casos nuevos para T1c y T1n, que antes tenían un solo caso cada una. Lectura de 8 bytes con dos CONTINUAR seguidos (el del medio con MANTENER), T1n con MANTENER seguido de un CONTINUAR que lee el byte siguiente, y CONTINUAR con CS ya liberado, que va por T1. Ahora T1c se ejecuta 4 veces y T1n 2; 53 comprobaciones sin errores |
+| 25/11/2026 | Firmware del SPI compilado para RV32I (`clang --target=riscv32 -march=rv32i -mabi=ilp32 -ffreestanding -O2 -Wall -Wextra -c spi_flash_example.c`): compila sin advertencias; falta enlazarlo con el arranque y el mapa de memoria del SoC del grupo 6 |
 
 ## Pendientes y problemas
 
