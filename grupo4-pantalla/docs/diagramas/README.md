@@ -1,7 +1,7 @@
 # Diagramas de arquitectura y barrido — Fase H2
 
 **Estado:** diseño conceptual, no implementado ni simulado. **Plataforma:** Tang Nano 9K (27 MHz). **Panel:** 64×64, rotulado HUB75E; contacto 12 serigrafiado `NC` (no identificado eléctricamente).  
-**Fecha:** 2026-11-07. **Responsables reales:** por registrar en commits y evidencias; la autoría de la propuesta documental no equivale a la verificación del hardware.
+**Fecha:** 2026-11-24. **Responsables reales:** por registrar en commits y evidencias; la autoría de la propuesta documental no equivale a la verificación del hardware.
 
 ## Archivos editables y vistas previas
 
@@ -14,6 +14,7 @@ Abrir [hub75e-diseno-preliminar.drawio](hub75e-diseno-preliminar.drawio) en http
 | 03 | Máquina de estados | [PNG](03-fsm.png) · [SVG](03-fsm.svg) | [03-fsm.md](03-fsm.md) |
 | 04 | Temporización conceptual | [PNG](04-temporizacion.png) · [SVG](04-temporizacion.svg) | [04-temporizacion.md](04-temporizacion.md) |
 | 05 | Formato de framebuffer | [PNG](05-framebuffer.png) · [SVG](05-framebuffer.svg) | [05-framebuffer.md](05-framebuffer.md) |
+| 06 | ASMD | [PNG](asmd-rtl-hub75.png) · [SVG](asmd-rtl-hub75.svg) · [DRAWIO](asmd-rtl-hub75.drawio) | [06.asmd-rtl-hub75.md](06.asmd-rtl.hub75.md) |
 
 ## Decisiones para esta versión
 

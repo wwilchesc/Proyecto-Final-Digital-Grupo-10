@@ -1,0 +1,250 @@
+Info: Using uarch 'gowin' for device 'GW1NR-LV9QN88PC6/I5'
+
+Info: Cell O_psram_ck[0] not found
+Info: Cell O_psram_ck[1] not found
+Info: Cell O_psram_ck_n[0] not found
+Info: Cell O_psram_ck_n[1] not found
+Info: Cell O_psram_cs_n[0] not found
+Info: Cell O_psram_cs_n[1] not found
+Info: Cell O_psram_reset_n[0] not found
+Info: Cell O_psram_reset_n[1] not found
+Info: Cell IO_psram_dq[0] not found
+Info: Cell IO_psram_dq[1] not found
+Info: Cell IO_psram_dq[2] not found
+Info: Cell IO_psram_dq[3] not found
+Info: Cell IO_psram_dq[4] not found
+Info: Cell IO_psram_dq[5] not found
+Info: Cell IO_psram_dq[6] not found
+Info: Cell IO_psram_dq[7] not found
+Info: Cell IO_psram_dq[8] not found
+Info: Cell IO_psram_dq[9] not found
+Info: Cell IO_psram_dq[10] not found
+Info: Cell IO_psram_dq[11] not found
+Info: Cell IO_psram_dq[12] not found
+Info: Cell IO_psram_dq[13] not found
+Info: Cell IO_psram_dq[14] not found
+Info: Cell IO_psram_dq[15] not found
+Info: Cell IO_psram_rwds[0] not found
+Info: Cell IO_psram_rwds[1] not found
+Info: Reading constraints...
+Info: Create constant nets...
+Info: Modify LUTs...
+Info: Pack IOBs...
+Info: Pack I3C IOs...
+Info: Pack MIPI IOs...
+Info: Pack diff IOBs...
+Info: Pack FFs into IO cells...
+Info: Pack IODELAY...
+Info: Pack Input Edge Monitors...
+Info: Pack IO logic...
+Info: Pack DESER16 logic...
+Info: Pack GSR...
+Info: Pack HCLK cells...
+Info: Pack DLLDLYs...
+Info: Pack wide LUTs...
+Info: Packed MUX2_LUT8:1, MUX2_LU7:2, MUX2_LUT6:12, MUX2_LUT5:22
+Info: Pack ALUs...
+Info: Pack SSRAMs...
+Info: Constrained 54 LUTFF pairs.
+Info: Pack PLL...
+Info: Pack ADC...
+Info: Pack BSRAMs...
+Info: Pack DSP...
+Info: Pack INV...
+Info: Pack buffered nets...
+Info: Pack EMCU and UserFlash cells...
+Info: Pack UserFlash cells...
+Info: Pack DQCE cells...
+Info: Pack DCS cells...
+Info: Checksum: 0x53948530
+
+Info: Device utilisation:
+Info: 	                 VCC:       1/      1   100%
+Info: 	                 IOB:      17/    276     6%
+Info: 	                LUT4:     389/   8640     4%
+Info: 	              OSER16:       0/     80     0%
+Info: 	              IDES16:       0/     80     0%
+Info: 	            IOLOGICI:       0/    276     0%
+Info: 	            IOLOGICO:       0/    276     0%
+Info: 	           MUX2_LUT5:      62/   4320     1%
+Info: 	           MUX2_LUT6:      20/   2160     0%
+Info: 	           MUX2_LUT7:       4/   1080     0%
+Info: 	           MUX2_LUT8:       1/   1080     0%
+Info: 	                 ALU:     100/   6480     1%
+Info: 	                 GND:       1/      1   100%
+Info: 	                 DFF:     225/   6480     3%
+Info: 	           RAM16SDP4:       0/    270     0%
+Info: 	               BSRAM:      12/     26    46%
+Info: 	              ALU54D:       0/     10     0%
+Info: 	     MULTADDALU18X18:       0/     10     0%
+Info: 	        MULTALU18X18:       0/     10     0%
+Info: 	        MULTALU36X18:       0/     10     0%
+Info: 	           MULT36X36:       0/      5     0%
+Info: 	           MULT18X18:       0/     20     0%
+Info: 	             MULT9X9:       0/     40     0%
+Info: 	              PADD18:       0/     20     0%
+Info: 	               PADD9:       0/     40     0%
+Info: 	                 GSR:       1/      1   100%
+Info: 	                 OSC:       0/      1     0%
+Info: 	                rPLL:       0/      2     0%
+Info: 	           FLASH608K:       0/      1     0%
+Info: 	                BUFG:       0/     22     0%
+Info: 	                DQCE:       0/     24     0%
+Info: 	                 DCS:       0/      8     0%
+Info: 	               DHCEN:       0/     24     0%
+Info: 	              CLKDIV:       0/      8     0%
+Info: 	             CLKDIV2:       0/     16     0%
+Info: 	           MIPI_IBUF:       0/     22     0%
+Info: 	           MIPI_OBUF:       0/     20     0%
+
+Info: Running custom HCLK placer...
+Info: Placed 0 cells based on constraints.
+Info: Creating initial analytic placement for 394 cells, random placement wirelen = 16823.
+Info:     at initial placer iter 0, wirelen = 811
+Info:     at initial placer iter 1, wirelen = 654
+Info:     at initial placer iter 2, wirelen = 624
+Info:     at initial placer iter 3, wirelen = 617
+Info: Running main analytical placer, max placement attempts per cell = 86736.
+Info:     at iteration #1, type ALL: wirelen solved = 586, spread = 4317, legal = 5614; time = 0.07s
+Info:     at iteration #2, type ALL: wirelen solved = 760, spread = 3691, legal = 5010; time = 0.06s
+Info:     at iteration #3, type ALL: wirelen solved = 751, spread = 3683, legal = 5138; time = 0.05s
+Info:     at iteration #4, type ALL: wirelen solved = 788, spread = 3588, legal = 5160; time = 0.05s
+Info:     at iteration #5, type ALL: wirelen solved = 889, spread = 3538, legal = 5007; time = 0.05s
+Info:     at iteration #6, type ALL: wirelen solved = 921, spread = 3312, legal = 4820; time = 0.05s
+Info:     at iteration #7, type ALL: wirelen solved = 1041, spread = 3432, legal = 5030; time = 0.05s
+Info:     at iteration #8, type ALL: wirelen solved = 1119, spread = 3237, legal = 4711; time = 0.05s
+Info:     at iteration #9, type ALL: wirelen solved = 1097, spread = 3177, legal = 4625; time = 0.05s
+Info:     at iteration #10, type ALL: wirelen solved = 1128, spread = 3058, legal = 4638; time = 0.06s
+Info:     at iteration #11, type ALL: wirelen solved = 1137, spread = 3193, legal = 4815; time = 0.06s
+Info:     at iteration #12, type ALL: wirelen solved = 1255, spread = 3185, legal = 4852; time = 0.06s
+Info:     at iteration #13, type ALL: wirelen solved = 1238, spread = 3334, legal = 4962; time = 0.05s
+Info:     at iteration #14, type ALL: wirelen solved = 1329, spread = 3368, legal = 4950; time = 0.05s
+Info: HeAP Placer Time: 0.96s
+Info:   of which solving equations: 0.47s
+Info:   of which spreading cells: 0.06s
+Info:   of which strict legalisation: 0.29s
+
+Info: Running simulated annealing placer for refinement.
+Info:   at iteration #1: temp = 0.000000, timing cost = 19, wirelen = 4625
+Info:   at iteration #5: temp = 0.000000, timing cost = 9, wirelen = 3260
+Info:   at iteration #10: temp = 0.000000, timing cost = 7, wirelen = 3111
+Info:   at iteration #15: temp = 0.000000, timing cost = 7, wirelen = 3017
+Info:   at iteration #17: temp = 0.000000, timing cost = 7, wirelen = 2998 
+Info: SA placement time 0.96s
+
+Info: Max frequency for clock 'loader.clk': 167.31 MHz (PASS at 27.00 MHz)
+
+Info: Slack histogram:
+Info:  legend: * represents 1 endpoint(s)
+Info:          + represents [1,1) endpoint(s)
+Info: [ 31060,  31334) |+
+Info: [ 31334,  31608) | 
+Info: [ 31608,  31882) |+
+Info: [ 31882,  32156) |************+
+Info: [ 32156,  32430) |*****+
+Info: [ 32430,  32704) |******+
+Info: [ 32704,  32978) |*************+
+Info: [ 32978,  33252) |***************+
+Info: [ 33252,  33526) |**************************+
+Info: [ 33526,  33800) |****************************+
+Info: [ 33800,  34074) |***************************+
+Info: [ 34074,  34348) |*****************************+
+Info: [ 34348,  34622) |******************** 
+Info: [ 34622,  34896) |***************+
+Info: [ 34896,  35170) |*********************************+
+Info: [ 35170,  35444) |*******************************+
+Info: [ 35444,  35718) |*********************************+
+Info: [ 35718,  35992) |************************************************************ 
+Info: [ 35992,  36266) |**************************************************+
+Info: [ 36266,  36540) |************************************************************ 
+Info: Checksum: 0x4b2dbf32
+Info: Routing globals...
+Info:     'loader.clk' net was routed using global resources only.
+Info:     'panel.fb_addr_bot[6]' is routed using segments.
+Info:     'panel.fb_addr_bot[8]' is routed using segments.
+Info:     'panel.fb_addr_bot[9]' is routed using segments.
+Info:     'panel.fb_addr_bot[7]' is routed using segments.
+Info:     'loader.waddr_DFF_D_Q[1]' is routed using segments.
+Info:     'loader.waddr_DFF_D_Q[0]' is routed using segments.
+Info:     'panel.fb_addr_bot[3]' is routed using segments.
+Info:     'panel.fb.mem_top.0.5_ADA_3[1]' is routed using segments.
+Info:     'loader.we_DFFR_Q_RESET_LUT2_I1_F' is routed using segments.
+
+Info: Routing..
+Info: Setting up routing queue.
+Info: Routing 2217 arcs.
+Info:            |   (re-)routed arcs  |   delta    | remaining|       time spent     |
+Info:    IterCnt |  w/ripup   wo/ripup |  w/r  wo/r |      arcs| batch(sec) total(sec)|
+Info:       1000 |       19        845 |   19   845 |      1244|       0.46       0.46|
+Info:       2000 |       26       1741 |    7   896 |       252|       0.40       0.86|
+Info:       2259 |       33       1967 |    7   226 |         0|       0.12       0.98|
+Info: Routing complete.
+Info: Router1 time 0.98s
+Info: Checksum: 0x253d71ca
+
+Info: Critical path report for clock 'loader.clk' (posedge -> posedge):
+Info:       type curr  total name
+Info:   clk-to-q  0.46  0.46 Source panel.datapath.timer_DFFRE_Q_9.Q
+Info:    routing  0.89  1.35 Net panel.datapath.timer[6] (7,14) -> (8,13)
+Info:                          Sink panel.controller.state_DFF_Q_2_D_LUT3_F_I1_LUT2_I1_F_MUX2_LUT6_O_S0_MUX2_LUT6_O_I1_MUX2_LUT5_O_I1_LUT4_F.I1
+Info:                          Defined in:
+Info:                               hub75_datapath.v:58.23-58.28
+Info:      logic  1.10  2.45 Source panel.controller.state_DFF_Q_2_D_LUT3_F_I1_LUT2_I1_F_MUX2_LUT6_O_S0_MUX2_LUT6_O_I1_MUX2_LUT5_O_I1_LUT4_F.F
+Info:    routing  0.00  2.45 Net panel.controller.state_DFF_Q_2_D_LUT3_F_I1_LUT2_I1_F_MUX2_LUT6_O_S0_MUX2_LUT6_O_I1_MUX2_LUT5_O_I1 (8,13) -> (8,13)
+Info:                          Sink panel.controller.state_DFF_Q_2_D_LUT3_F_I1_LUT2_I1_F_MUX2_LUT6_O_S0_MUX2_LUT6_O_I1_MUX2_LUT5_O.I1
+Info:                          Defined in:
+Info:                               /home/sandra/gitPackages/digital-logic-design-tools/oss-cad-suite-2026-07-24/lib/../share/yosys/gowin/cells_map.v:159.41-159.66
+Info:                               /home/sandra/gitPackages/digital-logic-design-tools/oss-cad-suite-2026-07-24/lib/../share/yosys/gowin/cells_map.v:151.13-151.15
+Info:      logic  0.50  2.95 Source panel.controller.state_DFF_Q_2_D_LUT3_F_I1_LUT2_I1_F_MUX2_LUT6_O_S0_MUX2_LUT6_O_I1_MUX2_LUT5_O.O
+Info:    routing  0.00  2.95 Net panel.controller.state_DFF_Q_2_D_LUT3_F_I1_LUT2_I1_F_MUX2_LUT6_O_S0_MUX2_LUT6_O_I1 (8,13) -> (8,13)
+Info:                          Sink panel.controller.state_DFF_Q_2_D_LUT3_F_I1_LUT2_I1_F_MUX2_LUT6_O_S0_MUX2_LUT6_O.I1
+Info:                          Defined in:
+Info:                               /home/sandra/gitPackages/digital-logic-design-tools/oss-cad-suite-2026-07-24/lib/../share/yosys/gowin/cells_map.v:157.13-157.15
+Info:      logic  0.50  3.45 Source panel.controller.state_DFF_Q_2_D_LUT3_F_I1_LUT2_I1_F_MUX2_LUT6_O_S0_MUX2_LUT6_O.O
+Info:    routing  2.17  5.62 Net panel.controller.state_DFF_Q_2_D_LUT3_F_I1_LUT2_I1_F_MUX2_LUT6_O_S0[4] (8,13) -> (8,13)
+Info:                          Sink panel.controller.state_DFF_Q_2_D_LUT3_F_I1_LUT2_I1_F_MUX2_LUT6_O_I1_MUX2_LUT5_O.S0
+Info:                          Defined in:
+Info:                               /home/sandra/gitPackages/digital-logic-design-tools/oss-cad-suite-2026-07-24/lib/../share/yosys/gowin/cells_map.v:130.20-130.21
+Info:      logic  0.18  5.80 Source panel.controller.state_DFF_Q_2_D_LUT3_F_I1_LUT2_I1_F_MUX2_LUT6_O_I1_MUX2_LUT5_O.O
+Info:    routing  0.00  5.80 Net panel.controller.state_DFF_Q_2_D_LUT3_F_I1_LUT2_I1_F_MUX2_LUT6_O_I1 (8,13) -> (8,13)
+Info:                          Sink panel.controller.state_DFF_Q_2_D_LUT3_F_I1_LUT2_I1_F_MUX2_LUT6_O.I1
+Info:                          Defined in:
+Info:                               /home/sandra/gitPackages/digital-logic-design-tools/oss-cad-suite-2026-07-24/lib/../share/yosys/gowin/cells_map.v:157.13-157.15
+Info:      logic  0.50  6.30 Source panel.controller.state_DFF_Q_2_D_LUT3_F_I1_LUT2_I1_F_MUX2_LUT6_O.O
+Info:    routing  0.81  7.11 Net panel.controller.state_DFF_Q_1_D_LUT2_F_I1[0] (8,13) -> (9,13)
+Info:                          Sink panel.controller.hub_oe_DFFSE_Q_CE_MUX2_LUT5_O.S0
+Info:                          Defined in:
+Info:                               /home/sandra/gitPackages/digital-logic-design-tools/oss-cad-suite-2026-07-24/lib/../share/yosys/gowin/cells_map.v:130.20-130.21
+Info:      logic  0.18  7.28 Source panel.controller.hub_oe_DFFSE_Q_CE_MUX2_LUT5_O.O
+Info:    routing  2.17  9.46 Net panel.controller.hub_oe_DFFSE_Q_CE (9,13) -> (9,13)
+Info:                          Sink panel.controller.hub_oe_DFFSE_Q.CE
+Info:      setup  0.04  9.50 Source panel.controller.hub_oe_DFFSE_Q.CE
+Info: 3.46 ns logic, 6.05 ns routing
+
+Info: Max frequency for clock 'loader.clk': 105.24 MHz (PASS at 27.00 MHz)
+
+Info: Slack histogram:
+Info:  legend: * represents 1 endpoint(s)
+Info:          + represents [1,1) endpoint(s)
+Info: [ 27535,  27969) |+
+Info: [ 27969,  28403) |*+
+Info: [ 28403,  28837) | 
+Info: [ 28837,  29271) |+
+Info: [ 29271,  29705) |*****+
+Info: [ 29705,  30139) |*********+
+Info: [ 30139,  30573) |+
+Info: [ 30573,  31007) | 
+Info: [ 31007,  31441) |******+
+Info: [ 31441,  31875) |***********************+
+Info: [ 31875,  32309) |**********************+
+Info: [ 32309,  32743) |*********+
+Info: [ 32743,  33177) |**************+
+Info: [ 33177,  33611) |***********************+
+Info: [ 33611,  34045) |************************************************************ 
+Info: [ 34045,  34479) |***********************************************+
+Info: [ 34479,  34913) |*********************************+
+Info: [ 34913,  35347) |**************************************+
+Info: [ 35347,  35781) |************+
+Info: [ 35781,  36215) |***+
+
+Info: Program finished normally.
