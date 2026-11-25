@@ -57,7 +57,7 @@ En esta tabla se encuentra lo que pide la guía `uart-riscv.pdf` para conectar l
 | --- | --- | --- |
 | 1 | Región del mapa y `cs` | Flash SPI `0x42_0000` · EEPROM I2C `0x46_0000` ([Ver](#qué-hace-este-grupo)) |
 | 2 | Mapa de registros MMIO | SPI e I2C ([Ver](tareas-y-actividades/README.md#4-registros-de-control-mmio)) |
-| 3 | Decodificador local (`addr[4:0]` → registro) | SPI: decodificador de registros en [`rtl/perip_spi.v`](rtl/perip_spi.v)<br>I2C: decodificador de registros en [`rtl/perip_i2c.v`](rtl/perip_i2c.v) |
+| 3 | Decodificador local (`addr[4:0]` → registro) | SPI: decodificador de registros en [`rtl/perip_spi.v`](rtl/perip_spi.v)<br>I2C: decodificador de registros en [`rtl/perip_i2c.v`](rtl/perip_i2c.v)<br>Diagrama del decodificador local y de los mapas de registros de los dos ([Ver](docs/diagramas/9-integracion/Grupo1_Decodificador_Local.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F9-integracion%2FGrupo1_Decodificador_Local.drawio.png)) |
 | 4 | Diagrama del adaptador de bus (bus ↔ registros, mux de lectura a `d_out`) | Pendiente |
 | 5 | Semántica START / BUSY / DONE (DONE retenido hasta que la CPU lo lee) | SPI: BUSY = busy_core ∨ start y DONE retenido en [`rtl/perip_spi.v`](rtl/perip_spi.v)<br>I2C: BUSY = busy_core ∨ go y DONE retenido en [`rtl/perip_i2c.v`](rtl/perip_i2c.v) |
 | 6 | Diagrama de tiempos del handshake bus ↔ core | SPI: lectura del JEDEC ID ([Ver](docs/diagramas/9-integracion/Grupo1_Tiempos_Handshake.drawio.png) · [Editar](https://app.diagrams.net/#Hwwilchesc%2FProyecto-Final-Digital-Grupo-10%2Fmain%2Fgrupo1-memoria-externa%2Fdocs%2Fdiagramas%2F9-integracion%2FGrupo1_Tiempos_Handshake.drawio.png))<br>simulación ([inicio](sim/ondas_handshake_inicio.png) · [fin](sim/ondas_handshake_fin.png)) |
@@ -137,6 +137,7 @@ En esta tabla se encuentra lo que pide la guía `uart-riscv.pdf` para conectar l
 | 23/11/2026 | Modelo de simulación de la EEPROM 24LC256 (`sim/eeprom_model.v`): dirección 0x50, escritura, lectura aleatoria con START repetido, lectura secuencial, ACK/NACK y estiramiento de reloj configurable |
 | 23/11/2026 | Testbench del I2C (paso 9): `sim/perip_i2c_tb.v` por el bus MMIO con el modelo de la EEPROM; 36 comprobaciones sin errores y cobertura de las 14 filas de la tabla de transferencias. El Makefile de `sim/` agrega `make sim-i2c` y `make todo`, y `sim/README.md` agrega la sección del I2C |
 | 23/11/2026 | Firmware del I2C (`firmware/i2c_eeprom.h` y `i2c_eeprom_example.c`): registros con volatile, funciones `i2c_cmd` (dar una orden y esperar BUSY = 0) e `i2c_send` (enviar un byte y devolver ACK_IN), `eeprom_write` con espera del ciclo de grabación (ACK polling) y `eeprom_read` con START repetido; el ejemplo comprueba la presencia de la EEPROM, graba 4 bytes y los lee de vuelta. Compila para RV32I; falta integrarlo al SoC |
+| 25/11/2026 | Diagrama del decodificador local (criterio B, ítem 3): `addr[4:0]` elige el registro del SPI (CONTROL, ADDR, WDATA, RDATA, STATUS, CLK_DIV) o del I2C (CONTROL, TX_DATA, RX_DATA, STATUS, CLK_DIV), con escritura solo si BUSY = 0 |
 
 ## Pendientes y problemas
 
