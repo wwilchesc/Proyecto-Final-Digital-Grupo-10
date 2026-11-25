@@ -1,0 +1,48 @@
+// prueba_grupo1_25k.cst
+// Pines de la prueba en placa (fpga/prueba_grupo1.v) en la Tang Primer 25K
+// con su Dock. Mismos pines de tang_primer_25k.cst, mas la UART, los dos LEDs
+// y los dos botones del Dock (de la definicion de la tarjeta en LiteX).
+//
+// En Gowin IDE marcar en Project > Configuration > Place & Route >
+// Dual-Purpose Pin: "Use MSPI as regular IO", "Use CPU as regular IO",
+// "Use READY as regular IO", "Use DONE as regular IO" y "Use I2C as regular IO".
+
+// ---- Reloj de 50 MHz ----
+IO_LOC  "clk" E2;
+IO_PORT "clk" IO_TYPE=LVCMOS33 PULL_MODE=NONE;
+
+// ---- Botones del Dock (activos en 0) ----
+IO_LOC  "btn_rst_n" H11;
+IO_PORT "btn_rst_n" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC  "btn_run_n" H10;
+IO_PORT "btn_run_n" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+
+// ---- UART hacia el PC (por el USB del depurador) ----
+IO_LOC  "uart_tx" C3;
+IO_PORT "uart_tx" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+
+// ---- LEDs del Dock (pines READY y DONE) ----
+IO_LOC  "led[0]" E8;
+IO_PORT "led[0]" IO_TYPE=LVCMOS33 PULL_MODE=NONE;
+IO_LOC  "led[1]" D7;
+IO_PORT "led[1]" IO_TYPE=LVCMOS33 PULL_MODE=NONE;
+
+// ---- Flash SPI de la tarjeta (pines MSPI) ----
+IO_LOC  "spi_cs_n" E6;
+IO_PORT "spi_cs_n" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC  "spi_sck" E7;
+IO_PORT "spi_sck" IO_TYPE=LVCMOS33 PULL_MODE=NONE;
+IO_LOC  "spi_mosi" D6;
+IO_PORT "spi_mosi" IO_TYPE=LVCMOS33 PULL_MODE=NONE;
+IO_LOC  "spi_miso" E5;
+IO_PORT "spi_miso" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC  "spi_wp_n" D5;
+IO_PORT "spi_wp_n" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC  "spi_hold_n" E4;
+IO_PORT "spi_hold_n" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+
+// ---- EEPROM I2C: conector J3 de 40 pines del Dock, pines 5 (K4) y 6 (J4) ----
+IO_LOC  "i2c_scl" K4;
+IO_PORT "i2c_scl" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC  "i2c_sda" J4;
+IO_PORT "i2c_sda" IO_TYPE=LVCMOS33 PULL_MODE=UP;
