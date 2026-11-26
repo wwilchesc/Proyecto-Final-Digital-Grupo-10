@@ -48,6 +48,20 @@ En T5, T6 y T7 el control da la misma orden (`sck_fall`). El datapath solo despl
 - **DONE retenido**: el pulso `done` del core (T12) pone STATUS.DONE en 1, que se mantiene hasta que la CPU lee STATUS o da una orden nueva.
 - **STATUS bit2 = CS_ACTIVO**: permite que el software sepa si CS quedó en 0 por MANTENER; `STATUS = {CS_ACTIVO, DONE, BUSY}`.
 
+### Nota sobre el registro de fase (realimentación del informe 4)
+
+En el informe 4 el profesor sugirió mover el registro de fase al datapath en el diagrama de bloques, porque la guía lo trata como un recurso del datapath que el control ordena.
+
+**Lo probamos.** Hicimos la versión con `fase` dentro de `spi_datapath.v`: el control solo daba las órdenes `fase_cmd`, `fase_dat` y `fase_sig`, y el datapath le devolvía la bandera `falta_fase`. Con el testbench completo pasaron las mismas 53 comprobaciones y los tiempos fueron idénticos ciclo a ciclo (236 ciclos en la lectura 0x03 de 3 bytes, 229 + 42 en la de 4 bytes). Es decir, el comportamiento es el mismo: solo cambia en qué bloque vive el registro.
+
+**Por qué dejamos `fase` en el control en esta versión:**
+
+- **`fase` dice en qué parte de la transacción vamos** (comando, dirección o datos), y la decisión de cuál sigue (`falta_fase`, `sig(fase)`) es de secuencia, no de datos. Por eso la vemos como parte del estado del control: la FSM de 9 estados más `fase` forman el estado completo de la transacción, y así la FSM no necesita repetir LOAD, LOW y HIGH para cada fase.
+- **El datapath no la necesita como registro propio**: solo recibe `sel = fase` para que el mux elija `val(fase)` y `n(fase)`, igual que recibe las demás órdenes.
+- **Coherencia con lo que ya está entregado**: el flujo clasificado, el ASMD, la tabla de transferencias y el diagrama de bloques ya muestran `fase` en el control (amarillo). Cambiar solo el código los habría dejado desalineados.
+
+Si se prefiere la otra forma, el cambio está probado y se puede aplicar junto con los diagramas 5, 6 y 7 sin cambiar ningún tiempo ni el mapa de registros.
+
 ---
 
 # RTL del controlador I2C
