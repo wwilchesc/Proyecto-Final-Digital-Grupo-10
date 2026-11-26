@@ -14,17 +14,6 @@ El testbench `tb_perip_joystick.v` realiza una verificación unitaria completame
 | **`perip_joystick.v`** | **Obligatorio** | `rtl/perip_joystick.v` | Módulo hardware bajo prueba (*DUT*). El testbench lo instancia internamente (`perip_joystick dut (...)`); sin este archivo la compilación con `iverilog` falla. |
 | **`Makefile`** | **Opcional** *(recomendado)* | `Makefile` (raíz) | Automatiza la limpieza de temporales, compilación, ejecución de la simulación y apertura de GTKWave. |
 
-### Requisito dentro de `tb_perip_joystick.v`
-
-Para que Icarus Verilog genere el archivo de formas de onda (`.vcd`) compatible con GTKWave, el bloque `initial` de `tb_perip_joystick.v` debe contener estas dos directivas al comienzo:
-
-```verilog
-initial begin
-    $dumpfile("ondas_joystick.vcd");
-    $dumpvars(0, tb_perip_joystick);
-    // ... resto de la secuencia de pruebas ...
-```
-
 ---
 
 ## 2. Configuración explícita del `Makefile`
