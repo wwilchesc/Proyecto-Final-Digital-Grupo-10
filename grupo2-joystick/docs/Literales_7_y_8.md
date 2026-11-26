@@ -1,6 +1,3 @@
-# Criterio A — Grupo 2: Joystick SPI
-
-Documento para incorporar al README del Grupo 2. Los literales A.7 y A.8 se derivan de `perip_joystick.v`, tanto del archivo suministrado en `fragmentos.zip` como de la lógica publicada en [Codigo/rtl/perip_joystick.v](https://github.com/wwilchesc/Proyecto-Final-Digital-Grupo-10/blob/main/grupo2-joystick/Codigo/rtl/perip_joystick.v). No se propone modificar el RTL para estos diagramas.
 
 ## A.7. Arquitectura de control y datapath
 
