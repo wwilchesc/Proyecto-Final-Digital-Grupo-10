@@ -401,6 +401,7 @@ flowchart TD
     D7 -- no --> O10(["tick ← 0"]) --> S0
     D7 -- sí --> O11(["valid ← 1, start_req ← 0<br/>tick ← 0"]) --> S0
  ```
+Despues de esto podemos construir l tabla de transferencias:
 | Estado | Condición | Transferencias | Siguiente |
 |---|---|---|---|
 | `S_IDLE` | `enable ∨ start_req ∨ ch≠0` | `cs_n←0; n←0; tick←0; mosi←tx_w[23]` | `S_SETUP` |
@@ -416,6 +417,7 @@ flowchart TD
 | `S_GAP` | `tick_done=0` | `tick←tick+1` | `S_GAP` |
 | `S_GAP` | `tick_done=1 ∧ ch≠0` | `tick←0` | `S_IDLE` |
 | `S_GAP` | `tick_done=1 ∧ ch=0` | `valid←1; start_req←0; tick←0` | `S_IDLE` |
+
 ## 3.4 Diagramas y Archivos Adjuntos
 
 * Esquema detallado de bloques y diagrama de estados de la FSM: [Ver diagramas](./docs/Diagramas.md)
