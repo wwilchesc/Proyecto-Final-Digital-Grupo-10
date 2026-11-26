@@ -382,6 +382,9 @@ flowchart TD
     S2["S_BIT<br/>24 pulsos"]
     S3["S_END<br/>cs_n=1"]
     S4["S_GAP<br/>espera tCSH"]
+    S0 --> D0{"enable o start_req<br/>o ch distinto de 0"}
+    D0 -- no --> S0
+    D0 -- sí --> O0(["cs_n ← 0, n ← 0, tick ← 0<br/>mosi ← tx_w[23]"]) --> S1
  ```
 
 
