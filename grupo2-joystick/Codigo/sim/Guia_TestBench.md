@@ -6,25 +6,13 @@ Este documento explica paso a paso qué archivos se necesitan, cómo configurar 
 
 ## 1. Archivos necesarios para correr el testbench
 
-El testbench `tb_perip_joystick.v` realiza una prueba unitaria completamente aislada: emula internamente al procesador FemtoRV32 (mediante tareas síncronas de lectura y escritura en el bus), al conversor ADC externo **MCP3008** (esclavo SPI Modo 0) y a los pulsadores físicos activos en bajo. Por ello, **no requiere el resto de los módulos del SoC** para ejecutarse.
+El testbench `tb_perip_joystick.v` realiza una prueba unitaria completamente aislada: emula internamente al procesador FemtoRV32 (mediante tareas síncronas de lectura y escritura en el bus), al conversor ADC externo **MCP3008** (esclavo SPI Modo 0) y a los pulsadores físicos activos en bajo.
 
 | Archivo | Requisito | Ruta sugerida | Función |
 | :--- | :---: | :--- | :--- |
 | **`tb_perip_joystick.v`** | **Obligatorio** | `sim/tb_perip_joystick.v` | Banco de pruebas que genera el reloj de $27\text{ MHz}$, aplica el reset, modela el MCP3008 y verifica automáticamente los registros del periférico. |
 | **`perip_joystick.v`** | **Obligatorio** | `rtl/perip_joystick.v` | Módulo hardware bajo prueba (*DUT*). El testbench lo instancia internamente (`perip_joystick dut (...)`); sin este archivo la compilación con `iverilog` falla. |
 | **`Makefile`** | **Opcional** *(recomendado)* | `Makefile` (raíz) | Automatiza la limpieza de temporales, compilación, ejecución de la simulación y apertura de GTKWave. |
-| **`SOC.v`, `femtorv32_quark.v`, `chip_select.v`, `top.v`, `.cst`** | **No requeridos** | — | Solo son necesarios para la integración y síntesis del SoC completo en la Tang Nano 9K, no para esta prueba unitaria. |
-
-### Requisito dentro de `tb_perip_joystick.v`
-
-Para que Icarus Verilog genere el archivo de formas de onda (`.vcd`) compatible con GTKWave, el bloque `initial` de `tb_perip_joystick.v` debe contener estas dos directivas al comienzo:
-
-```verilog
-initial begin
-    $dumpfile("ondas_joystick.vcd");
-    $dumpvars(0, tb_perip_joystick);
-    // ... resto de la secuencia de pruebas ...
-```
 
 ---
 
