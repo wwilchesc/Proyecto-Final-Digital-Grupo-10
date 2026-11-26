@@ -367,8 +367,13 @@ Ahora vamos a presentar la separación del periférico en dos partes: el **datap
 | `ch_inc` | `ch ← ch + 1`, pasa al siguiente eje |
  
 ## 3.3 ASMD + tabla de transferencia
-
-
+Estados:
+- `S_IDLE`: esperando. `busy = 0`, `mcp_cs_n = 1`, `mcp_sck = 0`.
+- `S_SETUP`: CS ya está abajo y el primer bit del comando ya está en MOSI; se espera medio periodo.
+- `S_BIT`: los 24 pulsos. En la subida se lee `mcp_miso`; en la bajada se cambia `mcp_mosi`.
+- `S_END`: CS sube; al cumplirse el medio periodo se guarda el resultado y avanza el canal.
+- `S_GAP`: medio periodo más con CS arriba; aquí se decide si el barrido terminó.
+Como la primera subida de `mcp_sck` llega un medio periodo después de salir de `S_SETUP`, entre la bajada de CS y ese flanco pasan dos medios periodos. Lo mismo pasa con CS en alto. Los dos superan con holgura tSUCS = 100 ns y tCSH = 270 ns.
 
 
 ## 3.4 Diagramas y Archivos Adjuntos
