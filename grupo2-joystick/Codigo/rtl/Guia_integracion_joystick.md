@@ -1,4 +1,4 @@
-# Guía de Integración del Periférico Joystick (`perip_joystick`) en el SoC (FemtoRV32)
+# Guía de Integración del Periférico Joystick (`perip_joystick.v`) en el SoC (FemtoRV32)
 
 Este documento describe paso a paso cómo integrar el periférico de joystick basado en el ADC **MCP3008** (`perip_joystick.v`) dentro de un **System-on-Chip (SoC)** existente con el procesador **FemtoRV32** en la **Tang Nano 9K**, sin interferir con otros periféricos ya presentes (UART, GPIO, multiplicador, pantalla HUB75, audio, etc.).
 
