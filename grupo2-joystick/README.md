@@ -13,7 +13,7 @@ Receptor del Joystick: recibe la posición de los ejes y los botones que presion
 
 Nuestro grupo implementa el periférico de joystick analógico de la consola de videojuegos. Su función es leer la posición de dos joysticks (ejes X e Y de cada uno) y el estado de sus pulsadores, y dejar esa información disponible para el procesador FemtoRV32, que la usa para controlar el juego (mover al personaje, navegar menús, etc.).
 
-Cada joystick entrega dos voltajes analógicos, uno por eje, entre 0 y 3.3 V. Como la FPGA Tang Nano 9K solo trabaja con señales digitales, usamos un conversor analógico-digital MCP3008 con 4 canales activos (`CH0` a `CH3`, 10 bits, resolución de $\approx 3.22\text{ mV}$ por paso). El ADC se comunica con la FPGA por SPI en modo 0, donde la FPGA actúa como maestro y el MCP3008 como esclavo.
+Cada joystick entrega dos voltajes analógicos, uno por eje, entre 0 y 3.3 V. Como la FPGA Tang Nano 9K solo trabaja con señales digitales, usamos un conversor analógico-digital MCP3008 con 4 canales activos (`CH0` a `CH3`, 10 bits, resolución de 3.22mV por paso). El ADC se comunica con la FPGA por SPI en modo 0, donde la FPGA actúa como maestro y el MCP3008 como esclavo.
 
 - **Dispositivo(s):** Dos joysticks analógicos (KY-023) conectados a un MCP3008
 - **Protocolo:** SPI Modo 0 (trama de 24 pulsos / 3 bytes por canal)
@@ -123,8 +123,8 @@ Estos parámetros determinan la velocidad a la que podemos transmitir informaci�
 | **tHI / tLO** | Son los tiempos mínimos durante los cuales SCLK debe mantenerse en nivel alto y bajo. Según el *datasheet*, ambos deben ser de al menos 125 ns. |
 | **tSUCS** | Es el tiempo mínimo que debe transcurrir entre la activación de CS y el primer flanco de subida del reloj. Su valor mínimo es 100 ns. |
 | **tCSH** | Es el tiempo mínimo durante el cual CS debe permanecer en alto antes de iniciar una nueva comunicación. El valor indicado es 270 ns. |
-| **ns (nanosegundo)** | Es una unidad de tiempo equivalente a una milmillonésima parte de un segundo ($10^{-9}\text{ s}$). |
-| **µs (microsegundo)** | Es una unidad de tiempo equivalente a una millonésima parte de un segundo ($10^{-6}\text{ s}$). |
+| **ns (nanosegundo)** | Es una unidad de tiempo equivalente a una milmillonésima parte de un segundo 10 ns. |
+| **µs (microsegundo)** | Es una unidad de tiempo equivalente a una millonésima parte de un segundo 10 μs. |
 | **MHz (megahercio)** | Es una unidad de frecuencia que representa un millón de ciclos por segundo. |
 | **ksps (kilomuestras por segundo)** | Indica cuántos miles de muestras puede realizar un ADC cada segundo. El MCP3008 tiene una capacidad especificada de 75 ksps a 2,7 V y 200 ksps a 5 V. |
 | **Divisor de reloj** | Es un circuito que permite obtener una frecuencia menor a partir del reloj principal de la FPGA. En nuestro diseño dividimos el reloj de 27 MHz con `CLKDIV = 10` para generar `mcp_sck` a 1,35 MHz. |
@@ -201,9 +201,9 @@ Con esta división nadie lee una línea mientras está cambiando. Cada bit se pr
 Estos valores salen del datasheet de Microchip MCP3004/3008:
 
 - Velocidad de SCLK: 3.6 MHz como máximo a 5 V y 1.35 MHz a 2.7 V. Como trabajamos a 3.3 V, usamos **1.35 MHz** por defecto (`CLKDIV = 10` con reloj de 27 MHz), que es el valor seguro.
-- SCLK en alto y en bajo ($t_{HI}$, $t_{LO}$): al menos 125 ns cada uno. Con `CLKDIV = 10`, cada semiperiodo dura **370 ns**.
-- De bajar CS al primer flanco de subida ($t_{SUCS}$): al menos 100 ns. En nuestro RTL el tiempo medido es **$\approx 740\text{ ns}$**.
-- CS en alto entre conversiones ($t_{CSH}$): al menos 270 ns.
+- SCLK en alto y en bajo (t_HI, t_LO): al menos 125 ns cada uno. Con `CLKDIV = 10`, cada semiperiodo dura **370 ns**.
+- De bajar CS al primer flanco de subida (t_SUCS): al menos 100 ns. En nuestro RTL el tiempo medido es **$\approx 740\text{ ns}$**.
+- CS en alto entre conversiones (t_CSH): al menos 270 ns.
 
 ## 2.5 Una transacción completa, pulso a pulso (trama de 24 pulsos / 3 bytes)
 
@@ -213,10 +213,10 @@ Llamamos **transacción** a una conversación completa: `mcp_cs_n` baja, se env�
 
 **Secuencia implementada en `perip_joystick.v`:**
 
-1. **Bajamos `mcp_cs_n`** a 0 y esperamos el tiempo de setup (`S_SETUP`, $\ge 100\text{ ns}$).
+1. **Bajamos `mcp_cs_n`** a 0 y esperamos el tiempo de setup (`S_SETUP`, 100 ns).
 2. **Transmitimos 24 pulsos de `mcp_sck`** (3 bytes): en cada flanco de subida se muestrea `mcp_miso` y en cada flanco de bajada se actualiza `mcp_mosi`.
 3. **Después del pulso 24**, dejamos `mcp_sck` en 0.
-4. **Subimos `mcp_cs_n`** a 1 y lo mantenemos $\ge 270\text{ ns}$ antes de la siguiente transacción.
+4. **Subimos `mcp_cs_n`** a 1 y lo mantenemos 270 ns antes de la siguiente transacción.
 5. **Guardamos** los 10 bits recibidos (pulsos 15 a 24) en el registro correspondiente al canal (`J1_X`, `J1_Y`, `J2_X` o `J2_Y`).
 
 ### Trama de 24 pulsos (3 bytes)
@@ -247,7 +247,7 @@ Los 4 bits del comando son `{SGL/DIFF, D2, D1, D0}`.
 
 ## 2.6 Ejemplo completo: leer el eje Y del jugador 1 (`CH1`)
 
-Para verlo con números, suponemos que el eje mide **2.18 V**. Como $2.18 / 3.22\text{ mV} \approx 677$, el ADC devuelve **677 = `10 1010 0101` en binario (`0x2A5`)**.
+Para verlo con números, suponemos que el eje mide **2.18 V**. Como 2.18 / 3.22mV = 677, el ADC devuelve **677 = `10 1010 0101` en binario (`0x2A5`)**.
 
 La FPGA envía los 3 bytes **`0x01`**, **`0x90`** (`1 001 0000`) y **`0x00`**:
 
@@ -261,14 +261,14 @@ Al unir los 10 bits recibidos: `valor = {rx2[1:0], rx3} = 10'b10_1010_0101 = 0x2
 
 ## 2.7 Leer varios canales
 
-El MCP3008 mide **un solo canal por transacción**. Para leer X e Y de dos jugadores hacemos 4 transacciones seguidas (**96 pulsos de `mcp_sck` en total**, $\approx 76\text{ }\mu\text{s}$ a $1.35\text{ MHz}$):
+El MCP3008 mide **un solo canal por transacción**. Para leer X e Y de dos jugadores hacemos 4 transacciones seguidas (**96 pulsos de `mcp_sck` en total**, 76 μs a 1.35 MHz):
 
 1. `CH0` → registro `J1_X` (eje X del jugador 1).
 2. `CH1` → registro `J1_Y` (eje Y del jugador 1).
 3. `CH2` → registro `J2_X` (eje X del jugador 2).
 4. `CH3` → registro `J2_Y` (eje Y del jugador 2).
 
-Entre una y otra, `mcp_cs_n` sube y espera $\ge 270\text{ ns}$. Cuando `CTRL.ENABLE = 1`, el ciclo se repite de forma continua y el procesador siempre encuentra el último valor leído en los registros.
+Entre una y otra, `mcp_cs_n` sube y espera 270 ns. Cuando `CTRL.ENABLE = 1`, el ciclo se repite de forma continua y el procesador siempre encuentra el último valor leído en los registros.
 
 ## 2.8 Cómo lo traducimos a un circuito en la FPGA
 
@@ -276,7 +276,7 @@ Para implementarlo necesitamos 4 bloques sencillos:
 
 | Bloque | Función |
 |---|---|
-| **Divisor de reloj** | Cuenta ciclos del reloj de sistema (27 MHz) según `CLKDIV` (por defecto `10`) y genera el tick para `mcp_sck` a $1.35\text{ MHz}$. |
+| **Divisor de reloj** | Cuenta ciclos del reloj de sistema (27 MHz) según `CLKDIV` (por defecto `10`) y genera el tick para `mcp_sck` a 1.35 MHz. |
 | **Contador de pulsos** | Cuenta los **24 pulsos** de la trama (0 a 23) para saber en qué bit de los 3 bytes vamos. |
 | **Registros de desplazamiento** | Uno envía la trama de 24 bits por `mcp_mosi` y otro captura los 10 bits útiles (`B9` a `B0`) por `mcp_miso`. |
 | **FSM (máquina de estados)** | Coordina el barrido de los 4 canales: `IDLE → S_SETUP → TRANSFERENCIA_24_PULSOS → CS_SUBE → ESPERA → SIGUIENTE_CANAL`. |
@@ -294,24 +294,24 @@ Esta tabla nos sirve para depurar cuando probemos el diseño en hardware:
 | Valores a la mitad o al doble de lo esperado | Un bit de desfase: se leyó un pulso antes o después. Revisar dónde se descarta el null bit. |
 | Valores ruidosos o erráticos | SCLK demasiado rápido, cables largos, o falta de tierra común. |
 | Canal equivocado | Bits D2 D1 D0 mal ordenados. D2 sale primero. |
-| Funciona en simulación, falla en la placa | Tiempos ($t_{SUCS}$, $t_{CSH}$) no respetados, o modo SPI equivocado. |
+| Funciona en simulación, falla en la placa | Tiempos (t_SUCS, t_CSH) no respetados, o modo SPI equivocado. |
 | Solo cambia un bit del resultado | Se está usando el flanco de bajada para leer MISO. |
 
 **Prueba de sanidad para hacer en la placa:**
 
-- Entrada a GND → resultado $\approx 0$.
-- Entrada a 3.3 V → resultado $\approx 1023$.
-- Joystick centrado → resultado $\approx 512$.
+- Entrada a GND → resultado 0.
+- Entrada a 3.3 V → resultado 1023.
+- Joystick centrado → resultado 512.
 
 ## 2.10 Lista de verificación antes de simular o probar
 
 - [x] En reposo: `mcp_cs_n = 1`, `mcp_sck = 0`.
-- [x] `mcp_sck` $\le 1.35\text{ MHz}$ y semiperiodo $> 125\text{ ns}$ (medido: $370\text{ ns}$).
-- [x] `mcp_cs_n` baja $\ge 100\text{ ns}$ antes del primer pulso (medido: $\approx 740\text{ ns}$).
+- [x] `mcp_sck` ≤1.35 MHz y semiperiodo > 125 ns (medido: 370 ns).
+- [x] `mcp_cs_n` baja ≥ 100 ns antes del primer pulso (medido: 740 ns).
 - [x] `mcp_mosi` cambia en las bajadas y `mcp_miso` se lee en las subidas.
 - [x] Se descarta el null bit, y `B9` es el primer bit guardado.
 - [x] El comando de cada canal es correcto (`CH0 = 0x80`, `CH1 = 0x90`, `CH2 = 0xA0`, `CH3 = 0xB0`).
-- [x] `mcp_cs_n` en alto $\ge 270\text{ ns}$ entre transacciones.
+- [x] `mcp_cs_n` en alto ≥ 270 ns entre transacciones.
 - [ ] En placa: todas las tierras unidas, y `VDD = VREF = 3.3 V`.
 
 ---
@@ -324,8 +324,8 @@ En esta sección se detalla la arquitectura interna del controlador Verilog (`pe
 
 El módulo se compone de cuatro sub-bloques funcionales diseñados para operar de forma síncrona con el reloj principal de la FPGA (27 MHz) y abstraer la complejidad del protocolo SPI al procesador:
 
-* **Generador de Reloj (`clk_divider`):** Toma el reloj del sistema de la FPGA (27 MHz) y genera impulsos de habilitación usando el divisor `CLKDIV` (por defecto `10`) para obtener `mcp_sck` a $1.35\text{ MHz}$.
-* **Máquina de Estados Principal (`spi_fsm`):** Coordina los ciclos de lectura secuencial de los 4 canales (`CH0` a `CH3`) con tramas de 24 pulsos y controla los tiempos de espera de Chip Select ($t_{SUCS}$ y $t_{CSH}$).
+* **Generador de Reloj (`clk_divider`):** Toma el reloj del sistema de la FPGA (27 MHz) y genera impulsos de habilitación usando el divisor `CLKDIV` (por defecto `10`) para obtener `mcp_sck` a 1.35 MHz.
+* **Máquina de Estados Principal (`spi_fsm`):** Coordina los ciclos de lectura secuencial de los 4 canales (`CH0` a `CH3`) con tramas de 24 pulsos y controla los tiempos de espera de Chip Select (t_SUCS y t_CSH).
 * **Registros de Desplazamiento (`shift_registers`):**
   * *Registro de Transmisión (Tx):* Envía la trama de 24 bits (3 bytes: `0x01`, byte de canal `0x80`–`0xB0`, `0x00`) por la línea `mcp_mosi`.
   * *Registro de Recepción (Rx):* Captura en serie los bits que entrega el ADC por la línea `mcp_miso`, descartando los bits iniciales y el *null bit*, y acumulando los 10 bits de datos (`B9` a `B0`).
@@ -378,24 +378,6 @@ Ahora vamos a presentar la separación del periférico en dos partes: el **datap
 
 ---
 
-### Arquitectura control/datapath (Criterio A.7)
-
-Se presenta la arquitectura interna del periférico
-MCP3008, identificando la unidad de control, el datapath,
-los registros, los contadores, las órdenes de control
-y las condiciones de decisión, de acuerdo con el código
-Verilog implementado.
-
-### Máquina de estados finitos (Criterio A.8)
-
-Se presenta la FSM de cinco estados: S_IDLE, S_SETUP,
-S_BIT, S_END y S_GAP, junto con su codificación binaria
-y la tabla de transiciones.
-
-[Consultar desarrollo y diagramas de los literales A.7 y A.8](./docs/Literales_7_y_8.md)
-
-
-
 ## 4. Registros
 
 El periférico `perip_joystick.v` se integra al bus MMIO del procesador **FemtoRV32** a partir de la dirección base **`0x0043_0000`** (rango útil `0x0043_0000` a `0x0043_001C`), habilitado por la señal `cs[3]` en `chip_select.v`. Implementa **8 registros de 32 bits** alineados a palabra (offsets de 4 en 4 bytes, decodificados con `mem_addr[4:0]`). Los valores de 10 bits del ADC ocupan `bits [9:0]` y el resto se lee en `0`.
@@ -411,13 +393,13 @@ El periférico `perip_joystick.v` se integra al bus MMIO del procesador **FemtoR
 | `0x0043_0010` | `0x10` | **`J2_X`** | R | `bits [9:0]`: Lectura de 10 bits (`0..1023`) del canal `CH2` (Eje X Joystick 2). Valor tras reset: `512`. |
 | `0x0043_0014` | `0x14` | **`J2_Y`** | R | `bits [9:0]`: Lectura de 10 bits (`0..1023`) del canal `CH3` (Eje Y Joystick 2). Valor tras reset: `512`. |
 | `0x0043_0018` | `0x18` | **`BUTTONS`** | R | `bit 0 = SW_J1`, `bit 1 = SW_J2` (lógica positiva: `1` = presionado, `0` = suelto; sincronizados e invertidos internamente desde `btn_n`). |
-| `0x0043_001C` | `0x1C` | **`CLKDIV`** | R/W | `bits [7:0]`: Divisor SPI ($f_{\text{SCLK}} = \frac{f_{\text{clk}}}{2 \cdot \text{CLKDIV}}$; por defecto `10` $\rightarrow 1.35\text{ MHz}$ con reloj de $27\text{ MHz}$). |
+| `0x0043_001C` | `0x1C` | **`CLKDIV`** | R/W | `bits [7:0]`: Divisor SPI (f_tSCLK = f_clk / 2 * CLKDIV; por defecto `10` → 1.35 MHz con reloj de 27 MHz). |
 
 ### 4.2 Funcionamiento e integración con el SoC
 
-* **Arranque seguro tras reset:** El módulo inicia apagado (`ENABLE = 0`, `VALID = 0`) con los cuatro ejes centrados en `512`. El firmware debe escribir `1` en `0x0043_0000` (`CTRL.ENABLE`) para activar el muestreo automático y esperar a que `STATUS[1]` (`VALID`) pase a `1` ($\approx 76\text{ }\mu\text{s}$ para el primer barrido de los 4 canales).
+* **Arranque seguro tras reset:** El módulo inicia apagado (`ENABLE = 0`, `VALID = 0`) con los cuatro ejes centrados en `512`. El firmware debe escribir `1` en `0x0043_0000` (`CTRL.ENABLE`) para activar el muestreo automático y esperar a que `STATUS[1]` (`VALID`) pase a `1` (76 μ para el primer barrido de los 4 canales).
 * **Barrido autónomo:** La FSM realiza secuencialmente la lectura de `CH0`, `CH1`, `CH2` y `CH3` mediante tramas SPI Modo 0 de **24 pulsos** y actualiza `J1_X`, `J1_Y`, `J2_X` y `J2_Y` de forma transparente para el procesador.
-* **Pulsadores sincronizados:** Las entradas físicas `joy_sw_n[1:0]` (activas en bajo) pasan por un sincronizador anti-metaestabilidad de doble flip-flop (`btn_ff1` $\rightarrow$ `btn_ff2`) y se invierten internamente antes de exponerse en `BUTTONS`.
+* **Pulsadores sincronizados:** Las entradas físicas `joy_sw_n[1:0]` (activas en bajo) pasan por un sincronizador anti-metaestabilidad de doble flip-flop (`btn_ff1` → `btn_ff2`) y se invierten internamente antes de exponerse en `BUTTONS`.
 * **Puntos clave de instanciación en `SOC.v`:** Conectar `.rst(!resetn)` (el SoC usa reset activo en bajo y `perip_joystick` activo en alto), `.addr(mem_addr[4:0])`, `.cs(cs_chip3)` y enrutar `joy_dout` a `.chip3_dout(joy_dout)` en `chip_select.v`.
 
 > Para ver el código de integración completo en `SOC.v`, `chip_select.v`, `top.v`, `Makefile` y el ejemplo de lectura en C, consultar la guía detallada en [`./Codigo/rtl/README.md`](./Codigo/rtl/README.md).
@@ -430,16 +412,16 @@ El módulo expone **6 pines físicos** en `top.v` para la **Tang Nano 9K** (4 l�
 
 | Señal (`top.v` / `.cst`) | Pin FPGA | Conector / Destino | Nota |
 | :--- | :---: | :--- | :--- |
-| **`mcp_cs_n`** | `PIN_CS` *(libre $3.3\text{ V}$)* | MCP3008 Pin 10 (`CS/SHDN`) | Salida activa en bajo. `IO_TYPE=LVCMOS33 PULL_MODE=UP`. |
-| **`mcp_sck`** | `PIN_SCK` *(libre $3.3\text{ V}$)* | MCP3008 Pin 13 (`CLK`) | Salida reloj SPI Modo 0 ($1.35\text{ MHz}$ por defecto). `IO_TYPE=LVCMOS33`. |
-| **`mcp_mosi`** | `PIN_MOSI` *(libre $3.3\text{ V}$)* | MCP3008 Pin 11 (`DIN`) | Salida de comandos FPGA $\rightarrow$ ADC. `IO_TYPE=LVCMOS33`. |
-| **`mcp_miso`** | `PIN_MISO` *(libre $3.3\text{ V}$)* | MCP3008 Pin 12 (`DOUT`) | Entrada de datos ADC $\rightarrow$ FPGA. `IO_TYPE=LVCMOS33 PULL_MODE=UP`. |
-| **`joy_sw_n[0]`** | `PIN_SW1` *(libre $3.3\text{ V}$)* | Joystick 1 (KY-023) Pin `SW` | Entrada activa en bajo. `IO_TYPE=LVCMOS33 PULL_MODE=UP`. No negar en `top.v`. |
-| **`joy_sw_n[1]`** | `PIN_SW2` *(libre $3.3\text{ V}$)* | Joystick 2 (KY-023) Pin `SW` | Entrada activa en bajo. `IO_TYPE=LVCMOS33 PULL_MODE=UP`. No negar en `top.v`. |
+| **`mcp_cs_n`** | `PIN_CS` *(libre 3.3 V)* | MCP3008 Pin 10 (`CS/SHDN`) | Salida activa en bajo. `IO_TYPE=LVCMOS33 PULL_MODE=UP`. |
+| **`mcp_sck`** | `PIN_SCK` *(libre 3.3 V)* | MCP3008 Pin 13 (`CLK`) | Salida reloj SPI Modo 0 ($1.35\text{ MHz}$ por defecto). `IO_TYPE=LVCMOS33`. |
+| **`mcp_mosi`** | `PIN_MOSI` *(libre 3.3 V)* | MCP3008 Pin 11 (`DIN`) | Salida de comandos FPGA $\rightarrow$ ADC. `IO_TYPE=LVCMOS33`. |
+| **`mcp_miso`** | `PIN_MISO` *(libre 3.3 V)* | MCP3008 Pin 12 (`DOUT`) | Entrada de datos ADC $\rightarrow$ FPGA. `IO_TYPE=LVCMOS33 PULL_MODE=UP`. |
+| **`joy_sw_n[0]`** | `PIN_SW1` *(libre 3.3 V)* | Joystick 1 (KY-023) Pin `SW` | Entrada activa en bajo. `IO_TYPE=LVCMOS33 PULL_MODE=UP`. No negar en `top.v`. |
+| **`joy_sw_n[1]`** | `PIN_SW2` *(libre 3.3 V)* | Joystick 2 (KY-023) Pin `SW` | Entrada activa en bajo. `IO_TYPE=LVCMOS33 PULL_MODE=UP`. No negar en `top.v`. |
 
 ### Restricciones físicas para el archivo `.cst`
 
-* **Alimentación estricta a $3.3\text{ V}$:** Tanto el MCP3008 (`VDD` y `VREF`) como los potenciómetros de los joysticks deben alimentarse a $3.3\text{ V}$ (nunca a $5\text{ V}$) con tierra común (`AGND` = `DGND` = `GND`).
+* **Alimentación estricta a 3.3 V:** Tanto el MCP3008 (`VDD` y `VREF`) como los potenciómetros de los joysticks deben alimentarse a 3.3 V (nunca a 5 V) con tierra común (`AGND` = `DGND` = `GND`).
 * **Pines a evitar:** No asignar pines reservados por `clk` (pin 52), `btn` (pines 3 y 4), `led`, `uart_tx`/`uart_rx` (pines 17 y 18), pantalla HUB75, audio ni pines de arranque/MSPI.
 * **Sintaxis para `nextpnr-himbaechel`:** Escribir cada directiva `IO_LOC` e `IO_PORT` en líneas separadas (plantilla completa en [`./Codigo/rtl/README.md`](./Codigo/rtl/README.md)). Los `PIN_*` se reemplazan por los números físicos libres al integrar el `.cst` final del SoC.
 
@@ -447,7 +429,7 @@ El módulo expone **6 pines físicos** en `top.v` para la **Tang Nano 9K** (4 l�
 
 ## 6. Simulación
 
-La verificación funcional del periférico se realizó de forma unitaria con **`Codigo/sim/tb_perip_joystick.v`** y **`Codigo/rtl/perip_joystick.v`**. El testbench genera un reloj de $27\text{ MHz}$, emula las lecturas y escrituras síncronas del bus del FemtoRV32, modela conductualmente el ADC **MCP3008** (SPI Modo 0) y simula los pulsadores físicos activos en bajo.
+La verificación funcional del periférico se realizó de forma unitaria con **`Codigo/sim/tb_perip_joystick.v`** y **`Codigo/rtl/perip_joystick.v`**. El testbench genera un reloj de 27 MHz, emula las lecturas y escrituras síncronas del bus del FemtoRV32, modela conductualmente el ADC **MCP3008** (SPI Modo 0) y simula los pulsadores físicos activos en bajo.
 
 ### 6.1 Cómo ejecutar el testbench
 
@@ -482,12 +464,12 @@ gtkwave ondas_joystick.vcd &
 
 | Parámetro / Evento | Valor medido en `Simulacion.png` | Requisito del MCP3008 ($3.3\text{ V}$) | Estado |
 | :--- | :---: | :---: | :---: |
-| Fin de reset (`rst` $\to$ `0`) | $200\text{ ns}$ (ejes inicializados en `512`) | — | Correcto |
-| Activación de `enable` por bus (`CTRL`) | $\approx 462\text{ ns}$ | $1$ ciclo de escritura | Correcto |
-| Duración de `S_SETUP` (`st = 001`) | $370\text{ ns}$ ($10$ ciclos de $27\text{ MHz}$) | $\ge 100\text{ ns}$ | Cumple |
-| Tiempo real $t_{SUCS}$ (`mcp_cs_n` $\downarrow$ a 1.er `mcp_sck` $\uparrow$) | $\approx 740\text{ ns}$ | $\ge 100\text{ ns}$ | Cumple con holgura |
-| Ancho en alto de `mcp_sck` ($t_{HI}$) | $370\text{ ns}$ ($f_{\text{SCLK}} = 1.35\text{ MHz}$) | $\ge 125\text{ ns}$ | Cumple |
-| Trama SPI y barrido completo | $24$ pulsos por canal ($\approx 76\text{ }\mu\text{s}$ los 4 canales) | SPI Modo 0 | Correcto |
+| Fin de reset (`rst` → `0`) | 200 ns (ejes inicializados en `512`) | — | Correcto |
+| Activación de `enable` por bus (`CTRL`) |  462 ns | 1 ciclo de escritura | Correcto |
+| Duración de `S_SETUP` (`st = 001`) | 370 ns (10 ciclos de 27 MHz) | ≥ 100 ns | Cumple |
+| Tiempo real t_{SUCS} (`mcp_cs_n` ↓ a 1.er `mcp_sck` ↑) | 740ns | ≥ 100 ns | Cumple con holgura |
+| Ancho en alto de `mcp_sck` (t_HI) | 370 ns (f_SCLK = 1.35 MHz) | ≥ 125 ns | Cumple |
+| Trama SPI y barrido completo | 24 pulsos por canal (76 μs los 4 canales) | SPI Modo 0 | Correcto |
 
 > Para ver la guía completa de señales recomendadas en GTKWave, configuración de `Makefile` y el análisis pulso a pulso de la captura, consultar [`./Codigo/sim/README.md`](./Codigo/sim/README.md).
 
