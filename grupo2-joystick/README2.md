@@ -21,8 +21,8 @@ El joystick entrega dos voltajes analógicos, uno por eje, entre 0 y 3.3 V. Como
 
 ## Tareas
 
-- [ ] Estudiar el protocolo SPI y la trama del MCP3008
-- [ ] Caja negra + características
+- [ ] 1. Estudiar el protocolo SPI y la trama del MCP3008
+- [ ] 2. Caja negra + características
 - [ ] 3. Bloques + señales
 - [ ] 4. Diagrama de tiempos
 - [ ] 5. Diagrama de flujo
