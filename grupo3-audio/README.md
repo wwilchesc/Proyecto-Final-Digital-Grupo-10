@@ -14,7 +14,7 @@ Este subsistema se encarga de la generación, síntesis y reproducción del audi
 
 - Dispositivo(s): Amplificador DAC Clase D MAX98357A (3.2 W) + parlante de 8 Ω (1–3 W)
 - Protocolo: I2S (Inter-IC Sound)
-- Dirección base en el mapa de memoria: `0x47_0000` (por evaluar el 0mapear a `0x1000_0020` en el espacio MMIO del FemtoRV)
+- Dirección base en el mapa de memoria: `0x47_0000` 
 
 ## Protocolo I2S
 
