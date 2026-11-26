@@ -331,7 +331,19 @@ El módulo se compone de cuatro sub-bloques funcionales diseñados para operar d
   * *Registro de Recepción (Rx):* Captura en serie los bits que entrega el ADC por la línea `mcp_miso`, descartando los bits iniciales y el *null bit*, y acumulando los 10 bits de datos (`B9` a `B0`).
 * **Banco de Registros e Interfaz de Bus (`reg_file`):** Mantiene almacenados los valores actualizados de los ejes (`J1_X`, `J1_Y`, `J2_X`, `J2_Y`), sincroniza los pulsadores (`BUTTONS`) y gestiona las lecturas/escrituras del procesador FemtoRV32.
 
-## 3.2 Diagramas y Archivos Adjuntos
+## 3.2 Clasificación control/datapath
+Ahora vamos a presentar la separación del periférico en dos partes: el **datapath** que es el encargado de guardar y mover los datos y la **unidad de control** (La maquina de estados), esta decide que se hace en cada momento.
+
+|Elemento|Parte|Función|
+|---|---|---|
+| Divisor ¨div¨ y comparación ¨div==CLKDIV-1¨ | Datapath | Es el encargado de contar los ciclos de 27 MHz y da un ¨tick¨ o un pulso de corta duración cada medio periodo
+
+## 3.3 ASMD + tabla de transferencia
+
+
+
+
+## 3.4 Diagramas y Archivos Adjuntos
 
 * Esquema detallado de bloques y diagrama de estados de la FSM: [Ver diagramas](./docs/Diagramas.md)
 * Especificaciones eléctricas y de tiempos del ADC: [Ver datasheet](./docs/Datasheet_MCP3008.md)
