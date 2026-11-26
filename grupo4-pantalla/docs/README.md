@@ -1,44 +1,90 @@
-# Pantalla RGB HUB75E — documentación de reconocimiento (fase 1)
+# Controlador de pantalla RGB 64 × 64 — Grupo 4
 
-> **Estado:** fase documental inicial, pendiente de validaciones físicas por el grupo.  
-> **Fecha de estudio:** 2026-11-07.  
-> **Alcance:** identificación visual del hardware, revisión bibliográfica, riesgos y plan de verificación. **No** acredita funcionamiento en FPGA, pruebas físicas o RTL implementado.
+**Electrónica Digital 1 · Universidad Nacional de Colombia**  
+**Proyecto:** consola de videojuegos retro en FPGA · Tang Nano 9K · FemtoRV32
 
-La intención es establecer una base verificable antes de diseñar el controlador para el panel LED RGB 64×64 y su integración con la Sipeed Tang Nano 9K. Los documentos se mantendrán en el **repositorio oficial**, dentro de `grupo4-pantalla/`.
+## Integrantes
 
-## Índice de documentos
+- Gisela Barrera Florez
+- Sandra Amaya Betancourt
+- Erika Briyith Hueso Castro
+- Sebastian Cespedes
+- Juan Jose Mora
+- Luis Felipe Cardenas
 
-| Archivo | Contenido | Estado |
+## 1. Objetivo
+
+Implementar un periférico de visualización para un panel HUB75E de 64 × 64 píxeles, capaz de recibir imágenes del procesador mediante MMIO y generar autónomamente las señales de barrido.
+
+## 2. Arquitectura
+
+El periférico integra un adaptador MMIO, un decodificador de registros, una memoria de imagen de doble banco, una unidad de control y un datapath. La FSM de diez estados coordina la lectura de píxeles, la transmisión de seis bits RGB por columna, la captura con LAT, el direccionamiento de filas y la habilitación mediante OE. El barrido se realiza de forma continua e independiente del software.
+
+```mermaid
+flowchart LR
+    CPU[FemtoRV32 / bus MMIO] --> MMIO[Adaptador MMIO]
+    MMIO --> FB[Framebuffer doble banco]
+    MMIO --> CTL[Registros y handshake]
+    FB --> DP[Datapath]
+    DP <--> FSM[FSM HUB75E]
+    FSM -->|frame_done| CTL
+    CTL -->|disp_bank| FB
+    CTL -->|OE| PANEL[Panel 64 × 64]
+    DP -->|RGB y A-E| PANEL
+    FSM -->|CLK y LAT| PANEL
+```
+
+| Característica | Prototipo de imágenes y video | Interfaz MMIO |
 |---|---|---|
-| [01-identificacion-panel.md](01-identificacion-panel.md) | Datos leídos de las fotografías y contraste con fabricantes | Estudio documental |
-| [02-interfaz-hub75e-y-tang-nano9k.md](02-interfaz-hub75e-y-tang-nano9k.md) | Señales, temporización conceptual, compatibilidad y memoria | Propuesta sujeta a verificación |
-| [03-riesgos-y-pruebas.md](03-riesgos-y-pruebas.md) | Matriz de riesgos, secuencia de ensayos y criterios de aceptación | Plan; pruebas no ejecutadas |
-| [04-plan-y-trazabilidad.md](04-plan-y-trazabilidad.md) | Hitos, entregables, dependencias y pautas de Git | Propuesta de coordinación |
-| [05-declaracion-uso-ia.md](05-declaracion-uso-ia.md) | Herramientas utilizadas y control humano del diseño | Declaración inicial |
-| [06-pinout-fotografiado.md](06-pinout-fotografiado.md) | Pinout aclarado por el equipo: `C / NC` y diferencias con HUB75E estándar | Pendiente de verificación eléctrica |
-| [fotos/](fotos/) | Fotografías del reverso suministradas para el reconocimiento | Evidencia visual |
+| Resolución | 64 × 64 | 64 × 64 |
+| Formato | RGB888 (24 bits/píxel) | RGB111 (3 bits/píxel) |
+| Entrada de imagen | Imagen inicial / UART, según prueba | Escrituras de palabra del procesador |
+| Planos de color | 8 | 1 |
+| Memoria de imagen | Según prototipo | Dos bancos de 4096 píxeles |
 
-## Identificación de trabajo
+RGB111 permite ocho colores y reduce la memoria lógica de los dos bancos a 24 576 bits. La ocupación física debe determinarse mediante síntesis.
 
-- **Marcaje leído en PCB:** `P2.5-2121-64X64-32S-8H-M11` (última parte pendiente de cotejar en alta resolución).
-- **Conector identificado por serigrafía:** HUB75E, 2×8 vías.
-- **Observación literal:** el equipo aclaró que el rótulo corresponde a **`C` y `NC`**. La convención HUB75E utiliza **`C` y `D`** en esa fila. Falta comprobar eléctricamente la función del contacto `NC`.
-- **Fabricante y hoja de datos exactos:** no verificados. Se enlaza documentación de un panel *comparable* Waveshare P2.5-64×64; no se presenta como el fabricante de esta placa.
+## 3. Comunicación con el procesador
 
-## Acuerdos pendientes antes de escribir RTL
+| Dirección | Registro o región | Acceso |
+|---|---|---|
+| `0x00480000`–`0x00483FFC` | 4096 píxeles RGB111, bits [2:0] | W |
+| `0x004C0000` | CONTROL: DISPLAY_EN [0], START [1] | R/W |
+| `0x004C0004` | STATUS: DISPLAY_EN [0], BUSY [1], DONE [2], FRONT_VALID [3] | R |
+| `0x004C0008` | FRAMES: contador de barridos completos | R |
 
-1. Registrar responsables y disponer de acceso al panel físico para verificaciones.
-2. Confirmar foto nítida del modelo y de los circuitos integrados; preguntar fabricante/proveedor.
-3. Resolver la interpretación eléctrica de **`C / NC`** y el tipo de barrido real.
-4. Confirmar fuente, voltajes lógicos, adaptador de nivel, masa común y orientación de conectores.
-5. Coordinar con integración el reloj, pines utilizables, mapa MMIO, formato de framebuffer y arbitraje de lectura/escritura.
-6. Registrar el resultado en Git mediante commits individuales acompañados de evidencia auténtica.
+El software espera BUSY=0, escribe el cuadro completo y solicita START. El controlador intercambia los bancos en el límite del barrido, desactiva BUSY y activa DONE. Los píxeles no se copian entre bancos. FRONT_VALID habilita la visualización después del primer intercambio; FRAMES cuenta los barridos físicos, no los cuadros producidos por el juego.
 
-**Nota:** Para cálculos se usa la Tang Nano 9K con reloj nominal de 27 MHz. Verificar la placa definitiva y sus bancos antes de asignar pines `.cst`; otros documentos del repositorio podrían reflejar versiones anteriores.
+## 4. Interfaz física
 
-## Diagramas conceptuales H2 y registro de evidencias
+| Señal | Función |
+|---|---|
+| R1, G1, B1 / R2, G2, B2 | Bits de color de las mitades superior e inferior |
+| A–E (`hub_addr[4:0]`) | Selección de pareja de filas |
+| `hub_clk` | Desplazamiento de los datos |
+| `hub_lat` | Captura de los datos desplazados |
+| `hub_oe` | Habilitación de las salidas, activa en bajo |
 
-- [Diagrama draw.io multipágina con vistas previas y explicaciones](diagramas/README.md).
-- [Organización y registro de evidencias fotográficas y de pruebas](fotos/README.md).
+Se utiliza un reloj de sistema nominal de 27 MHz. La alimentación del panel es externa a los GPIO y requiere masa común. La serigrafía NC/D y los niveles eléctricos se describen en la documentación de hardware.
 
-**Estado:** diagramas propuestos; no constituyen RTL terminado ni simulación/fotografías de funcionamiento.
+## 5. Validación
+
+El banco de pruebas integral de la interfaz MMIO se ejecuta con Icarus Verilog:
+
+```bash
+cd integracion_mmio
+make sim
+```
+
+```text
+PASS: MMIO CONTROL/STATUS/FRAMES, START/BUSY/DONE, doble buffer y barrido RGB111; filas=96 LAT=160 frames=4
+```
+
+Resultado obtenido el 25 de noviembre de 2026. Verifica el periférico con un maestro de prueba, no con el procesador real. La síntesis y prueba física de esta configuración integrada se mantienen como verificaciones del sistema.
+
+## 6. Documentación y archivos
+
+- [Interfaz MMIO, mapa de registros e instrucciones de integración](integracion_mmio/README.md).
+- [Explicación de los módulos Verilog](integracion_mmio/explicacion/README.md).
+- [Documentación técnica](docs/README.md).
+- [Diagramas del controlador](docs/diagramas/README.md).
