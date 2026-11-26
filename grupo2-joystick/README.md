@@ -397,6 +397,9 @@ flowchart TD
     D5 -- sí --> O8(["res[ch] ← rx[9:0]<br/>ch ← ch+1, tick ← 0"]) --> S4
     S4 --> D6{"tick_done"}
     D6 -- no --> O9(["tick ← tick+1"]) --> S4
+    D6 -- sí --> D7{"ch = 0"}
+    D7 -- no --> O10(["tick ← 0"]) --> S0
+    D7 -- sí --> O11(["valid ← 1, start_req ← 0<br/>tick ← 0"]) --> S0
  ```
 
 
