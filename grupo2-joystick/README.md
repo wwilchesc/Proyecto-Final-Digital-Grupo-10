@@ -336,7 +336,10 @@ Ahora vamos a presentar la separación del periférico en dos partes: el **datap
 
 |Elemento|Parte|Función|
 |---|---|---|
-| Divisor ¨div¨ y comparación ¨div==CLKDIV-1¨ | Datapath | Es el encargado de contar los ciclos de 27 MHz y da un ¨tick¨ o un pulso de corta duración cada medio periodo
+| Divisor `div` y comparación `div==CLKDIV-1` | Datapath | Es el encargado de contar los ciclos de 27 MHz y da un ¨tick¨ o un pulso de corta duración cada medio periodo del reloj del SPI `mcp_sck` |
+| Registro `CLKDIV` | Datapath | Guarda el divisor (10 despues del reset)
+| Contador de pulsos  `cnt` y comparacion `cnt == 24` | Datapath | Leva la cuenta de los 24 pulsos|
+| Decodificador de MOSI| Datapath | Arr
 
 ## 3.3 ASMD + tabla de transferencia
 
