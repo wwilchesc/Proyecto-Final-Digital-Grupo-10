@@ -336,15 +336,15 @@ Este documento reúne la evidencia de verificación del controlador `perip_joyst
 > Reemplaza los enlaces o rutas de ejemplo por los URLs de tus videos (YouTube, Google Drive, video subido al repositorio o release) y agrega una breve descripción de lo que se observa en cada grabación.
 
 ### Video 1 — Lectura de los bits de ejes X/Y y el pulsador SW
-* **Enlace :** `[https://youtube.com/shorts/XooOwVK_s9I?si=4kVZroBxlKVF1-6w]`
+* **Enlace :** [![Ver video en YouTube](https://youtube.com/shorts/XooOwVK_s9I?si=4kVZroBxlKVF1-6w)](https://youtube.com/shorts/XooOwVK_s9I?si=4kVZroBxlKVF1-6w)
 * **Descripción de la prueba:**
   * Alimentación desde la Tang Nano 9K a **3.3 V** (`VDD`, `VREF` y `VCC` del joystick) con tierra común.
-  * Desplazamiento de la palanca en los ejes `VRx` (`CH0`) y `VRy` (`CH1`) hacia los extremos y el centro.
+  * Desplazamiento de la palanca en los ejes `VRx` (`CH0`) y `VRy` (`CH1`) hacia los extremos y el centro mediente la terminal con la instrucción `picocom -b 57600 /dev/ttyUSB1` .
   * Visualización en vivo en Linux Mint mediante la consola y transmisión serie por `/dev/ttyUSB1` a `57600` baudios.
   Verificación de las tramas transmitidas por UART desde el firmware en FemtoRV32 (`0x0043_0000` para el joystick y `0x0040_0000` para UART)
 
 
 ### Video 2 — Visualizacion en pantalla del movimiento del joystick
-* **Enlace / Ruta del video:** `[https://youtube.com/shorts/_OouOZ9f-Ns?si=Qud1WUWcKQ1wCPJt]`
+* **Enlace / Ruta del video:** [![Ver video en YouTube](https://youtube.com/shorts/_OouOZ9f-Ns?si=Qud1WUWcKQ1wCPJt)](https://youtube.com/shorts/_OouOZ9f-Ns?si=Qud1WUWcKQ1wCPJt)
 * **Descripción de la prueba:**
   * Vista en pantalla de el moviemiento del joystick con `visor_joystick.py` 
