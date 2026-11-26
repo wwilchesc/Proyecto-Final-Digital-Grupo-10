@@ -27,14 +27,7 @@ El protocolo I2S (Inter-IC Sound) es un estándar de comunicación síncrono dis
   * **DIN (Data In):** Línea de datos serie donde se transmiten las muestras de 16 bits con signo, enviando siempre el bit más significativo primero (MSB).
 * **Formato de trama:** Cada trama completa dura 32 ciclos de BCLK (16 bits para el canal mono).
 
-## Tareas
 
-- [ ] Estudiar el protocolo I2S y el módulo amplificador
-- [ ] Definir los registros del periférico
-- [ ] Diseñar el generador de tonos y el transmisor I2S
-- [ ] Definir los efectos de sonido
-- [ ] Escribir el testbench
-- [ ] Probar en la placa
 
 
 
