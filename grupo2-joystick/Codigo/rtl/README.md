@@ -324,3 +324,27 @@ Antes de ejecutar `make syn` en tu proyecto final, confirma cada punto:
 - [ ] `top.v` expone los 6 pines físicos del joystick y conecta `.joy_sw_n(joy_sw_n)` sin negación.
 - [ ] El archivo `.cst` asigna pines libres de $3.3\text{ V}$ (`LVCMOS33`) con `PULL_MODE=UP` en `mcp_cs_n`, `mcp_miso` y `joy_sw_n[1:0]`, usando una sentencia por línea.
 - [ ] El firmware del FemtoRV32 escribe `1` en `0x0043_0000` (`CTRL.ENABLE`) al arrancar para iniciar el muestreo automático.
+
+# Pruebas y Validación
+
+Este documento reúne la evidencia de verificación del controlador `perip_joystick` (SPI Modo 0, 4 canales de 10 bits y pulsadores `SW`), tanto en simulación RTL como en hardware físico sobre la **Tang Nano 9K** comunicándose con Linux Mint vía UART (`57600` baudios).
+
+---
+
+## 6. Videos de Funcionamiento en Hardware Real
+
+> Reemplaza los enlaces o rutas de ejemplo por los URLs de tus videos (YouTube, Google Drive, video subido al repositorio o release) y agrega una breve descripción de lo que se observa en cada grabación.
+
+### Video 1 — Lectura de los bits de ejes X/Y y el pulsador SW
+* **Enlace :** `[https://youtube.com/shorts/XooOwVK_s9I?si=4kVZroBxlKVF1-6w]`
+* **Descripción de la prueba:**
+  * Alimentación desde la Tang Nano 9K a **3.3 V** (`VDD`, `VREF` y `VCC` del joystick) con tierra común.
+  * Desplazamiento de la palanca en los ejes `VRx` (`CH0`) y `VRy` (`CH1`) hacia los extremos y el centro.
+  * Visualización en vivo en Linux Mint mediante la consola y transmisión serie por `/dev/ttyUSB1` a `57600` baudios.
+  Verificación de las tramas transmitidas por UART desde el firmware en FemtoRV32 (`0x0043_0000` para el joystick y `0x0040_0000` para UART)
+
+
+### Video 2 — Visualizacion en pantalla del movimiento del joystick
+* **Enlace / Ruta del video:** `[https://youtube.com/shorts/_OouOZ9f-Ns?si=Qud1WUWcKQ1wCPJt]`
+* **Descripción de la prueba:**
+  * Vista en pantalla de el moviemiento del joystick con `visor_joystick.py` 
