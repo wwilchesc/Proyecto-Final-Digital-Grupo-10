@@ -401,9 +401,21 @@ flowchart TD
     D7 -- no --> O10(["tick ← 0"]) --> S0
     D7 -- sí --> O11(["valid ← 1, start_req ← 0<br/>tick ← 0"]) --> S0
  ```
-
-
-
+| Estado | Condición | Transferencias | Siguiente |
+|---|---|---|---|
+| `S_IDLE` | `enable ∨ start_req ∨ ch≠0` | `cs_n←0; n←0; tick←0; mosi←tx_w[23]` | `S_SETUP` |
+| `S_IDLE` | si no | — | `S_IDLE` |
+| `S_SETUP` | `tick_done=0` | `tick←tick+1` | `S_SETUP` |
+| `S_SETUP` | `tick_done=1` | `tick←0` | `S_BIT` |
+| `S_BIT` | `tick_done=0` | `tick←tick+1` | `S_BIT` |
+| `S_BIT` | `tick_done=1 ∧ sck=0` | `sck←1; rx←{rx[22:0],miso}; n←n+1; tick←0` | `S_BIT` |
+| `S_BIT` | `tick_done=1 ∧ sck=1 ∧ n<24` | `sck←0; mosi←tx_w[23−n]; tick←0` | `S_BIT` |
+| `S_BIT` | `tick_done=1 ∧ sck=1 ∧ n=24` | `sck←0; cs_n←1; tick←0` | `S_END` |
+| `S_END` | `tick_done=0` | `tick←tick+1` | `S_END` |
+| `S_END` | `tick_done=1` | `res[ch]←rx[9:0]; ch←ch+1; tick←0` | `S_GAP` |
+| `S_GAP` | `tick_done=0` | `tick←tick+1` | `S_GAP` |
+| `S_GAP` | `tick_done=1 ∧ ch≠0` | `tick←0` | `S_IDLE` |
+| `S_GAP` | `tick_done=1 ∧ ch=0` | `valid←1; start_req←0; tick←0` | `S_IDLE` |
 ## 3.4 Diagramas y Archivos Adjuntos
 
 * Esquema detallado de bloques y diagrama de estados de la FSM: [Ver diagramas](./docs/Diagramas.md)
