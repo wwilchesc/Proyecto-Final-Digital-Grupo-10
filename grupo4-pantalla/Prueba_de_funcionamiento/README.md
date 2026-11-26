@@ -1,12 +1,8 @@
-# Prueba de Funcionamiento - Grupo 4 (Pantalla)
+# Pruebas de funcionamiento del panel HUB75E
 
-## Descripción del contenido
-En esta carpeta se encuentran los archivos iniciales del módulo de pantalla:
-* **`PRUEBA_2/`**: Archivos de código y recursos de las pruebas iniciales.
-* **Documentos PDF**: Corresponden a la digitalización de los textos, apuntes y diagramas que realizamos inicialmente a mano durante el planteamiento y diseño del sistema.
+Esta carpeta reúne las pruebas iniciales del controlador de pantalla, incluyendo el RTL de barrido, la memoria de imagen, los recursos gráficos y las pruebas del decodificador local. Los documentos PDF contienen explicaciones y material de diseño elaborado por el equipo.
 
-## Integrantes y colaboración
-Todos los miembros del grupo participaron activamente en la creación y elaboración de estos archivos (Los cuales fueron digitalizados con herramientas IA) asi como tambien de los archivos que se encuentran en la carpeta PRUEBA_2:
-* **Gisela**
-* **Erika**
-* **Sandra**
+- [PRUEBA_2](PRUEBA_2/): controlador del panel y visualización de imágenes.
+- [Decodificador local](decodificador_local/): selección de registros y simulación independiente.
+- [Diagramas del controlador](../docs/diagramas/README.md).
+- [Interfaz MMIO integral](../integracion_mmio/README.md).
