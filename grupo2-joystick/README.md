@@ -340,7 +340,6 @@ Ahora vamos a presentar la separación del periférico en dos partes: el **datap
 | Registro `CLKDIV` | Datapath | Guarda el divisor (10 despues del reset)
 | Contador de pulsos  `cnt` y comparacion `cnt == 24` | Datapath | Leva la cuenta de los 24 pulsos|
 | Decodificador de MOSI, `f(cnt, ch)` | Lógica combinacional, sin memoria | Datapath | Saca start, SGL/DIFF, D1 y D0 según `cnt` y `ch` |
-
 | Registro de recepción `rx` (10 bits) | Datapath | En cada subida corre sus bits y mete el que llega por `mcp_miso` |
 | Contador de canal `ch` (2 bits) | Datapath | Recorre `CH0` a `CH3` |
 | `J1_X`, `J1_Y`, `J2_X`, `J2_Y` (10 bits, reset 512) | Datapath | Guardan el último valor de cada canal para el procesador |
