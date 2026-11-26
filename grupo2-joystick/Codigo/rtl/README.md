@@ -327,7 +327,7 @@ Antes de ejecutar `make syn` en tu proyecto final, confirma cada punto:
 
 # Pruebas y Validación
 
-Este documento reúne la evidencia de verificación del controlador `perip_joystick` (SPI Modo 0, 4 canales de 10 bits y pulsadores `SW`), tanto en simulación RTL como en hardware físico sobre la **Tang Nano 9K** comunicándose con Linux Mint vía UART (`57600` baudios).
+Este sección reúne la evidencia de verificación del controlador `perip_joystick` (SPI Modo 0, 4 canales de 10 bits y pulsadores `SW`), tanto en simulación RTL como en hardware físico sobre la **Tang Nano 9K** comunicándose con Linux Mint vía UART (`57600` baudios).
 
 ---
 
