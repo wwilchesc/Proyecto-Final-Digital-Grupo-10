@@ -339,8 +339,34 @@ Ahora vamos a presentar la separación del periférico en dos partes: el **datap
 | Divisor `div` y comparación `div==CLKDIV-1` | Datapath | Es el encargado de contar los ciclos de 27 MHz y da un ¨tick¨ o un pulso de corta duración cada medio periodo del reloj del SPI `mcp_sck` |
 | Registro `CLKDIV` | Datapath | Guarda el divisor (10 despues del reset)
 | Contador de pulsos  `cnt` y comparacion `cnt == 24` | Datapath | Leva la cuenta de los 24 pulsos|
-| Decodificador de MOSI| Datapath | Arr
+| Decodificador de MOSI, `f(cnt, ch)` | Lógica combinacional, sin memoria | Datapath | Saca start, SGL/DIFF, D1 y D0 según `cnt` y `ch` |
 
+| Registro de recepción `rx` (10 bits) | Datapath | En cada subida corre sus bits y mete el que llega por `mcp_miso` |
+| Contador de canal `ch` (2 bits) | Datapath | Recorre `CH0` a `CH3` |
+| `J1_X`, `J1_Y`, `J2_X`, `J2_Y` (10 bits, reset 512) | Datapath | Guardan el último valor de cada canal para el procesador |
+| `mcp_sck` | Datapath | Reloj SPI hacia el ADC. Marca el ritmo: en cada pulso viaja un bit en cada sentido |
+| `mcp_cs_n` | Datapath | *Chip Select*, activo en bajo (por eso la "_n"). En 0 el ADC escucha; al subir termina la lectura |
+| `mcp_mosi` | Datapath | *Master Out, Slave In*: lleva el comando de la FPGA al ADC |
+| `mcp_miso` | Datapath | *Master In, Slave Out*: trae el resultado del ADC, del bit de más peso al de menos |
+| Sincronizador de botones (`sw1`, `sw2`) | Datapath | El botón puede cambiar en cualquier momento; al pasar por dos flip-flops la FPGA siempre lo lee como un 0 o un 1 claro. Al final se invierte (`BUTTONS = ~sw2`) para que 1 signifique presionado |
+| Multiplexor de lectura (`addr[4:0]`) | Datapath | Pone en `d_out` el registro que pide el procesador |
+| FSM (`S_IDLE`, `S_SETUP`, `S_BIT`, `S_END`, `S_GAP`) | **Control** | Lleva la secuencia de cada lectura |
+| Bits `ENABLE` y `START` de `CTRL` | Control | `ENABLE`: barrido continuo. `START`: un solo barrido, se borra solo |
+| Bit `VALID` de `STATUS` | Control | Indica que ya se completó un barrido y los ejes no son los 512 del reset |
+| `BUSY` | Control | Vale 1 cuando la FSM no está en `S_IDLE` |
+ 
+Órdenes que manda la FSM al datapath:
+ 
+| Señal | Efecto |
+|---|---|
+| `div_clr` | `div ← 0`, reinicia el conteo de tiempo |
+| `sck_hi` / `sck_lo` | Sube o baja `mcp_sck` (cada flanco del reloj SPI) |
+| `sh_rx` | Mete `mcp_miso` en `rx` y hace `cnt ← cnt + 1` |
+| `upd_mosi` | Carga en `mcp_mosi` el bit que toca del comando |
+| `cs_lo` / `cs_hi` | Baja o sube `mcp_cs_n`: empieza o termina la lectura |
+| `ld_res` | Copia `rx` al registro del canal `ch` |
+| `ch_inc` | `ch ← ch + 1`, pasa al siguiente eje |
+ 
 ## 3.3 ASMD + tabla de transferencia
 
 
