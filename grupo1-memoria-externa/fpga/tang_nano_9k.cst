@@ -1,0 +1,31 @@
+// tang_nano_9k.cst
+// Pines del Grupo 1 (memoria externa) en la Tang Nano 9K, con los nombres de
+// puertos de rtl/memoria_externa.v. Es el bloque que el grupo 6 copia en
+// soc/top.cst.
+//
+// - Flash SPI: la P25Q32 de 32 Mbit de la tarjeta, en los pines MSPI (59 a 62).
+//   Hay que activar "Use MSPI as regular IO" (en Gowin IDE) o la opcion
+//   equivalente de gowin_pack. La configuracion de la FPGA esta en su Flash
+//   interna, asi que esta Flash queda libre para datos.
+// - spi_wp_n y spi_hold_n no tienen pin en esta tarjeta: en el top del SoC se
+//   dejan sin conectar (no se declaran como puertos del top).
+// - EEPROM I2C 24LC256 cableada por fuera, con pull-ups de 4,7 kOhm a 3,3 V.
+//   Pines 31 y 32: banco de 3,3 V y libres en la tabla de pines del grupo 6
+//   (confirmar con el grupo 6 antes de soldar).
+// - Reloj de 27 MHz: el SPI queda en 6,75 MHz con CLK_DIV = 1 (valor de
+//   reset). El I2C necesita CLK_DIV = 67 para ~99,3 kHz (el firmware lo
+//   escribe al arrancar; con el valor de reset, 124, queda en ~54 kHz).
+
+IO_LOC  "spi_sck" 59;
+IO_PORT "spi_sck" IO_TYPE=LVCMOS33 PULL_MODE=NONE;
+IO_LOC  "spi_cs_n" 60;
+IO_PORT "spi_cs_n" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC  "spi_mosi" 61;
+IO_PORT "spi_mosi" IO_TYPE=LVCMOS33 PULL_MODE=NONE;
+IO_LOC  "spi_miso" 62;
+IO_PORT "spi_miso" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+
+IO_LOC  "i2c_scl" 31;
+IO_PORT "i2c_scl" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC  "i2c_sda" 32;
+IO_PORT "i2c_sda" IO_TYPE=LVCMOS33 PULL_MODE=UP;

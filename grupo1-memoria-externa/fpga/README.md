@@ -1,7 +1,13 @@
 # Pines y restricciones del Grupo 1
 
-`tang_primer_25k.cst` asigna los pines de `rtl/memoria_externa.v` en la **Tang Primer 25K** (GW5A-LV25MG121, reloj de 50 MHz). Con esta tarjeta se hace la primera prueba en físico; después se pasa a la Tang Nano 9K del SoC (ver la última sección).
+**Cómo se trabajó.** Primero todo se hizo para la **Tang Primer 25K** (GW5A-LV25MG121, reloj de 50 MHz), porque era la tarjeta que teníamos disponible: ahí se asignaron los pines, se compiló en Gowin y se hace la prueba en placa con video (`tang_primer_25k.cst`, `prueba_grupo1.v`). Después se pasó a la **Tang Nano 9K** (GW1NR-LV9QN88PC6/I5, reloj de 27 MHz), que es la placa del SoC, para la **versión final** (`tang_nano_9k.cst`, `prueba_grupo1_9k.v`). El RTL del grupo es el mismo en las dos: solo cambian el reloj, los pines y detalles de cada tarjeta.
 
+| | Tang Primer 25K (pruebas) | Tang Nano 9K (versión final) |
+| --- | --- | --- |
+| Pines del bloque | [`tang_primer_25k.cst`](tang_primer_25k.cst) | [`tang_nano_9k.cst`](tang_nano_9k.cst) |
+| Prueba en placa | [`prueba_grupo1.v`](prueba_grupo1.v) · [`.cst`](prueba_grupo1_25k.cst) · [`.sdc`](prueba_grupo1.sdc) | [`prueba_grupo1_9k.v`](prueba_grupo1_9k.v) · [`.cst`](prueba_grupo1_9k.cst) · [`.sdc`](prueba_grupo1_9k.sdc) |
+| Simulación de la prueba | `make sim-prueba`: 8 comprobaciones, 0 errores | `make sim-prueba-9k`: 9 comprobaciones, 0 errores |
+| Gowin (V1.9.11.03 Education) | 1683 LUT (8 %), Fmax 96,5 MHz con 50 MHz | 1669 LUT (20 %), Fmax 44,5 MHz con 27 MHz |
 ## Pines en la Tang Primer 25K
 
 | Puerto | Pin | Va a | Nota |
@@ -24,23 +30,7 @@ Los pines de la Flash son los que usa la definición de la tarjeta en LiteX (`li
 2. Marcar **Project → Configuration → Place & Route → Dual-Purpose Pin → Use MSPI as regular IO**. Sin esto, los pines de la Flash quedan reservados para la configuración.
 3. La Flash también guarda el bitstream al principio. Para escribir datos (récords) hay que usar direcciones altas, lejos del bitstream; leer el JEDEC ID y leer datos no lo afecta.
 
-## Paso a la Tang Nano 9K
-
-El RTL no cambia. Solo cambian el reloj y los pines:
-
-| Puerto | Tang Primer 25K | Tang Nano 9K |
-| --- | --- | --- |
-| `clk` | E2 (50 MHz) | 52 (27 MHz) |
-| `spi_sck` | E7 | 59 (MCLK) |
-| `spi_cs_n` | E6 | 60 (MCS_N) |
-| `spi_mosi` | D6 | 61 (MO) |
-| `spi_miso` | E5 | 62 (MI) |
-| `spi_wp_n`, `spi_hold_n` | D5, E4 | sin pin (fijos en la tarjeta; confirmar en el esquemático) |
-| `i2c_scl`, `i2c_sda` | K4, J4 | dos pines libres de la lista del grupo 6 |
-
-Con 27 MHz: el SPI queda en 6,75 MHz con `CLK_DIV = 1` (no hay que cambiar nada) y el I2C necesita `CLK_DIV = 67` para unos 99,3 kHz. La Flash de la Nano 9K es de 32 Mbit y de otro fabricante, así que el JEDEC ID que responde no es 0xEF4017; los comandos 0x9F, 0x03, 0x06, 0x02 y 0x05 son los mismos.
-
-## Prueba en placa: SPI e I2C juntos
+## Prueba en placa en la 25K: SPI e I2C juntos
 
 `prueba_grupo1.v` es un módulo superior para probar en la tarjeta **todo el bloque del grupo**, sin necesitar el SoC. Instancia `rtl/memoria_externa.v` y un secuenciador que hace el papel de la CPU: escribe y lee los registros por las mismas señales del bus del FemtoRV32 (`mem_addr`, `mem_wdata`, `mem_wmask`, `mem_rstrb`, `mem_rdata`). Al terminar manda un reporte por la UART y enciende los LEDs.
 
@@ -110,4 +100,57 @@ RESULTADO   SPI: OK      I2C: OK
 
 Si la EEPROM no está conectada, las dos líneas del I2C dicen FALLA, el LED del I2C queda apagado y el SPI sigue funcionando; así se ve que cada parte se prueba por separado.
 
-Para pasar la prueba a la Tang Nano 9K basta con poner `CLK_HZ = 27_000_000` y cambiar los pines como dice la tabla de arriba (y `CLK_DIV = 67` en el I2C, o dejar 124 y aceptar unos 54 kHz).
+La versión de esta prueba para la Tang Nano 9K está en la sección siguiente.
+
+## Versión final: Tang Nano 9K
+
+### Qué cambia frente a la 25K
+
+| | Tang Primer 25K | Tang Nano 9K |
+| --- | --- | --- |
+| Reloj | 50 MHz, pin E2 | 27 MHz, pin 52 |
+| SCK del SPI con `CLK_DIV = 1` | 12,5 MHz | 6,75 MHz (no hay que cambiar nada) |
+| SCL del I2C | `CLK_DIV = 124` → ~100 kHz | `CLK_DIV = 67` → ~99,3 kHz (el firmware y la prueba lo escriben al arrancar) |
+| Flash | 64 Mbit, también guarda el bitstream | P25Q32 de 32 Mbit; el bitstream va en la Flash interna de la FPGA, así que esta queda libre |
+| Pines de la Flash | E7 (SCK), E6 (CS), D6 (MOSI), E5 (MISO), D5, E4 | 59 (SCK), 60 (CS), 61 (MOSI), 62 (MISO) |
+| `spi_wp_n`, `spi_hold_n` | D5, E4 | Sin pin: en la 9K no llegan a la FPGA, se dejan sin conectar |
+| EEPROM | K4 (SCL), J4 (SDA) | 31 (SCL), 32 (SDA) |
+| LEDs de la prueba | Encienden con 1 | Encienden con 0 (`LED_ACTIVO_BAJO = 1`) |
+| Sector de prueba de la Flash | 0x7FF000 | 0x3FF000 (último sector de 4 KB) |
+
+Los pines de la Flash son los del esquemático de Sipeed (MCLK, MCS_N, MO y MI de la FPGA) y los de la definición de la tarjeta en LiteX; son de doble uso (MSPI), así que hay que activar **Use MSPI as regular IO** (`-use_mspi_as_gpio 1`). Los pines 31 y 32 de la EEPROM están en el banco de 3,3 V y no los usa ningún otro grupo según la tabla de pines del grupo 6; **no se deben usar pines del 3 al 20 ni del 79 al 88**, que son de 1,8 V. La Flash de la 9K es de otro fabricante, así que su JEDEC ID no es 0xEF4017; los comandos 0x9F, 0x03, 0x06, 0x02, 0x05 y 0x20 son los mismos.
+
+### Prueba en placa en la 9K
+
+| Puerto | Pin | En la tarjeta |
+| --- | --- | --- |
+| `clk` | 52 | Oscilador de 27 MHz |
+| `btn_rst_n` | 4 | Botón S1: reset y nueva corrida |
+| `btn_run_n` | 3 | Botón S2: repetir con el siguiente byte |
+| `uart_tx` | 17 | UART del USB de la tarjeta |
+| `led[0]`, `led[1]` | 10, 11 | LEDs 0 y 1: SPI OK e I2C OK |
+| Flash | 59, 60, 61, 62 | Flash de la tarjeta |
+| `i2c_scl`, `i2c_sda` | 31, 32 | Header lateral, hacia la EEPROM |
+
+La EEPROM se cablea igual que en la 25K: pin 6 (SCL) al pin 31, pin 5 (SDA) al pin 32, pin 8 a 3,3 V, pines 1, 2, 3, 4 y 7 a GND, pull-ups de 4,7 kΩ a 3,3 V y un condensador de 100 nF entre los pines 8 y 4.
+
+Comandos para la consola Tcl de Gowin (`D` es la carpeta `grupo1-memoria-externa`):
+
+```
+create_project -name prueba_grupo1_9k -dir C:/Users/USUARIO/Desktop/prueba9k -pn GW1NR-LV9QN88PC6/I5 -device_version C
+set D C:/ruta/a/grupo1-memoria-externa
+foreach f {fpga/prueba_grupo1_9k.v rtl/memoria_externa.v rtl/perip_spi.v rtl/spi_control.v rtl/spi_datapath.v rtl/perip_i2c.v rtl/i2c_control.v rtl/i2c_datapath.v} {add_file -type verilog $D/$f}
+add_file -type cst $D/fpga/prueba_grupo1_9k.cst
+add_file -type sdc $D/fpga/prueba_grupo1_9k.sdc
+set_option -top_module prueba_grupo1_9k -verilog_std sysv2017 -use_mspi_as_gpio 1
+run all
+```
+
+Con Gowin V1.9.11.03 Education compila sin errores: 1669 LUT (20 %) y 472 registros (8 %), Fmax de 44,5 MHz para el reloj de 27 MHz, y todos los pines donde dice el `.cst`. Se programa en SRAM con Gowin Programmer y el reporte sale por el puerto COM de la 9K a 115200 8N1.
+
+### Para el SoC (grupo 6)
+
+- `tang_nano_9k.cst` tiene los pines del bloque para copiar en `soc/top.cst`.
+- En `soc/top.v` no hace falta sacar `spi_wp_n` ni `spi_hold_n` como puertos: en la 9K no tienen pin.
+- Hay que activar los pines MSPI como E/S (en el flujo libre, la opción equivalente de `gowin_pack`).
+- El firmware tiene que escribir `CLK_DIV = 67` en el I2C (0x0046_0010) al arrancar.
