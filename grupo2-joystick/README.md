@@ -213,10 +213,10 @@ Llamamos **transacción** a una conversación completa: `mcp_cs_n` baja, se env�
 
 **Secuencia implementada en `perip_joystick.v`:**
 
-1. **Bajamos `mcp_cs_n`** a 0 y esperamos el tiempo de setup (`S_SETUP`, 100 ns).
+1. **Bajamos `mcp_cs_n`** a 0 y esperamos el tiempo de setup (`S_SETUP`, ≥ 100 ns).
 2. **Transmitimos 24 pulsos de `mcp_sck`** (3 bytes): en cada flanco de subida se muestrea `mcp_miso` y en cada flanco de bajada se actualiza `mcp_mosi`.
 3. **Después del pulso 24**, dejamos `mcp_sck` en 0.
-4. **Subimos `mcp_cs_n`** a 1 y lo mantenemos 270 ns antes de la siguiente transacción.
+4. **Subimos `mcp_cs_n`** a 1 y lo mantenemos ≥ 270 ns antes de la siguiente transacción.
 5. **Guardamos** los 10 bits recibidos (pulsos 15 a 24) en el registro correspondiente al canal (`J1_X`, `J1_Y`, `J2_X` o `J2_Y`).
 
 ### Trama de 24 pulsos (3 bytes)
@@ -268,7 +268,7 @@ El MCP3008 mide **un solo canal por transacción**. Para leer X e Y de dos jugad
 3. `CH2` → registro `J2_X` (eje X del jugador 2).
 4. `CH3` → registro `J2_Y` (eje Y del jugador 2).
 
-Entre una y otra, `mcp_cs_n` sube y espera 270 ns. Cuando `CTRL.ENABLE = 1`, el ciclo se repite de forma continua y el procesador siempre encuentra el último valor leído en los registros.
+Entre una y otra, `mcp_cs_n` sube y espera ≥ 270 ns. Cuando `CTRL.ENABLE = 1`, el ciclo se repite de forma continua y el procesador siempre encuentra el último valor leído en los registros.
 
 ## 2.8 Cómo lo traducimos a un circuito en la FPGA
 
