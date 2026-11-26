@@ -522,12 +522,3 @@ gtkwave ondas_joystick.vcd &
 
 > Para ver la guía completa de señales recomendadas en GTKWave, configuración de `Makefile` y el análisis pulso a pulso de la captura, consultar [`./Codigo/sim/README.md`](./Codigo/sim/README.md).
 
-## 7. Avances
-
-| Fecha | Avance |
-| --- | --- |
-| | |
-
-## 8. Pendientes y problemas
-
--
