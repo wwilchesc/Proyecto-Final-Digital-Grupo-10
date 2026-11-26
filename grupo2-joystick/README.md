@@ -22,13 +22,15 @@ Cada joystick entrega dos voltajes analógicos, uno por eje, entre 0 y 3.3 V. Co
 
 ## Tareas
 
-- [ ] Estudiar el protocolo SPI y la trama del MCP3008
-- [ ] Definir los registros del receptor
-- [ ] Diseñar el receptor en Verilog
-- [ ] Definir la asignación de cada jugador
-- [ ] Escribir el testbench
-- [ ] Probar en la placa
-
+[x] Estudiar el protocolo SPI y la trama del MCP3008
+[x] 1. Caja negra + características
+[x] 2. Bloques + señales
+[x] 3. Diagrama de tiempos
+[x] 4. Diagrama de flujo
+[x] 5. Clasificación control/datapath
+[x] 6. ASMD + tabla de transferencias
+[ ] 7. Arquitectura control/datapath
+[ ] 8. FSM
 # 1. Terminología básica
 
 En esta sección se explican los principales conceptos que se utilizan en el desarrollo del periférico. La idea es conocer primero los componentes, las señales y los términos relacionados con la comunicación entre dispositivos, para entender con mayor facilidad el funcionamiento del sistema y las etapas de implementación.
