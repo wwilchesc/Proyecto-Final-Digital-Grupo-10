@@ -339,7 +339,8 @@ Este sección reúne la evidencia de verificación del controlador `perip_joysti
 * **Enlace :** [![Ver video en YouTube](https://youtube.com/shorts/XooOwVK_s9I?si=4kVZroBxlKVF1-6w)](https://youtube.com/shorts/XooOwVK_s9I?si=4kVZroBxlKVF1-6w)
 * **Descripción de la prueba:**
   * Alimentación desde la Tang Nano 9K a **3.3 V** (`VDD`, `VREF` y `VCC` del joystick) con tierra común.
-  * Desplazamiento de la palanca en los ejes `VRx` (`CH0`) y `VRy` (`CH1`) hacia los extremos y el centro mediente la terminal con la instrucción `picocom -b 57600 /dev/ttyUSB1` .
+  * Desplazamiento de la palanca en los ejes `VRx` (`CH0`) y `VRy` (`CH1`) hacia los extremos y el centro mediente la terminal con las siguientes instrucciónes `stty -F /dev/ttyUSB1 57600 cs8 -cstopb -parenb \-ixon -ixoff -crtscts raw -echo`  y 
+  `picocom -b 57600 /dev/ttyUSB1` respectivamente .
   * Visualización en vivo en Linux Mint mediante la consola y transmisión serie por `/dev/ttyUSB1` a `57600` baudios.
   Verificación de las tramas transmitidas por UART desde el firmware en FemtoRV32 (`0x0043_0000` para el joystick y `0x0040_0000` para UART)
 
