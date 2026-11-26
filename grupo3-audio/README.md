@@ -27,15 +27,15 @@ El protocolo I2S (Inter-IC Sound) es un estándar de comunicación síncrono dis
   * **DIN (Data In):** Línea de datos serie donde se transmiten las muestras de 16 bits con signo, enviando siempre el bit más significativo primero (MSB).
 * **Formato de trama:** Cada trama completa dura 32 ciclos de BCLK (16 bits para el canal mono).
 
-* Diagramas/
+## Diagramas
 
 Diagramas de diseño del periférico de audio: caja negra, diagrama de bloques, diagrama de flujo, FSM, ASMD, control–datapath, tiempos, tabla de transiciones y clasificación.
 
-docs/
+## docs
 
 Documentación de apoyo: datasheet del amplificador MAX98357A (MAX98357_ALLDATASHEET.pdf), el diagrama de flujo en draw.io (Diagrama_de_Flujo.md) y la caja negra del periférico.
 
-Tests/
+## Tests
 
 Pruebas iniciales del transmisor I2S en la Tang Nano 9K, antes de integrarlo al SoC.
 
@@ -43,7 +43,7 @@ i2s/: transmisor I2S (i2s_transmitter.v) con un top.v que genera una melodía, s
 I2S audio prueba/: versión con periférico de melodías (i2s_melody_peripheral.v), núcleo I2S (i2s_tx_core.v), ROM de canciones (pacman_songs.mem), top para hardware, testbench (tb_i2s_melody.v) y forma de onda de simulación (i2s_test.vcd).
 Implementacion/soc_Peri_Audio/
 
-SoC completo basado en FemtoRV con el periférico de audio integrado (base 0x47_0000).
+## SoC completo basado en FemtoRV con el periférico de audio integrado (base 0x47_0000).
 
 rtl/: fuentes Verilog del SoC.
 SOC.v: módulo principal que conecta CPU, memoria y periféricos.
