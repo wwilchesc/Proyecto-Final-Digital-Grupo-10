@@ -173,7 +173,7 @@ La captura corresponde a la ventana inicial de **$0\text{ ns}$ a $1850\text{ ns}
    * En el ciclo inmediatamente posterior (\approx 500 ns), la máquina de estados detecta `enable = 1`, baja `mcp_cs_n` a `0` para seleccionar el MCP3008 y transita de `st = 000` (`S_IDLE`) a `st = 001` (`S_SETUP`).
    * En ese mismo instante (\approx 500ns), el modelo conductual del MCP3008 detecta el flanco de bajada de `mcp_cs_n` y saca la línea `mcp_miso` de estado indefinido (rojo) a `0`.
    * El estado `S_SETUP` (`001`) dura exactamente $10$ ciclos de reloj (370, desde \approx 500ns hasta \approx 870ns), momento en el cual la FSM avanza a `st = 010` (`S_BIT`).
-   * Al entrar a `S_BIT`, el divisor espera un medio periodo adicional (370ns) antes de generar el primer flanco de subida de reloj. Esto produce un tiempo real de establecimiento $t_{SUCS} \approx 740ns (de 00ns a 1240ns), superando con holgura el mínimo de 100ns exigido por el *datasheet* del MCP3008.
+   * Al entrar a `S_BIT`, el divisor espera un medio periodo adicional (370ns) antes de generar el primer flanco de subida de reloj. Esto produce un tiempo real de establecimiento $t_{SUCS}$ \approx 740ns (de 00ns a 1240ns), superando con holgura el mínimo de 100ns exigido por el *datasheet* del MCP3008.
 
 4. **Primer pulso de reloj SPI (`mcp_sck`, `n[4:0]`, `mcp_mosi`):**
    * En $\approx 1240\text{ ns}$ ocurre el primer flanco de subida de `mcp_sck` (`0` $\to$ `1`). En ese mismo instante, el contador de pulsos `n[4:0]` se incrementa de `00` a `01`, confirmando el muestreo del primer bit de la trama de $24$ pulsos sobre el canal `ch = 00` (`CH0` / `J1_X`).
