@@ -1,4 +1,4 @@
-# Grupo 2 · Joystick SPI
+# Grupo 2 ·  SPI
 
 Receptor del Joystick: recibe las teclas que presiona el jugador y se las entrega al procesador.
 
@@ -34,9 +34,9 @@ En esta sección se explican los principales conceptos que se utilizan en el des
 
 ## 1.1. Descripción general del proyecto
 
-El proyecto consiste en desarrollar un periférico que permita conectar dos joysticks analógicos a un procesador FemtoRV implementado en una FPGA Tang Nano.
+El proyecto consiste en desarrollar un periférico que permita conectar dos s analógicos a un procesador FemtoRV implementado en una FPGA Tang Nano.
 
-Cuando se mueve un joystick, sus ejes generan señales de voltaje que cambian según la posición de la palanca. Estas señales llegan al conversor MCP3008, que se encarga de transformarlas en valores digitales. Después, la FPGA recibe los datos mediante comunicación SPI y los guarda en registros para que el procesador pueda consultarlos.
+Cuando se mueve un , sus ejes generan señales de voltaje que cambian según la posición de la palanca. Estas señales llegan al conversor MCP3008, que se encarga de transformarlas en valores digitales. Después, la FPGA recibe los datos mediante comunicación SPI y los guarda en registros para que el procesador pueda consultarlos.
 
 ## 1.2. Componentes principales
 
@@ -44,15 +44,15 @@ Antes de explicar la comunicación entre los dispositivos, es importante identif
 
 | Término | Descripción |
 |---|---|
-| **Joystick analógico** | Es una palanca que permite detectar movimientos en dos direcciones, X y Y. Cada eje tiene un potenciómetro que modifica su voltaje dependiendo de la posición. En nuestro caso trabajamos con un rango de 0 a 3,3 V, por lo que en el centro se espera un valor cercano a 1,65 V. También cuenta con un botón que funciona como interruptor. |
-| **Señal analógica** | Es una señal cuyo valor puede cambiar de manera continua dentro de un rango determinado. Por ejemplo, el voltaje que entrega un joystick cuando se mueve. |
+| ** analógico** | Es una palanca que permite detectar movimientos en dos direcciones, X y Y. Cada eje tiene un potenciómetro que modifica su voltaje dependiendo de la posición. En nuestro caso trabajamos con un rango de 0 a 3,3 V, por lo que en el centro se espera un valor cercano a 1,65 V. También cuenta con un botón que funciona como interruptor. |
+| **Señal analógica** | Es una señal cuyo valor puede cambiar de manera continua dentro de un rango determinado. Por ejemplo, el voltaje que entrega un  cuando se mueve. |
 | **Señal digital** | Es una señal que representa información mediante dos niveles lógicos, 0 y 1. Estos niveles permiten que los circuitos digitales procesen y transmitan información. |
 | **FPGA (Tang Nano)** | Es un dispositivo que permite configurar circuitos digitales según las necesidades del proyecto. La utilizamos para implementar el periférico y controlar la comunicación con el ADC. |
 | **ADC (conversor analógico-digital)** | Es un circuito que convierte una señal analógica, como un voltaje, en un valor numérico que puede procesar un sistema digital. |
 | **MCP3008** | Es el conversor ADC que utilizamos. Tiene ocho canales de entrada y una resolución de 10 bits. Se comunica con la FPGA mediante SPI. |
-| **FemtoRV** | Es un procesador basado en la arquitectura RISC-V. En nuestro sistema ejecuta el programa del juego y obtiene la información de los joysticks leyendo los registros del periférico. |
+| **FemtoRV** | Es un procesador basado en la arquitectura RISC-V. En nuestro sistema ejecuta el programa del juego y obtiene la información de los s leyendo los registros del periférico. |
 | **SoC (System on Chip)** | Es un sistema que integra un procesador y diferentes periféricos dentro de un mismo chip. En este proyecto, estos elementos se implementan en la FPGA. |
-| **Periférico** | Es un módulo que realiza una función específica y se comunica con el procesador. En nuestro caso, permite obtener la posición de los joysticks y el estado de sus botones. |
+| **Periférico** | Es un módulo que realiza una función específica y se comunica con el procesador. En nuestro caso, permite obtener la posición de los s y el estado de sus botones. |
 
 ## 1.3. Bits, resolución y representación de los datos
 
@@ -94,7 +94,7 @@ La FPGA controla la comunicación y selecciona el canal que necesita leer, mient
 
 ## 1.5. Estructura de la trama SPI
 
-Cada vez que necesitamos conocer el valor de un eje del joystick, la FPGA inicia una comunicación con el MCP3008. Primero envía los bits que indican qué canal debe medir y después recibe el resultado.
+Cada vez que necesitamos conocer el valor de un eje del , la FPGA inicia una comunicación con el MCP3008. Primero envía los bits que indican qué canal debe medir y después recibe el resultado.
 
 Para nuestro diseño consideramos una secuencia de 17 pulsos de reloj, suficientes para enviar la configuración y recibir los 10 bits de la conversión.
 
@@ -104,7 +104,7 @@ Para nuestro diseño consideramos una secuencia de 17 pulsos de reloj, suficient
 | **Start bit** | Es un bit con valor 1 que indica al MCP3008 el inicio de una solicitud. |
 | **SGL/DIFF** | Permite seleccionar el tipo de medición. Con valor 1 se utiliza el modo de entrada individual (*single-ended*), que mide cada canal respecto a tierra. Con valor 0 se utiliza el modo diferencial. En nuestro diseño usamos el valor 1. |
 | **D2, D1 y D0** | Son tres bits que permiten seleccionar uno de los ocho canales del MCP3008. Por ejemplo, 000 corresponde a CH0 y 001 a CH1. |
-| **Canales CH0 a CH7** | Son las ocho entradas analógicas disponibles. Para los dos joysticks utilizamos cuatro canales, del CH0 al CH3, uno por cada eje. |
+| **Canales CH0 a CH7** | Son las ocho entradas analógicas disponibles. Para los dos s utilizamos cuatro canales, del CH0 al CH3, uno por cada eje. |
 | **Periodo de muestreo** | Es el intervalo durante el cual el ADC adquiere el valor del voltaje de entrada. Después de recibir los bits de selección, necesita un ciclo adicional de reloj para completar esta etapa. |
 | **Null bit** | Es un bit con valor 0 que aparece antes de los diez bits del resultado. No forma parte del valor de la conversión, por lo que la FPGA debe ignorarlo. |
 
@@ -128,7 +128,7 @@ Estos parámetros determinan la velocidad a la que podemos transmitir informaci�
 | **ksps (kilomuestras por segundo)** | Indica cuántos miles de muestras puede realizar un ADC cada segundo. El MCP3008 tiene una capacidad especificada de 75 ksps a 2,7 V y 200 ksps a 5 V. |
 | **Divisor de reloj** | Es un circuito que permite obtener una frecuencia menor a partir del reloj principal de la FPGA. Por ejemplo, podemos dividir un reloj de 27 MHz para generar el SCLK que necesita el MCP3008. |
 
-En nuestro caso, no necesitamos realizar conversiones a una velocidad tan alta, ya que los movimientos de los joysticks son relativamente lentos. Lo importante es que las lecturas se realicen con suficiente frecuencia para detectar los cambios de posición sin retrasos perceptibles durante el juego.
+En nuestro caso, no necesitamos realizar conversiones a una velocidad tan alta, ya que los movimientos de los s son relativamente lentos. Lo importante es que las lecturas se realicen con suficiente frecuencia para detectar los cambios de posición sin retrasos perceptibles durante el juego.
 
 ## 1.7. Conceptos para la implementación del periférico
 
@@ -143,7 +143,7 @@ Finalmente, hay algunos términos que utilizaremos cuando comencemos a desarroll
 | **FSM (máquina de estados finitos)** | Es una forma de organizar el funcionamiento de un circuito mediante estados definidos. En nuestro diseño permite controlar los pasos de comunicación SPI, desde la activación de CS hasta la recepción de los datos. |
 | **Testbench** | Es un entorno de simulación que permite comprobar el funcionamiento de un circuito antes de implementarlo físicamente. Podemos utilizarlo para simular las respuestas del MCP3008 y verificar que la FPGA interprete correctamente los datos. |
 
-Con estos conceptos podemos entender el recorrido de la información dentro del sistema: los joysticks generan los voltajes, el MCP3008 los convierte en números digitales y la FPGA se encarga de recibirlos y almacenarlos. Finalmente, el procesador FemtoRV consulta esos registros para utilizar los movimientos y botones dentro del juego.
+Con estos conceptos podemos entender el recorrido de la información dentro del sistema: los s generan los voltajes, el MCP3008 los convierte en números digitales y la FPGA se encarga de recibirlos y almacenarlos. Finalmente, el procesador FemtoRV consulta esos registros para utilizar los movimientos y botones dentro del juego.
 
 ## 2.1 La idea general
 
@@ -168,7 +168,7 @@ La FPGA y el MCP3008 se unen con cuatro líneas:
 | **MISO** | ADC → FPGA | 12 (DOUT) | Resultado que envía el ADC |
 | **CS** | FPGA → ADC | 10 (CS/SHDN) | Selección del chip, activa en bajo |
 
-Además, el chip necesita alimentación y las entradas del joystick:
+Además, el chip necesita alimentación y las entradas del :
 
 | Pin | Nombre | Conectar a |
 |---|---|---|
@@ -176,7 +176,7 @@ Además, el chip necesita alimentación y las entradas del joystick:
 | 15 | VREF | 3.3 V (define que 3.3 V = 1023) |
 | 14 | AGND | GND |
 | 9 | DGND | GND |
-| 1 a 4 | CH0 a CH3 | Ejes X e Y del joystick (3.3 V arriba, GND abajo, el eje al canal) |
+| 1 a 4 | CH0 a CH3 | Ejes X e Y del  (3.3 V arriba, GND abajo, el eje al canal) |
 
 Todos los GND deben ir unidos. Sin tierra común, SPI no funciona.
 
@@ -324,7 +324,7 @@ Esta tabla nos servirá para depurar cuando probemos el diseño:
 
 - Entrada a GND → resultado ≈ 0.
 - Entrada a 3.3 V → resultado ≈ 1023.
-- Joystick centrado → resultado ≈ 512.
+-  centrado → resultado ≈ 512.
 
 ## 2.11 Lista de verificación antes de simular o probar
 
@@ -367,42 +367,99 @@ Especificaciones eléctricas y de tiempos del ADC: [Ver datasheet](./docs/Datash
 _(Diagrama de bloques, diagrama de flujo, cálculos. Guardar los archivos en `docs/`.)_
 
 ## 4. Registros
-Propuesta de registros del periférico de joystick, ubicado a partir de la dirección base `0x43_0000`. Planteamos registros de 32 bits alineados a palabra (desplazamientos de 4 en 4). Los valores de 10 bits del ADC quedan en los bits `[9:0]` y el resto se lee como 0.
 
-## 4.1 Mapa de registros
+El periférico `perip_joystick.v` se integra al bus MMIO del procesador **FemtoRV32** a partir de la dirección base **`0x0043_0000`** (rango útil `0x0043_0000` a `0x0043_001C`), habilitado por la señal `cs[3]` en `chip_select.v`. Implementa **8 registros de 32 bits** alineados a palabra (offsets de 4 en 4 bytes, decodificados con `mem_addr[4:0]`). Los valores de 10 bits del ADC ocupan `bits [9:0]` y el resto se lee en `0`.
 
-| Desplazamiento | Nombre | Acceso | Descripción |
-|---|---|---|---|
-| `0x00` | `CTRL` | R/W | Control del periférico. Bit 0 `ENABLE`: activa el barrido continuo de los 4 canales. Bit 1 `START`: pide un barrido único y se limpia solo al terminar. |
-| `0x04` | `STATUS` | R | Estado. Bit 0 `BUSY`: hay una conversión en curso. Bit 1 `VALID`: ya se completó al menos un barrido y los registros de datos son válidos. |
-| `0x08` | `J1_X` | R | Eje X del jugador 1 (canal CH0 del MCP3008). Bits `[9:0]` con el valor 0 a 1023. |
-| `0x0C` | `J1_Y` | R | Eje Y del jugador 1 (canal CH1). Bits `[9:0]`. |
-| `0x10` | `J2_X` | R | Eje X del jugador 2 (canal CH2). Bits `[9:0]`. |
-| `0x14` | `J2_Y` | R | Eje Y del jugador 2 (canal CH3). Bits `[9:0]`. |
-| `0x18` | `BUTTONS` | R | Estado de los pulsadores. Bit 0 `J1_BTN` y bit 1 `J2_BTN` (1 = presionado). |
-| `0x1C` | `CLKDIV` | R/W | (Opcional) Divisor del reloj de sistema para generar SCLK, de modo que SCLK ≤ 1.35 MHz. |
+### 4.1 Mapa de registros (Base `0x0043_0000`)
 
-## 4.2 Funcionamiento previsto
+| Dirección | Offset | Registro | Acceso | Descripción de bits |
+| :---: | :---: | :--- | :---: | :--- |
+| `0x0043_0000` | `0x00` | **`CTRL`** | R/W | `bit 0 = ENABLE` (`1`: barrido continuo de los 4 canales). `bit 1 = START` (`1`: dispara 1 barrido único y se autolimpia al terminar). |
+| `0x0043_0004` | `0x04` | **`STATUS`** | R | `bit 0 = BUSY` (`1`: conversión SPI en curso). `bit 1 = VALID` (`1`: al menos 1 barrido completo listo). |
+| `0x0043_0008` | `0x08` | **`J1_X`** | R | `bits [9:0]`: Lectura de 10 bits (`0..1023`) del canal `CH0` (Eje X Joystick 1). Valor tras reset: `512`. |
+| `0x0043_000C` | `0x0C` | **`J1_Y`** | R | `bits [9:0]`: Lectura de 10 bits (`0..1023`) del canal `CH1` (Eje Y Joystick 1). Valor tras reset: `512`. |
+| `0x0043_0010` | `0x10` | **`J2_X`** | R | `bits [9:0]`: Lectura de 10 bits (`0..1023`) del canal `CH2` (Eje X Joystick 2). Valor tras reset: `512`. |
+| `0x0043_0014` | `0x14` | **`J2_Y`** | R | `bits [9:0]`: Lectura de 10 bits (`0..1023`) del canal `CH3` (Eje Y Joystick 2). Valor tras reset: `512`. |
+| `0x0043_0018` | `0x18` | **`BUTTONS`** | R | `bit 0 = SW_J1`, `bit 1 = SW_J2` (lógica positiva: `1` = presionado, `0` = suelto; sincronizados e invertidos internamente desde `btn_n`). |
+| `0x0043_001C` | `0x1C` | **`CLKDIV`** | R/W | `bits [7:0]`: Divisor SPI ($f_{\text{SCLK}} = \frac{f_{\text{clk}}}{2 \cdot \text{CLKDIV}}$; por defecto `10` $\rightarrow 1.35\text{ MHz}$ con reloj de $27\text{ MHz}$). |
 
-- El periférico hace los barridos por su cuenta: mide CH0, CH1, CH2 y CH3 en orden y va actualizando `J1_X`, `J1_Y`, `J2_X` y `J2_Y`.
-- El procesador solo lee: consulta `STATUS` si necesita saber que hay datos válidos y luego lee los ejes y los botones cuando los necesite.
-- El procesador solo escribe `CTRL` (y `CLKDIV`, si lo dejamos) para encender el periférico o pedir un barrido.
+### 4.2 Funcionamiento e integración con el SoC
 
-## 4.3 Puntos por confirmar
+* **Arranque seguro tras reset:** El módulo inicia apagado (`ENABLE = 0`, `VALID = 0`) con los cuatro ejes centrados en `512`. El firmware debe escribir `1` en `0x0043_0000` (`CTRL.ENABLE`) para activar el muestreo automático y esperar a que `STATUS[1]` (`VALID`) pase a `1` ($\approx 76\text{ }\mu\text{s}$ para el primer barrido de los 4 canales).
+* **Barrido autónomo:** La FSM realiza secuencialmente la lectura de `CH0`, `CH1`, `CH2` y `CH3` mediante tramas SPI Modo 0 de **24 pulsos** y actualiza `J1_X`, `J1_Y`, `J2_X` y `J2_Y` de forma transparente para el procesador.
+* **Pulsadores sincronizados:** Las entradas físicas `joy_sw_n[1:0]` (activas en bajo) pasan por un sincronizador anti-metaestabilidad de doble flip-flop (`btn_ff1` $\rightarrow$ `btn_ff2`) y se invierten internamente antes de exponerse en `BUTTONS`.
+* **Puntos clave de instanciación en `SOC.v`:** Conectar `.rst(!resetn)` (el SoC usa reset activo en bajo y `perip_joystick` activo en alto), `.addr(mem_addr[4:0])`, `.cs(cs_chip3)` y enrutar `joy_dout` a `.chip3_dout(joy_dout)` en `chip_select.v`.
 
-1. **Ancho y alineación del bus:** supusimos palabras de 32 bits con desplazamientos múltiplos de 4. Hay que verificar cómo accede el SoC a los periféricos del laboratorio.
-2. **Pulsador:** el MCP3008 solo lee señales analógicas, así que el botón de cada joystick debe entrar por un pin digital de la FPGA. Falta decidir si se agrega antirrebote.
-3. **Cantidad de jugadores:** el diseño asume dos joysticks (cuatro canales). Si fuera uno, bastaría con `J1_X`, `J1_Y` y un solo bit en `BUTTONS`.
-4. **Utilidad de `CLKDIV`:** es opcional. Sin él, el divisor queda fijo en el diseño.
+> Para ver el código de integración completo en `SOC.v`, `chip_select.v`, `top.v`, `Makefile` y el ejemplo de lectura en C, consultar la guía detallada en [`./Codigo/rtl/README.md`](./Codigo/rtl/README.md).
+
+---
 
 ## 5. Pines
 
-| Señal | Pin FPGA | Conector | Nota |
-| --- | --- | --- | --- |
-| | | | |
+El módulo expone **6 pines físicos** en `top.v` para la **Tang Nano 9K** (4 líneas SPI Modo 0 hacia el MCP3008 y 2 entradas digitales para los pulsadores `SW` de los joysticks KY-023), todos configurados en bancos de **$3.3\text{ V}$ (`LVCMOS33`)**.
+
+| Señal (`top.v` / `.cst`) | Pin FPGA | Conector / Destino | Nota |
+| :--- | :---: | :--- | :--- |
+| **`mcp_cs_n`** | `PIN_CS` *(libre $3.3\text{ V}$)* | MCP3008 Pin 10 (`CS/SHDN`) | Salida activa en bajo. `IO_TYPE=LVCMOS33 PULL_MODE=UP`. |
+| **`mcp_sck`** | `PIN_SCK` *(libre $3.3\text{ V}$)* | MCP3008 Pin 13 (`CLK`) | Salida reloj SPI Modo 0 ($1.35\text{ MHz}$ por defecto). `IO_TYPE=LVCMOS33`. |
+| **`mcp_mosi`** | `PIN_MOSI` *(libre $3.3\text{ V}$)* | MCP3008 Pin 11 (`DIN`) | Salida de comandos FPGA $\rightarrow$ ADC. `IO_TYPE=LVCMOS33`. |
+| **`mcp_miso`** | `PIN_MISO` *(libre $3.3\text{ V}$)* | MCP3008 Pin 12 (`DOUT`) | Entrada de datos ADC $\rightarrow$ FPGA. `IO_TYPE=LVCMOS33 PULL_MODE=UP`. |
+| **`joy_sw_n[0]`** | `PIN_SW1` *(libre $3.3\text{ V}$)* | Joystick 1 (KY-023) Pin `SW` | Entrada activa en bajo. `IO_TYPE=LVCMOS33 PULL_MODE=UP`. No negar en `top.v`. |
+| **`joy_sw_n[1]`** | `PIN_SW2` *(libre $3.3\text{ V}$)* | Joystick 2 (KY-023) Pin `SW` | Entrada activa en bajo. `IO_TYPE=LVCMOS33 PULL_MODE=UP`. No negar en `top.v`. |
+
+### Restricciones físicas para el archivo `.cst`
+
+* **Alimentación estricta a $3.3\text{ V}$:** Tanto el MCP3008 (`VDD` y `VREF`) como los potenciómetros de los joysticks deben alimentarse a $3.3\text{ V}$ (nunca a $5\text{ V}$) con tierra común (`AGND` = `DGND` = `GND`).
+* **Pines a evitar:** No asignar pines reservados por `clk` (pin 52), `btn` (pines 3 y 4), `led`, `uart_tx`/`uart_rx` (pines 17 y 18), pantalla HUB75, audio ni pines de arranque/MSPI.
+* **Sintaxis para `nextpnr-himbaechel`:** Escribir cada directiva `IO_LOC` e `IO_PORT` en líneas separadas (plantilla completa en [`./Codigo/rtl/README.md`](./Codigo/rtl/README.md)). Los `PIN_*` se reemplazan por los números físicos libres al integrar el `.cst` final del SoC.
+
+---
 
 ## 6. Simulación
 
+La verificación funcional del periférico se realizó de forma unitaria con **`Codigo/sim/tb_perip_joystick.v`** y **`Codigo/rtl/perip_joystick.v`**. El testbench genera un reloj de $27\text{ MHz}$, emula las lecturas y escrituras síncronas del bus del FemtoRV32, modela conductualmente el ADC **MCP3008** (SPI Modo 0) y simula los pulsadores físicos activos en bajo.
+
+### 6.1 Cómo ejecutar el testbench
+
+Con el entorno **OSS CAD Suite** activado previamente en la terminal (`source /ruta/a/tu/oss-cad-suite/environment`), se puede correr la simulación desde `grupo2-joystick/` con:
+
+```bash
+iverilog -g2005 -o tb_joy.vvp Codigo/sim/tb_perip_joystick.v Codigo/rtl/perip_joystick.v
+vvp -n tb_joy.vvp
+gtkwave ondas_joystick.vcd &
+```
+
+*(También está documentada la regla portable `make sim-joystick` para integrarla en cualquier `Makefile` dentro de [`./Codigo/sim/README.md`](./Codigo/sim/README.md).)*
+
+### 6.2 Qué se verificó
+
+1. **Verificación automática en consola:** El testbench valida el barrido continuo (`ENABLE = 1`), la lectura sincronizada de los pulsadores (`BUTTONS`) y el disparo de barrido único (`START = 1` con autolimpieza), arrojando la salida:
+
+   ```text
+   OK    J1_X = 512
+   OK    J1_Y = 1023
+   OK    J2_X = 0
+   OK    J2_Y = 291
+   OK    BUTTONS = 1
+   OK    J1_X tras START = 100
+   OK    START se limpio solo
+   PASS: perip_joystick
+   ```
+
+2. **Análisis de tiempos y protocolo SPI Modo 0 en GTKWave:**
+
+![Simulación de arranque SPI de perip_joystick en GTKWave](./Codigo/sim/Simulacion.png)
+
+| Parámetro / Evento | Valor medido en `Simulacion.png` | Requisito del MCP3008 ($3.3\text{ V}$) | Estado |
+| :--- | :---: | :---: | :---: |
+| Fin de reset (`rst` $\to$ `0`) | $200\text{ ns}$ (ejes inicializados en `512`) | — | Correcto |
+| Activación de `enable` por bus (`CTRL`) | $\approx 462\text{ ns}$ | $1$ ciclo de escritura | Correcto |
+| Duración de `S_SETUP` (`st = 001`) | $370\text{ ns}$ ($10$ ciclos de $27\text{ MHz}$) | $\ge 100\text{ ns}$ | Cumple |
+| Tiempo real $t_{SUCS}$ (`mcp_cs_n` $\downarrow$ a 1.er `mcp_sck` $\uparrow$) | $\approx 740\text{ ns}$ | $\ge 100\text{ ns}$ | Cumple con holgura |
+| Ancho en alto de `mcp_sck` ($t_{HI}$) | $370\text{ ns}$ ($f_{\text{SCLK}} = 1.35\text{ MHz}$) | $\ge 125\text{ ns}$ | Cumple |
+| Trama SPI y barrido completo | $24$ pulsos por canal ($\approx 76\text{ }\mu\text{s}$ los 4 canales) | SPI Modo 0 | Correcto |
+
+> Para ver la guía completa de señales recomendadas en GTKWave, configuración de `Makefile` y el análisis pulso a pulso de la captura, consultar [`./Codigo/sim/README.md`](./Codigo/sim/README.md).
 _(Cómo correr el testbench y qué se verificó. Archivos en `sim/`.)_
 
 ## 7. Avances
