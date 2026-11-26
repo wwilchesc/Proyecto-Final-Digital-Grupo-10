@@ -375,6 +375,16 @@ Estados:
 - `S_GAP`: medio periodo más con CS arriba; aquí se decide si el barrido terminó.
 Como la primera subida de `mcp_sck` llega un medio periodo después de salir de `S_SETUP`, entre la bajada de CS y ese flanco pasan dos medios periodos. Lo mismo pasa con CS en alto. Los dos superan con holgura tSUCS = 100 ns y tCSH = 270 ns.
 
+```mermaid
+flowchart TD
+    S0["S_IDLE<br/>busy=0, cs_n=1, sck=0"]
+    S1["S_SETUP<br/>espera tSUCS"]
+    S2["S_BIT<br/>24 pulsos"]
+    S3["S_END<br/>cs_n=1"]
+    S4["S_GAP<br/>espera tCSH"]
+ ```
+
+
 
 ## 3.4 Diagramas y Archivos Adjuntos
 
