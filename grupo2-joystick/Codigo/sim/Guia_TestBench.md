@@ -153,7 +153,6 @@ Dentro de GTKWave, expande `tb_perip_joystick` $\to$ `dut` en el panel izquierdo
 
 ## 4. Prueba de funcionamiento y análisis de la simulación
 
-*(Asegúrate de guardar la imagen `Simulacion.png` en el mismo directorio que este archivo `.md`, o ajusta la ruta relativa según la estructura de tu repositorio).*
 
 ![Simulación de arranque SPI de perip_joystick en GTKWave](./Simulacion.png)
 
