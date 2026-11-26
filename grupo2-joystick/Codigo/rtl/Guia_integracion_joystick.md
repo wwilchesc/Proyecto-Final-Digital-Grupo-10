@@ -6,24 +6,22 @@ Este documento describe paso a paso cómo integrar el periférico de joystick ba
 
 ## 1. Archivos importantes para la integración
 
-Para llevar el joystick al SoC completo necesitas únicamente **el archivo Verilog propio del periférico** y realizar modificaciones puntuales en **cinco archivos** del proyecto destino:
+Para llevar el joystick al SoC completo necesitas únicamente **el archivo Verilog propio del periférico** y realizar modificaciones puntuales en **cinco archivos** del proyecto integrado:
 
 | Archivo | Origen | Rol en la integración |
 | :--- | :--- | :--- |
-| **`perip_joystick.v`** | **Copiar de este repo** | Módulo RTL autocontenido (controlador SPI Modo 0, sincronizador de botones e interfaz MMIO de 32 bits). Es el único archivo nuevo obligatorio para sintetizar. |
+| **`perip_joystick.v`** | **Copiar de este repositorio** | Módulo RTL autocontenido (controlador SPI Modo 0, sincronizador de botones e interfaz MMIO de 32 bits). Es el único archivo nuevo obligatorio para sintetizar. |
 | **`chip_select.v`** | Proyecto destino (verificar/editar) | Decodificador de direcciones del bus. Asigna la dirección base **`0x0043_0000`** (`cs[3]`) y enruta la salida `chip3_dout` hacia `mem_rdata`. |
 | **`SOC.v`** | Proyecto destino (editar) | Bus central donde se declaran los puertos del joystick, se enlaza `joy_dout` al `chip_select` y se instancia `perip_joystick`. |
 | **`top.v`** | Proyecto destino (editar) | Envoltorio físico de la Tang Nano 9K que saca los 6 pines externos del joystick desde `SOC` hacia los pines de la FPGA. |
 | **`top.cst`** *(o el `.cst` del SoC)* | Proyecto destino (editar) | Asigna los números de pin físicos de la Tang Nano 9K, el estándar eléctrico `$3.3\text{ V}$` (`LVCMOS33`) y las resistencias *pull-up* internas. |
 | **`Makefile`** *(de síntesis)* | Proyecto destino (editar) | Debe incluir `perip_joystick.v` en la lista de archivos Verilog que compila Yosys para generar el bitstream (`.fs`). |
 
-> **Nota sobre archivos de referencia:** Los archivos `SOC_con_joystick.v`, `top_con_joystick.v` y `chip_select.v` de este repositorio son únicamente **ejemplos de referencia** ya integrados. Si tu proyecto ya tiene otros periféricos (pantalla, audio, etc.), **no los sobrescribas**; copia únicamente los bloques de código indicados en las secciones siguientes.
-
 ---
 
 ## 2. Integración en el SoC (`SOC.v`) y asignación en el bus
 
-En la arquitectura del SoC con FemtoRV32, cada periférico se controla mediante **entrada/salida mapeada en memoria (MMIO)**. A partir del diseño de referencia (`SOC_con_joystick.v`), al periférico del joystick se le determinó la siguiente asignación en el bus:
+En la arquitectura del SoC con FemtoRV32, cada periférico se controla mediante **entrada/salida mapeada en memoria (MMIO)**. A partir de esto, al periférico del joystick se le determinó la siguiente asignación en el bus:
 
 * **Dirección base en memoria:** `0x0043_0000` (rango útil `0x0043_0000` a `0x0043_001C`).
 * **Línea de selección (*Chip Select*):** `cs[3]` (`wire cs_chip3 = cs[3];`).
@@ -119,7 +117,7 @@ Asegúrate de que en `SOC.v` existan las señales estándar del bus `wire wr = |
 
 ## 3. Otros archivos donde declarar variables y conexiones
 
-Para que el sistema sintetice y funcione físicamente en la Tang Nano 9K, además de `SOC.v` debes revisar o modificar estos cuatro archivos:
+Para que el sistema sintetice y funcione físicamente en la Tang Nano 9K, además de `SOC.v` se debe revisar o modificar estos cuatro archivos:
 
 ### 3.1 Decodificador de direcciones (`chip_select.v`)
 
@@ -241,7 +239,7 @@ IO_PORT "joy_sw_n[1]" IO_TYPE=LVCMOS33 PULL_MODE=UP;
 #### Reglas importantes al elegir los pines en la Tang Nano 9K
 
 * **Solo bancos de $3.3\text{ V}$ (`LVCMOS33`):** Tanto el MCP3008 como los potenciómetros del KY-023 deben alimentarse a $3.3\text{ V}$ (nunca a $5\text{ V}$) para no dañar las entradas de la FPGA.
-* **Evitar conflictos de pines:** No selecciones pines ya usados por `clk` (pin 52), `btn` (pines 3 y 4), `led`, `uart_tx`/`uart_rx` (pines 17 y 18), tu pantalla HUB75, audio ni los pines reservados de MSPI/arranque.
+* **Evitar conflictos de pines:** No selecciones pines ya usados por `clk` (pin 52), `btn` (pines 3 y 4), `led`, `uart_tx`/`uart_rx` (pines 17 y 18), la pantalla, audio ni los pines reservados de MSPI/arranque.
 * **Una sentencia por línea:** `nextpnr-himbaechel` exige que cada directiva `IO_LOC` e `IO_PORT` vaya en su propia línea separada.
 * **`PULL_MODE=UP` en entradas activas en bajo y MISO:** Evita lecturas flotantes si un joystick está desconectado durante pruebas.
 
@@ -249,7 +247,7 @@ IO_PORT "joy_sw_n[1]" IO_TYPE=LVCMOS33 PULL_MODE=UP;
 
 ### 3.4 Archivo `Makefile` de síntesis del proyecto destino
 
-En el `Makefile` con el que sintetizas tu SoC completo (Yosys + `nextpnr-himbaechel` + `gowin_pack`), agrega `perip_joystick.v` a la lista de fuentes Verilog del diseño (la variable suele llamarse `DESIGN`, `OBJS`, `VERILOG_SRC` o similar):
+En el `Makefile` con el que se sintetiza el SoC completo (Yosys + `nextpnr-himbaechel` + `gowin_pack`), agrega `perip_joystick.v` a la lista de fuentes Verilog del diseño (la variable suele llamarse `DESIGN`, `OBJS`, `VERILOG_SRC` o similar):
 
 ```makefile
 # El módulo superior de síntesis SIEMPRE debe ser el top del SoC (nunca perip_joystick)
