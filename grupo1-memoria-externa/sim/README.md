@@ -154,3 +154,7 @@ PASS: prueba_grupo1 (SPI e I2C por memoria_externa, reporte por UART y LEDs)
 ```
 
 La salida completa, con los dos reportes, está en `prueba_grupo1_tb.log`. Si se quita la EEPROM del banco, las dos líneas del I2C dicen FALLA y el LED del I2C queda apagado, mientras el SPI sigue en OK.
+
+## Versión para la Tang Nano 9K
+
+`make sim-prueba-9k` simula `fpga/prueba_grupo1_9k.v` con un reloj de 27 MHz. Además de lo mismo que la versión de la 25K, comprueba que la prueba deja `CLK_DIV = 67` en el I2C (unos 99,3 kHz) y que los LEDs encienden con 0. Resultado: **9 comprobaciones, 0 errores** (`prueba_grupo1_9k_tb.log`).

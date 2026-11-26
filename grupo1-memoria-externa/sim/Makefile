@@ -1,5 +1,5 @@
 # Simulacion de los perifericos del Grupo 1.
-# Uso: make sim | make sim-i2c | make sim-mem | make sim-prueba | make todo | make ondas | make ondas-i2c | make clean
+# Uso: make sim | make sim-i2c | make sim-mem | make sim-prueba | make sim-prueba-9k | make todo | make ondas | make ondas-i2c | make clean
 RTL_SPI = ../rtl/perip_spi.v ../rtl/spi_control.v ../rtl/spi_datapath.v
 TB_SPI  = perip_spi_tb.v flash_model.v
 
@@ -43,10 +43,17 @@ sim-prueba: prueba_grupo1_tb.vvp
 prueba_grupo1_tb.vvp: prueba_grupo1_tb.v flash_model.v eeprom_model.v ../fpga/prueba_grupo1.v $(RTL_MEM)
 	iverilog -g2012 -Wall -o $@ prueba_grupo1_tb.v flash_model.v eeprom_model.v ../fpga/prueba_grupo1.v $(RTL_MEM)
 
+# ---- Prueba en placa para la Tang Nano 9K ----
+sim-prueba-9k: prueba_grupo1_9k_tb.vvp
+	vvp prueba_grupo1_9k_tb.vvp | tee prueba_grupo1_9k_tb.log
+
+prueba_grupo1_9k_tb.vvp: prueba_grupo1_9k_tb.v flash_model.v eeprom_model.v ../fpga/prueba_grupo1_9k.v $(RTL_MEM)
+	iverilog -g2012 -Wall -o $@ prueba_grupo1_9k_tb.v flash_model.v eeprom_model.v ../fpga/prueba_grupo1_9k.v $(RTL_MEM)
+
 # ---- Todos ----
-todo: sim sim-i2c sim-mem sim-prueba
+todo: sim sim-i2c sim-mem sim-prueba sim-prueba-9k
 
 clean:
-	rm -f perip_spi_tb.vvp perip_spi_tb.vcd perip_i2c_tb.vvp perip_i2c_tb.vcd memoria_externa_tb.vvp memoria_externa_tb.vcd prueba_grupo1_tb.vvp prueba_grupo1_tb.vcd
+	rm -f perip_spi_tb.vvp perip_spi_tb.vcd perip_i2c_tb.vvp perip_i2c_tb.vcd memoria_externa_tb.vvp memoria_externa_tb.vcd prueba_grupo1_tb.vvp prueba_grupo1_tb.vcd prueba_grupo1_9k_tb.vvp prueba_grupo1_9k_tb.vcd
 
-.PHONY: sim sim-i2c sim-mem sim-prueba todo ondas ondas-i2c clean
+.PHONY: sim sim-i2c sim-mem sim-prueba sim-prueba-9k todo ondas ondas-i2c clean
