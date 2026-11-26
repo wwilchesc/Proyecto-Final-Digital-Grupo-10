@@ -1,0 +1,20 @@
+// Reloj 27 MHz onboard Tang Nano 9K
+IO_LOC "clk" 52;
+IO_PORT "clk" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+
+// Botón S1 como reset activo bajo
+IO_LOC "rst_n" 4;
+IO_PORT "rst_n" IO_TYPE=LVCMOS18 PULL_MODE=UP;
+
+IO_LOC "rst_n" 3;
+IO_PORT "rst_n" IO_TYPE=LVCMOS18 PULL_MODE=UP;
+
+// Salidas I2S hacia MAX98357A (GPIO 35, 36, 37)
+IO_LOC "bclk" 35;
+IO_PORT "bclk" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8;
+
+IO_LOC "lrck" 36;
+IO_PORT "lrck" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8;
+
+IO_LOC "sdin" 37;
+IO_PORT "sdin" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8;
