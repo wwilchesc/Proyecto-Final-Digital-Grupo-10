@@ -6,7 +6,7 @@ Este documento describe paso a paso cómo integrar el periférico de joystick ba
 
 ## 1. Archivos importantes para la integración
 
-Para llevar el joystick al SoC completo necesitas únicamente **un archivo Verilog propio del periférico** y realizar modificaciones puntuales en **cinco archivos** del proyecto destino:
+Para llevar el joystick al SoC completo necesitas únicamente **el archivo Verilog propio del periférico** y realizar modificaciones puntuales en **cinco archivos** del proyecto destino:
 
 | Archivo | Origen | Rol en la integración |
 | :--- | :--- | :--- |
