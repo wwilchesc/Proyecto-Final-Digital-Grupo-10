@@ -1,0 +1,143 @@
+Archive member included to satisfy reference by file (symbol)
+
+/usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32i/ilp32/libgcc.a(div.o)
+                              /tmp/ccF3UiWz.o (__divsi3)
+
+Discarded input sections
+
+ .text          0x00000000        0x0 /tmp/ccwSxZiM.o
+ .data          0x00000000        0x0 /tmp/ccwSxZiM.o
+ .bss           0x00000000        0x0 /tmp/ccwSxZiM.o
+ .text          0x00000000        0x0 /tmp/ccF3UiWz.o
+ .data          0x00000000        0x0 /tmp/ccF3UiWz.o
+ .bss           0x00000000        0x0 /tmp/ccF3UiWz.o
+ .data          0x00000000        0x0 /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32i/ilp32/libgcc.a(div.o)
+ .bss           0x00000000        0x0 /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32i/ilp32/libgcc.a(div.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+BRAM             0x00000000         0x00008000         xrw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD /tmp/ccwSxZiM.o
+LOAD /tmp/ccF3UiWz.o
+LOAD /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32i/ilp32/libgcc.a
+
+.text           0x00000000      0x5f8
+                0x00000000                        . = ALIGN (0x4)
+ *(.text.startup)
+ .text.startup  0x00000000       0x2c /tmp/ccwSxZiM.o
+                0x00000000                _start
+ *(.text*)
+ .text.imprimir
+                0x0000002c       0x40 /tmp/ccF3UiWz.o
+ .text.imprimir_dec
+                0x0000006c       0x8c /tmp/ccF3UiWz.o
+ .text.startup.main
+                0x000000f8      0x144 /tmp/ccF3UiWz.o
+                0x000000f8                main
+ .text          0x0000023c       0xb4 /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32i/ilp32/libgcc.a(div.o)
+                0x0000023c                __divsi3
+                0x00000244                __hidden___udivsi3
+                0x00000244                __udivsi3
+                0x0000028c                __umodsi3
+                0x000002c0                __modsi3
+ *(.rodata*)
+ .rodata.main.str1.4
+                0x000002f0      0x288 /tmp/ccF3UiWz.o
+                                 0xf0 (size before relaxing)
+ .rodata.str1.4
+                0x00000578      0x198 /tmp/ccF3UiWz.o
+ .rodata.lista_sonidos
+                0x00000578       0x80 /tmp/ccF3UiWz.o
+
+.rela.dyn       0x000005f8        0x0
+ .rela.text.startup
+                0x000005f8        0x0 /tmp/ccwSxZiM.o
+
+.data           0x000005f8        0x0
+                0x000005f8                        . = ALIGN (0x4)
+ *(.data*)
+
+.bss            0x000005f8        0x0
+                0x000005f8                        . = ALIGN (0x4)
+                0x000005f8                        __bss_start = .
+ *(.bss*)
+ *(COMMON)
+                0x000005f8                        __bss_end = .
+
+.stack          0x000005f8      0x400
+                0x000005f8                        _stack_start = .
+                0x000009f8                        . = (. + 0x400)
+ *fill*         0x000005f8      0x400 
+                0x000009f8                        _stack_end = .
+                0x000009f8                        _stack_top = .
+OUTPUT(build/firmware.elf elf32-littleriscv)
+
+.riscv.attributes
+                0x00000000       0x1c
+ .riscv.attributes
+                0x00000000       0x1a /tmp/ccwSxZiM.o
+ .riscv.attributes
+                0x0000001a       0x1c /tmp/ccF3UiWz.o
+ .riscv.attributes
+                0x00000036       0x1a /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32i/ilp32/libgcc.a(div.o)
+
+.comment        0x00000000       0x22
+ .comment       0x00000000       0x22 /tmp/ccF3UiWz.o
+                                 0x23 (size before relaxing)
+
+.debug_line     0x00000000      0x66e
+ .debug_line    0x00000000       0x7e /tmp/ccwSxZiM.o
+ .debug_line    0x0000007e      0x49d /tmp/ccF3UiWz.o
+ .debug_line    0x0000051b      0x153 /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32i/ilp32/libgcc.a(div.o)
+
+.debug_line_str
+                0x00000000      0x14f
+ .debug_line_str
+                0x00000000      0x14f /tmp/ccwSxZiM.o
+                                 0x58 (size before relaxing)
+ .debug_line_str
+                0x0000014f      0x108 /tmp/ccF3UiWz.o
+ .debug_line_str
+                0x0000014f       0xa2 /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32i/ilp32/libgcc.a(div.o)
+
+.debug_info     0x00000000      0x520
+ .debug_info    0x00000000       0x24 /tmp/ccwSxZiM.o
+ .debug_info    0x00000024      0x49d /tmp/ccF3UiWz.o
+ .debug_info    0x000004c1       0x5f /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32i/ilp32/libgcc.a(div.o)
+
+.debug_abbrev   0x00000000      0x27a
+ .debug_abbrev  0x00000000       0x14 /tmp/ccwSxZiM.o
+ .debug_abbrev  0x00000014      0x23e /tmp/ccF3UiWz.o
+ .debug_abbrev  0x00000252       0x28 /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32i/ilp32/libgcc.a(div.o)
+
+.debug_aranges  0x00000000       0x70
+ .debug_aranges
+                0x00000000       0x20 /tmp/ccwSxZiM.o
+ .debug_aranges
+                0x00000020       0x30 /tmp/ccF3UiWz.o
+ .debug_aranges
+                0x00000050       0x20 /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32i/ilp32/libgcc.a(div.o)
+
+.debug_str      0x00000000      0x29f
+ .debug_str     0x00000000      0x29f /tmp/ccwSxZiM.o
+                                 0x64 (size before relaxing)
+ .debug_str     0x0000029f      0x1b7 /tmp/ccF3UiWz.o
+ .debug_str     0x0000029f       0xe7 /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32i/ilp32/libgcc.a(div.o)
+
+.debug_loclists
+                0x00000000      0x1b8
+ .debug_loclists
+                0x00000000      0x1b8 /tmp/ccF3UiWz.o
+
+.debug_rnglists
+                0x00000000       0x92
+ .debug_rnglists
+                0x00000000       0x92 /tmp/ccF3UiWz.o
+
+.debug_frame    0x00000000       0x80
+ .debug_frame   0x00000000       0x80 /tmp/ccF3UiWz.o
