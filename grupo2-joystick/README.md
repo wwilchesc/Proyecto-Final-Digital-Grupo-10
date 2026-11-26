@@ -378,6 +378,24 @@ Ahora vamos a presentar la separación del periférico en dos partes: el **datap
 
 ---
 
+### Arquitectura control/datapath (Criterio A.7)
+
+Se presenta la arquitectura interna del periférico
+MCP3008, identificando la unidad de control, el datapath,
+los registros, los contadores, las órdenes de control
+y las condiciones de decisión, de acuerdo con el código
+Verilog implementado.
+
+### Máquina de estados finitos (Criterio A.8)
+
+Se presenta la FSM de cinco estados: S_IDLE, S_SETUP,
+S_BIT, S_END y S_GAP, junto con su codificación binaria
+y la tabla de transiciones.
+
+[Consultar desarrollo y diagramas de los literales A.7 y A.8](./docs/Literales_7_y_8.md)
+
+
+
 ## 4. Registros
 
 El periférico `perip_joystick.v` se integra al bus MMIO del procesador **FemtoRV32** a partir de la dirección base **`0x0043_0000`** (rango útil `0x0043_0000` a `0x0043_001C`), habilitado por la señal `cs[3]` en `chip_select.v`. Implementa **8 registros de 32 bits** alineados a palabra (offsets de 4 en 4 bytes, decodificados con `mem_addr[4:0]`). Los valores de 10 bits del ADC ocupan `bits [9:0]` y el resto se lee en `0`.
