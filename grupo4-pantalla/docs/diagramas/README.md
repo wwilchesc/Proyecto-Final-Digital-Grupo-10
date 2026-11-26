@@ -3,18 +3,22 @@
 **Estado:** diseño conceptual, no implementado ni simulado. **Plataforma:** Tang Nano 9K (27 MHz). **Panel:** 64×64, rotulado HUB75E; contacto 12 serigrafiado `NC` (no identificado eléctricamente).  
 **Fecha:** 2026-11-24. **Responsables reales:** por registrar en commits y evidencias; la autoría de la propuesta documental no equivale a la verificación del hardware.
 
-## Archivos editables y vistas previas
+# Diagramas del controlador HUB75E
 
-Abrir [hub75e-diseno-preliminar.drawio](hub75e-diseno-preliminar.drawio) en https://app.diagrams.net/ (cinco páginas editables con rectángulos, conectores y formas independientes).
+Los diagramas describen las distintas etapas del diseño, desde la arquitectura de barrido hasta la interfaz MMIO. Los archivos editables se abren en [diagrams.net](https://app.diagrams.net/).
 
-| N.º | Diagrama | Imagen | Explicación técnica |
-|---|---|---|---|
-| 01 | Arquitectura general | [PNG](01-arquitectura.png) · [SVG](01-arquitectura.svg) | [01-arquitectura.md](01-arquitectura.md) |
-| 02 | Flujo de barrido | [PNG](02-flujo-barrido.png) · [SVG](02-flujo-barrido.svg) | [02-flujo-barrido.md](02-flujo-barrido.md) |
-| 03 | Máquina de estados | [PNG](03-fsm.png) · [SVG](03-fsm.svg) | [03-fsm.md](03-fsm.md) |
-| 04 | Temporización conceptual | [PNG](04-temporizacion.png) · [SVG](04-temporizacion.svg) | [04-temporizacion.md](04-temporizacion.md) |
-| 05 | Formato de framebuffer | [PNG](05-framebuffer.png) · [SVG](05-framebuffer.svg) | [05-framebuffer.md](05-framebuffer.md) |
-| 06 | ASMD | [PNG](asmd-rtl-hub75.png) · [SVG](asmd-rtl-hub75.svg) · [DRAWIO](asmd-rtl-hub75.drawio) | [06.asmd-rtl-hub75.md](06.asmd-rtl.hub75.md) |
+| Diagrama | Función |
+|---|---|
+| [Caja negra](1.Arquitectura/DiagramaCajaNegra.drawio.png) | Interfaz de hardware y señales |
+| [Caja negra inicial](1.Arquitectura/Diagrama_cajanegra.png) | Arquitectura del panel |
+| [Flujo de barrido](2.Barrido/Diagrama_Flujo_HUB75_64x64.pdf) | Secuencia de visualización del prototipo |
+| [Temporización del panel](3.Tiempos/DiagramaTiempos.png) | Señales HUB75E |
+| [Decodificador local](4.Decodificador_local/Decodificador_local.drawio) | Selección de registros en el diseño inicial |
+| [Acceso a registros](4.Decodificador_local/ejemplos/decodificador_local_facil.drawio) | Ejemplos de lectura y escritura |
+| [Diseño preliminar](5.Preliminar/hub75e-diseno-preliminar.drawio) | Arquitectura conceptual y alternativas iniciales |
+| [ASMD](6.ASMD/asmd-rtl-hub75.drawio) | Diez estados de la FSM del prototipo |
+
+La implementación RGB111 está descrita en el [manual de integración](../../integracion_mmio/README.md). El ASMD original corresponde al prototipo parametrizable; la instancia MMIO utiliza un único plano.
 
 ## Decisiones para esta versión
 
