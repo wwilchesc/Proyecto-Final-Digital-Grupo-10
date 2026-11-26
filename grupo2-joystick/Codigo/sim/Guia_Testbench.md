@@ -13,8 +13,6 @@ El testbench `tb_perip_joystick.v` realiza una verificación unitaria completame
 | **`tb_perip_joystick.v`** | **Obligatorio** | `sim/tb_perip_joystick.v` | Banco de pruebas que genera el reloj de $27\text{ MHz}$, aplica el reset, modela el MCP3008 y comprueba automáticamente los registros del periférico. |
 | **`perip_joystick.v`** | **Obligatorio** | `rtl/perip_joystick.v` | Módulo hardware bajo prueba (*DUT*). El testbench lo instancia internamente (`perip_joystick dut (...)`); sin este archivo la compilación con `iverilog` falla. |
 | **`Makefile`** | **Opcional** *(recomendado)* | `Makefile` (raíz) | Automatiza la limpieza de temporales, compilación, ejecución de la simulación y apertura de GTKWave. |
-| **`tb_perip_joystick.gtkw`** | **Opcional** | `tb_perip_joystick.gtkw` | Archivo de configuración de GTKWave que guarda las señales elegidas, su orden y su formato numérico (decimal/hexadecimal). |
-| **`SOC.v`, `femtorv32_quark.v`, `chip_select.v`, `top.v`, `.cst`** | **No requeridos** | — | Solo son necesarios para la integración y síntesis del SoC completo en la Tang Nano 9K, no para esta prueba unitaria. |
 
 ### Requisito dentro de `tb_perip_joystick.v`
 
