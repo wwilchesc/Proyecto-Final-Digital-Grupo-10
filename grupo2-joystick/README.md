@@ -385,6 +385,18 @@ flowchart TD
     S0 --> D0{"enable o start_req<br/>o ch distinto de 0"}
     D0 -- no --> S0
     D0 -- sí --> O0(["cs_n ← 0, n ← 0, tick ← 0<br/>mosi ← tx_w[23]"]) --> S1
+    S1 --> D1{"tick_done"}
+    D1 -- no --> O3(["tick ← tick+1"]) --> S2
+    D2 -- sí --> D3{"sck"}
+    D3 -- 0 --> O4(["sck ← 1, rx ← {rx[22:0], miso}<br/>n ← n+1, tick ← 0"]) --> S2
+    D3 -- 1 --> D4{"n = 24"}
+    D4 -- no --> O5(["sck ← 0, mosi ← tx_w[23−n]<br/>tick ← 0"]) --> S2
+    D4 -- sí --> O6(["sck ← 0, cs_n ← 1<br/>tick ← 0"]) --> S3
+    S3 --> D5{"tick_done"}
+    D5 -- no --> O7(["tick ← tick+1"]) --> S3
+    D5 -- sí --> O8(["res[ch] ← rx[9:0]<br/>ch ← ch+1, tick ← 0"]) --> S4
+    S4 --> D6{"tick_done"}
+    D6 -- no --> O9(["tick ← tick+1"]) --> S4
  ```
 
 
