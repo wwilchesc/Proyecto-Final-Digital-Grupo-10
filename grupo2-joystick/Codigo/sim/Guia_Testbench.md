@@ -6,7 +6,7 @@ Este documento detalla paso a paso cómo preparar, configurar y ejecutar la simu
 
 ## 1. Archivos necesarios para correr el testbench
 
-El testbench `tb_perip_joystick.v` realiza una verificación unitaria completamente aislada: emula internamente al procesador FemtoRV32 (mediante tareas síncronas de lectura y escritura en el bus), al conversor ADC externo **MCP3008** (esclavo SPI Modo 0) y a los pulsadores físicos activos en bajo. Por ello, **no necesita el resto del SoC** para ejecutarse.
+El testbench `tb_perip_joystick.v` realiza una verificación unitaria completamente aislada: emula internamente al procesador FemtoRV32 (mediante tareas síncronas de lectura y escritura en el bus), al conversor ADC externo **MCP3008** (esclavo SPI Modo 0) y a los pulsadores físicos activos en bajo.
 
 | Archivo | Requisito | Ruta sugerida | Función |
 | :--- | :---: | :--- | :--- |
