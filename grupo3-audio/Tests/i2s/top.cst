@@ -1,0 +1,17 @@
+// Reloj nativo de 27 MHz
+IO_LOC "clk" 52;
+IO_PORT "clk" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+
+// LED 1 a bordo para diagnóstico (LED heartbeat)
+IO_LOC "led_heartbeat" 10;
+IO_PORT "led_heartbeat" IO_TYPE=LVCMOS18;
+
+// Salidas I2S hacia MAX98357A
+IO_LOC "bclk" 35;
+IO_PORT "bclk" IO_TYPE=LVCMOS33 DRIVE=8;
+
+IO_LOC "lrck" 36;
+IO_PORT "lrck" IO_TYPE=LVCMOS33 DRIVE=8;
+
+IO_LOC "sdin" 37;
+IO_PORT "sdin" IO_TYPE=LVCMOS33 DRIVE=8;
