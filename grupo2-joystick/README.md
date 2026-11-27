@@ -340,9 +340,9 @@ Ahora vamos a presentar la separación del periférico en dos partes: el **datap
 |Elemento|Parte|Función|
 |---|---|---|
 | Divisor `tick` y comparación `tick_done = (tick == clkdiv − 1)` | Datapath | Es el encargado de contar los ciclos de 27 MHz y da un ¨tick¨ o un pulso de corta duración cada medio periodo del reloj del SPI `mcp_sck` |
-| Registro `CLKDIV` | Datapath | Guarda el divisor (10 despues del reset)
+| Registro `CLKDIV` (`clkdiv`) | Datapath | Guarda el divisor (10 despues del reset)
 | Contador de pulsos `n` y comparación `n == 24` | Datapath | Lleva la cuenta de los 24 pulsos|
-| Palabra de transmisión `tx_w` (24 bits) | Datapath | Arma la trama con el canal: `{8'h01, 1'b1, 1'b0, ch[1:0], 4'b0000, 8'h00}`. En cada bajada sale el bit `tx_w[23 − n]` por `mcp_mosi` |
+| Palabra de transmisión `tx_w` (24 bits) | Datapath | Arma la trama con el canal: `{8'h01, 1'b1, 1'b0, ch, 4'b0000, 8'h00}`. En cada bajada sale el bit `tx_w[23 − n]` por `mcp_mosi` |
 | Registro de recepción `rx` (10 bits) | Datapath | En cada subida corre sus bits y mete el que llega por `mcp_miso` |
 | Contador de canal `ch` (2 bits) | Datapath | Recorre `CH0` a `CH3` |
 | `j1x`, `j1y`, `j2x`, `j2y` (10 bits, reset 512) | Datapath | Guardan el último valor de cada canal (registros `J1_X`, `J1_Y`, `J2_X`, `J2_Y`) |
@@ -363,41 +363,41 @@ Ahora vamos a presentar la separación del periférico en dos partes: el **datap
 |---|---|
 | `tick_clr` | `tick ← 0`, reinicia el conteo de tiempo |
 | `sck_hi` / `sck_lo` | Sube o baja `mcp_sck` (cada flanco del reloj SPI) |
-| `sh_rx` | Mete `mcp_miso` en `rx` y hace `cnt ← cnt + 1` |
+| `sh_rx` | Mete `mcp_miso` en `rx` y hace `n ← n + 1` |
 | `upd_mosi` | Carga en `mcp_mosi` el bit que toca del comando |
 | `cs_lo` / `cs_hi` | Baja o sube `mcp_cs_n`: empieza o termina la lectura |
-| `ld_res` | Copia `rx` al registro del canal `ch` |
+| `ld_res` | Copia `rx[9:0]` al registro del canal `ch` (`j1x`, `j1y`, `j2x` o `j2y`) |
 | `ch_inc` | `ch ← ch + 1`, pasa al siguiente eje |
  
 ## 3.3 ASMD + tabla de transferencia
 Estados:
 - `S_IDLE`: esperando. `busy = 0`, `mcp_cs_n = 1`, `mcp_sck = 0`.
-- `S_SETUP`: CS ya está abajo y el primer bit del comando ya está en MOSI; se espera medio periodo.
+- `S_SETUP`: `mcp_cs_n` ya está abajo y el primer bit del comando ya está en `mcp_mosi`; se espera medio periodo.
 - `S_BIT`: los 24 pulsos. En la subida se lee `mcp_miso`; en la bajada se cambia `mcp_mosi`.
-- `S_END`: CS sube; al cumplirse el medio periodo se guarda el resultado y avanza el canal.
-- `S_GAP`: medio periodo más con CS arriba; aquí se decide si el barrido terminó.
-Como la primera subida de `mcp_sck` llega un medio periodo después de salir de `S_SETUP`, entre la bajada de CS y ese flanco pasan dos medios periodos. Lo mismo pasa con CS en alto. Los dos superan con holgura tSUCS = 100 ns y tCSH = 270 ns.
+- `S_END`: `mcp_cs_n` sube; al cumplirse el medio periodo se guarda el resultado y avanza el canal.
+- `S_GAP`: medio periodo más con `mcp_cs_n` arriba; aquí se decide si el barrido terminó.
+Como la primera subida de `mcp_sck` llega un medio periodo después de salir de `S_SETUP`, entre la bajada de `mcp_cs_n` y ese flanco pasan dos medios periodos. Lo mismo pasa con `mcp_cs_n` en alto. Los dos superan con holgura `t_SUCS` = 100 ns y `t_CSH` = 270 ns.
 
 ```mermaid
 flowchart TD
-    S0["S_IDLE<br/>busy=0, cs_n=1, sck=0"]
-    S1["S_SETUP<br/>espera tSUCS"]
+    S0["S_IDLE<br/>busy=0, mcp_cs_n=1, mcp_sck=0"]
+    S1["S_SETUP<br/>espera t_SUCS"]
     S2["S_BIT<br/>24 pulsos"]
-    S3["S_END<br/>cs_n=1"]
-    S4["S_GAP<br/>espera tCSH"]
+    S3["S_END<br/>mcp_cs_n=1"]
+    S4["S_GAP<br/>espera t_CSH"]
     S0 --> D0{"enable o start_req<br/>o ch distinto de 0"}
     D0 -- no --> S0
-    D0 -- sí --> O0(["cs_n ← 0, n ← 0, tick ← 0<br/>mosi ← tx_w[23]"]) --> S1
+    D0 -- sí --> O0(["mcp_cs_n ← 0, n ← 0, tick ← 0<br/>mcp_mosi ← tx_w[23]"]) --> S1
     S1 --> D1{"tick_done"}
     D1 -- no --> O3(["tick ← tick+1"]) --> S2
-    D2 -- sí --> D3{"sck"}
-    D3 -- 0 --> O4(["sck ← 1, rx ← {rx[22:0], miso}<br/>n ← n+1, tick ← 0"]) --> S2
+    D2 -- sí --> D3{"mcp_sck"}
+    D3 -- 0 --> O4(["mcp_sck ← 1, rx ← {rx[22:0], mcp_miso}<br/>n ← n+1, tick ← 0"]) --> S2
     D3 -- 1 --> D4{"n = 24"}
-    D4 -- no --> O5(["sck ← 0, mosi ← tx_w[23−n]<br/>tick ← 0"]) --> S2
-    D4 -- sí --> O6(["sck ← 0, cs_n ← 1<br/>tick ← 0"]) --> S3
+    D4 -- no --> O5(["mcp_sck ← 0, mcp_mosi ← tx_w[23−n]<br/>tick ← 0"]) --> S2
+    D4 -- sí --> O6(["mcp_sck ← 0, mcp_cs_n ← 1<br/>tick ← 0"]) --> S3
     S3 --> D5{"tick_done"}
     D5 -- no --> O7(["tick ← tick+1"]) --> S3
-    D5 -- sí --> O8(["res[ch] ← rx[9:0]<br/>ch ← ch+1, tick ← 0"]) --> S4
+    D5 -- sí --> O8(["j1x/j1y/j2x/j2y ← rx[9:0] (según ch)<br/>ch ← ch+1, tick ← 0"]) --> S4
     S4 --> D6{"tick_done"}
     D6 -- no --> O9(["tick ← tick+1"]) --> S4
     D6 -- sí --> D7{"ch = 0"}
@@ -407,16 +407,16 @@ flowchart TD
 Despues de esto podemos construir l tabla de transferencias:
 | Estado | Condición | Transferencias | Siguiente |
 |---|---|---|---|
-| `S_IDLE` | `enable ∨ start_req ∨ ch≠0` | `cs_n←0; n←0; tick←0; mosi←tx_w[23]` | `S_SETUP` |
+| `S_IDLE` | `enable ∨ start_req ∨ ch≠0` | `mcp_cs_n←0; n←0; tick←0; mcp_mosi←tx_w[23]` | `S_SETUP` |
 | `S_IDLE` | si no | — | `S_IDLE` |
 | `S_SETUP` | `tick_done=0` | `tick←tick+1` | `S_SETUP` |
 | `S_SETUP` | `tick_done=1` | `tick←0` | `S_BIT` |
 | `S_BIT` | `tick_done=0` | `tick←tick+1` | `S_BIT` |
-| `S_BIT` | `tick_done=1 ∧ sck=0` | `sck←1; rx←{rx[22:0],miso}; n←n+1; tick←0` | `S_BIT` |
-| `S_BIT` | `tick_done=1 ∧ sck=1 ∧ n<24` | `sck←0; mosi←tx_w[23−n]; tick←0` | `S_BIT` |
-| `S_BIT` | `tick_done=1 ∧ sck=1 ∧ n=24` | `sck←0; cs_n←1; tick←0` | `S_END` |
+| `S_BIT` | `tick_done=1 ∧ mcp_sck=0` | `mcp_sck←1; rx←{rx[22:0],mcp_miso}; n←n+1; tick←0` | `S_BIT` |
+| `S_BIT` | `tick_done=1 ∧ mcp_sck=1 ∧ n<24` | `mcp_sck←0; mcp_mosi←tx_w[23−n]; tick←0` | `S_BIT` |
+| `S_BIT` | `tick_done=1 ∧ mcp_sck=1 ∧ n=24` | `mcp_sck←0; mcp_cs_n←1; tick←0` | `S_END` |
 | `S_END` | `tick_done=0` | `tick←tick+1` | `S_END` |
-| `S_END` | `tick_done=1` | `res[ch]←rx[9:0]; ch←ch+1; tick←0` | `S_GAP` |
+| `S_END` | `tick_done=1` | `j1x/j1y/j2x/j2y←rx[9:0] (según ch); ch←ch+1; tick←0` | `S_GAP` |
 | `S_GAP` | `tick_done=0` | `tick←tick+1` | `S_GAP` |
 | `S_GAP` | `tick_done=1 ∧ ch≠0` | `tick←0` | `S_IDLE` |
 | `S_GAP` | `tick_done=1 ∧ ch=0` | `valid←1; start_req←0; tick←0` | `S_IDLE` |
