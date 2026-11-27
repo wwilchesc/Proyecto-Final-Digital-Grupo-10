@@ -212,7 +212,7 @@ endmodule
 
 ### 3.3 Restricciones de pines físicos (`.cst` para Tang Nano 9K)
 
-Agrega al final de tu archivo `.cst` (por ejemplo, `top.cst`) las líneas siguientes, reemplazando `PIN_*` por los números de pin físicos libres de tu placa Tang Nano 9K:
+Agrega al final de tu archivo `.cst` las lsiguientes lineas:
 
 ```text
 // ============================================================================
