@@ -128,70 +128,26 @@ Se envían **seis bits RGB en paralelo** porque se cargan dos píxeles simultán
 
 ### 5.2. Diagrama de bloques y señales
 
-El diagrama divide el sistema en **framebuffer, datapath y FSM**. El framebuffer almacena colores; el datapath mantiene contadores y selecciona bits RGB; la FSM determina cuándo se realizan las operaciones. El adaptador MMIO permitirá que el procesador escriba fotogramas, pero todavía no está implementado en el RTL consultado.
+![Diagrama de caja negra](DiagramadeBloquesG4.png)
 
-```mermaid
-flowchart LR
-    SOC[SoC RISC-V]
-    PANEL[Panel HUB75E 64x64]
-    subgraph G4[Controlador G4]
-        MMIO[Adaptador MMIO<br/>PENDIENTE]
-        BANK[Gestor doble buffer<br/>PROPUESTO]
-        FB[Framebuffer RGB888<br/>framebuffer.v]
-        DP[Datapath<br/>hub75_datapath.v]
-        FSM[FSM de 10 estados<br/>hub75_control.v]
-    end
-    SOC -->|"d_in y control MMIO"| MMIO
-    MMIO -->|"d_out[31:0]"| SOC
-    MMIO -.->|"we, waddr[11:0], wdata[23:0]"| FB
-    MMIO -.->|"cuadro completo: por definir"| BANK
-    BANK -.->|"wr_bank, disp_bank"| FB
-    DP -->|"fb_addr_top, fb_addr_bot (12 bits c/u)"| FB
-    FB -->|"pix_top, pix_bot (24 bits c/u)"| DP
-    FSM -->|"load_rgb, inc/clr de contadores, load_addr"| DP
-    DP -->|"col_last, row_last, plane_last, timer_done"| FSM
-    DP -->|"RGB (6 bits), addr (5 bits)"| PANEL
-    FSM -->|"hub_clk, hub_lat, hub_oe"| PANEL
-    classDef pendiente stroke:#b7791f,stroke-width:2px,stroke-dasharray:4 4;
-    class MMIO,BANK pendiente;
-```
+
 
 **Figura 2. Comunicación entre los bloques internos.** Las conexiones punteadas representan funcionalidades previstas para la integración, no módulos Verilog comprobados.
 
-**Datos y direcciones:**
 
-| Señal | Ancho | Función |
-|---|---:|---|
-| `we` | 1 bit | Habilitación de escritura propuesta desde MMIO. |
-| `waddr[11:0]` | 12 bits | Dirección de escritura de uno de los 4096 píxeles. |
-| `wdata[23:0]` | 24 bits | Valor RGB888 del píxel que se escribirá. |
-| `fb_addr_top`, `fb_addr_bot` | 12 bits c/u | Direcciones de lectura de dos píxeles simultáneos: filas `row` y `row+32`, misma columna. |
-| `pix_top`, `pix_bot` | 24 bits c/u | Dos píxeles que entrega la memoria al datapath. |
-| `wr_bank`, `disp_bank` | 1 bit c/u | Banco de escritura y de visualización previstos para un futuro doble buffer. |
+El módulo `perip_hub75` reúne **control de bus**, **memoria**, **datapath** y **FSM de barrido**. La memoria admite escrituras de un píxel por flanco en el banco posterior y entrega dos píxeles en una lectura síncrona del banco visible. El control MMIO registra `DISPLAY_EN`, `BUSY`, `DONE`, `FRONT_VALID`, el contador `FRAMES` y `disp_bank`.
 
-En el código consultado, `framebuffer.v` declara una memoria RGB888 inicializada mediante `image.hex` y la lee de forma **síncrona** en cada flanco positivo de `clk`. No tiene entradas `we`, `waddr`, `wdata` ni selector de banco. Estas señales del diagrama representan el **diseño por implementar**, no interfaces ya existentes.
-
-**Órdenes de la FSM al datapath (todas de 1 bit):**
-
-| Señal | Operación |
-|---|---|
-| `load_rgb` | Guarda los seis bits del plano de color seleccionado. |
-| `inc_col` / `clr_col` | Incrementa o reinicia la columna (`col`). |
-| `inc_row` / `clr_row` | Incrementa o reinicia la pareja de filas (`row`). |
-| `inc_plane` / `clr_plane` | Incrementa o reinicia el plano RGB (`plane`). |
-| `load_addr` | Registra `addr ← row` para seleccionar la fila del panel. |
-| `inc_timer` / `clr_timer` | Incrementa o reinicia el contador de iluminación (`timer`). |
-
-**Condiciones del datapath hacia la FSM (1 bit cada una):**
-
-| Señal | Vale 1 cuando… | Consecuencia |
+| Interconexión | Señales | Qué significan |
 |---|---|---|
-| `col_last` | `col = 63` | La FSM termina las columnas y genera el pulso `hub_lat`. |
-| `row_last` | `row = 31` | Se debe cambiar de plano o reiniciar el recorrido. |
-| `plane_last` | `plane = 7` | Se completó el último plano. |
-| `timer_done` | `timer = T_BASE << plane` | La FSM finaliza la iluminación y desactiva la salida. |
+| Bus → periférico | `cs_fb`, `cs_ctrl`, `addr[15:0]`, `rd`, `wr`, `d_in[31:0]` | Selección y operación de lectura/escritura. |
+| Periférico → framebuffer | `we`, `waddr[11:0]`, `wdata[2:0]` | Escritura de **un píxel RGB111** en el banco posterior; se ignora si BUSY=1. |
+| Datapath → framebuffer | `fb_addr_top`, `fb_addr_bot` | Direcciones de los dos píxeles (12 bits cada una). |
+| Framebuffer → datapath | `pix_top[2:0]`, `pix_bot[2:0]` | Píxeles RGB111, expandidos internamente a los puertos RGB888 heredados para reutilizar el datapath. |
+| FSM → datapath | `load_rgb`, `inc_col`, `clr_col`, `inc_row`, `clr_row`, `inc_plane`, `clr_plane`, `load_addr`, `clr_timer`, `inc_timer` | Órdenes de carga, incremento o reinicio. Con `PLANES=1`, el plano permanece en cero. |
+| Datapath → FSM | `col_last`, `row_last`, `plane_last`, `timer_done` | Indican columna 63, fila 31, plano 0 (último) y fin del tiempo de iluminación. |
+| FSM → control MMIO | `frame_done` | Pulso en `S_BLANK` para la última pareja de filas del único plano. **No es** el registro DONE. |
+| Control MMIO → framebuffer | `disp_bank` | Banco visible; el banco posterior de escritura es `~disp_bank`. |
 
-La idea es que **la FSM decide** qué operación se necesita y **el datapath la ejecuta**, actualizando registros al siguiente flanco ascendente de `clk`.
 
 ### 5.3. Diagrama de tiempos del barrido HUB75E
 
