@@ -215,24 +215,31 @@ endmodule
 Agrega al final de tu archivo `.cst` (por ejemplo, `top.cst`) las líneas siguientes, reemplazando `PIN_*` por los números de pin físicos libres de tu placa Tang Nano 9K:
 
 ```text
-// MCP3008, SPI modo 0 (bancos de 3.3 V)
-IO_LOC  "mcp_cs_n" PIN_CS;
+// ============================================================================
+// JOYSTICK MCP3008 (SPI Modo 0) + PULSADORES KY-023 — Banco 1 (3.3 V)
+// ============================================================================
+// Pin 10 del MCP3008 (CS/SHDN)
+IO_LOC  "mcp_cs_n" 54;
 IO_PORT "mcp_cs_n" IO_TYPE=LVCMOS33 PULL_MODE=UP;
 
-IO_LOC  "mcp_sck"  PIN_SCK;
-IO_PORT "mcp_sck"  IO_TYPE=LVCMOS33;
+// Pin 13 del MCP3008 (CLK)
+IO_LOC  "mcp_sck" 55;
+IO_PORT "mcp_sck" IO_TYPE=LVCMOS33;
 
-IO_LOC  "mcp_mosi" PIN_MOSI;
+// Pin 11 del MCP3008 (DIN)
+IO_LOC  "mcp_mosi" 56;
 IO_PORT "mcp_mosi" IO_TYPE=LVCMOS33;
 
-IO_LOC  "mcp_miso" PIN_MISO;
+// Pin 12 del MCP3008 (DOUT)
+IO_LOC  "mcp_miso" 57;
 IO_PORT "mcp_miso" IO_TYPE=LVCMOS33 PULL_MODE=UP;
 
-// Pulsadores SW de los joysticks KY-023 (activos en bajo, con pull-up interno)
-IO_LOC  "joy_sw_n[0]" PIN_SW1;
+// Pulsador SW del Joystick 1 (KY-023, activo en bajo con pull-up interno)
+IO_LOC  "joy_sw_n[0]" 48;
 IO_PORT "joy_sw_n[0]" IO_TYPE=LVCMOS33 PULL_MODE=UP;
 
-IO_LOC  "joy_sw_n[1]" PIN_SW2;
+// Pulsador SW del Joystick 2 (sin cablear: el pull-up interno lo mantiene en reposo)
+IO_LOC  "joy_sw_n[1]" 49;
 IO_PORT "joy_sw_n[1]" IO_TYPE=LVCMOS33 PULL_MODE=UP;
 ```
 
